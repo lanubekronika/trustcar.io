@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn how TrustCar.io uses AI-powered inspections to provide transparent, fraud-protected vehicle reports. 360° damage mapping, EXIF verification, and comprehensive analysis in 48-72 hours.">
+    <meta name="keywords" content="vehicle inspection, AI damage detection, fraud prevention, used car inspection, pre-purchase inspection, car history report">
+    <meta property="og:title" content="How TrustCar.io Works — AI-Powered Vehicle Inspections">
+    <meta property="og:description" content="Transparent, AI-powered vehicle inspections that protect buyers from fraud and hidden damage. 360° damage mapping with local repair estimates.">
+    <meta property="og:type" content="website">
+    <title>How It Works — TrustCar.io</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
+        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+        .logo { font-size: 1.8rem; font-weight: 800; }
+        nav { display: flex; gap: 2rem; }
+        nav a { color: white; text-decoration: none; font-weight: 600; transition: opacity .2s; }
+        nav a:hover { opacity: 0.85; }
+        main { padding: 3rem 5%; max-width: 1200px; margin: 0 auto; }
+        h1 { font-size: 3rem; margin-bottom: .75rem; text-align: center; font-weight: 800; background: linear-gradient(135deg, #0b1724 0%, #0553F0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .subtitle { color: #64748b; font-size: 1.15rem; margin-bottom: 3rem; text-align: center; font-weight: 500; line-height: 1.6; }
+        .process-steps { display: flex; flex-direction: column; gap: 3rem; margin-bottom: 3rem; }
+        .step { display: flex; gap: 2rem; align-items: start; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(2,6,23,0.08); border: 2px solid #e6eefc; transition: .3s; }
+        .step:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(2,6,23,0.12); border-color: #0553F0; }
+        .step-number { width: 70px; height: 70px; background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 12px rgba(5,83,240,0.25); }
+        .step-content { flex: 1; }
+        .step-title { font-size: 1.6rem; font-weight: 800; margin-bottom: .75rem; color: #0b1724; }
+        .step-description { color: #475569; line-height: 1.7; margin-bottom: 1rem; font-weight: 500; }
+        .step-features { display: flex; flex-wrap: wrap; gap: .75rem; }
+        .feature-tag { background: linear-gradient(135deg, #e6eefc 0%, #d1e3fc 100%); color: #0553F0; padding: .5rem 1rem; border-radius: 8px; font-size: .85rem; font-weight: 700; border: 1px solid #d1e3fc; }
+        .why-section { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); padding: 3rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(2,6,23,0.08); margin-bottom: 3rem; border: 2px solid #e6eefc; }
+        .why-section h2 { font-size: 2rem; margin-bottom: 1.5rem; font-weight: 800; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .benefit-card { padding: 1.5rem; background: white; border-radius: 12px; border-left: 4px solid #0553F0; box-shadow: 0 2px 8px rgba(2,6,23,0.06); transition: .3s; }
+        .benefit-card:hover { transform: translateY(-4px); box-shadow: 0 4px 16px rgba(2,6,23,0.1); }
+        .benefit-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+        .benefit-title { font-weight: 800; margin-bottom: .5rem; font-size: 1.05rem; }
+        .benefit-text { color: #64748b; font-size: .9rem; line-height: 1.6; }
+        .cta-section { text-align: center; padding: 3rem; background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); border-radius: 16px; color: white; box-shadow: 0 8px 24px rgba(5,83,240,0.25); }
+        .cta-section h2 { margin-bottom: 1rem; font-size: 2rem; font-weight: 800; }
+        .btn { padding: 1rem 3rem; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 1.1rem; text-decoration: none; display: inline-block; transition: all .2s; }
+        .btn-white { background: white; color: #0553F0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+        /* Scroll animations */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        
+        /* Trust badges */
+        .trust-section { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; flex-wrap: wrap; align-items: center; }
+        .trust-badge { background: white; padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(2,6,23,0.06); font-weight: 600; color: #64748b; font-size: 0.9rem; }
+        
+        /* Disclaimer */
+        .disclaimer { font-size: 0.85rem; color: #64748b; text-align: center; margin-top: 3rem; line-height: 1.6; max-width: 800px; margin-left: auto; margin-right: auto; }
+        
+        @media (max-width: 768px) { 
+            main { padding: 2rem 4%; }
+            h1 { font-size: 2.2rem; }
+            .subtitle { font-size: 1rem; }
+            .step { flex-direction: column; padding: 1.25rem; }
+            .step-number { width: 50px; height: 50px; font-size: 1.5rem; }
+            .step-title { font-size: 1.3rem; }
+            .benefits-grid { grid-template-columns: 1fr; }
+            .trust-section { gap: 1rem; }
+            .cta-section { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="/" style="color:white;text-decoration:none;" aria-label="TrustCar.io home">TrustCar.io</a></div>
+        <nav role="navigation" aria-label="Main navigation">
+            <a href="/" aria-label="Home page">Home</a>
+            <a href="/pricing.html" aria-label="View pricing tiers">Pricing</a>
+            <a href="/dealers.html" aria-label="Find certified dealers">Find Dealers</a>
+            <a href="/how-it-works.html" aria-current="page" aria-label="How it works (current page)">How It Works</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>How TrustCar Works</h1>
+        <p class="subtitle">Transparent, AI-powered vehicle inspections that protect buyers from fraud and hidden damage.</p>
+
+        <div class="process-steps">
+            <div class="step fade-in">
+                <div class="step-number" aria-label="Step 1">1</div>
+                <div class="step-content">
+                    <h2 class="step-title">Choose Your Inspection Tier</h2>
+                    <div class="step-description">
+                        Select from three inspection levels based on your needs: <strong>Basic</strong> (from $49) for instant VIN history, safety ratings, and recall data; 
+                        <strong>Plus</strong> (from $119) for seller-uploaded photos with AI damage detection, fraud scoring, and remote OBD-II diagnostics; or <strong>Premium</strong> (from $229) for a comprehensive 
+                        third-party in-person inspection with live video walkthrough and mechanical assessment.
+                    </div>
+                    <div class="step-features">
+                        <span class="feature-tag">Instant Basic Reports</span>
+                        <span class="feature-tag">Typically 48hr Plus Reports</span>
+                        <span class="feature-tag">Typically 72hr Premium Inspection</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number" aria-label="Step 2">2</div>
+                <div class="step-content">
+                    <h2 class="step-title">Capture 360° Vehicle Photos</h2>
+                    <div class="step-description">
+                        Using your smartphone's browser (no app download required), capture 20+ guided photos covering every angle of the vehicle. 
+                        Our quality analysis system helps identify blurry, dark, or insufficient images in real-time, prompting re-capture when needed. 
+                        GPS coordinates and timestamps are extracted from photo metadata (EXIF) to help verify authenticity and location. 
+                        The entire process typically takes 5-10 minutes with step-by-step visual guidance.
+                    </div>
+                    <div class="step-features">
+                        <span class="feature-tag">20-Point 360° Coverage</span>
+                        <span class="feature-tag">Real-Time Quality Checks</span>
+                        <span class="feature-tag">GPS + Timestamp Verification</span>
+                        <span class="feature-tag">Mobile-First Capture</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number" aria-label="Step 3">3</div>
+                <div class="step-content">
+                    <h2 class="step-title">AI Vision System Analyzes Every Pixel</h2>
+                    <div class="step-description">
+                        Our computer vision models (powered by Roboflow and advanced ML systems) automatically scan each photo to help detect potential dents, 
+                        scratches, cracks, rust, paint damage, and parts condition issues. Each detected damage point is mapped to a 360° vehicle diagram 
+                        with location coordinates, severity classification (minor/moderate/severe), approximate size measurements, and confidence scores. 
+                        The system cross-references VIN plates, odometer readings, and title history to help identify potential fraud indicators and calculate a risk assessment score (0-100).
+                    </div>
+                    <div class="step-features">
+                        <span class="feature-tag">360° Damage Mapping</span>
+                        <span class="feature-tag">Location Tracking</span>
+                        <span class="feature-tag">Severity Classification</span>
+                        <span class="feature-tag">Approximate Cost Guides</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number" aria-label="Step 4">4</div>
+                <div class="step-content">
+                    <h2 class="step-title">Human Review & Report Generation</h2>
+                    <div class="step-description">
+                        Our quality assurance team reviews flagged items in a prioritized review queue. High-risk inspections are escalated for enhanced manual 
+                        verification. Once approved, an AI-assisted comprehensive report is generated summarizing vehicle history, 
+                        safety ratings, damage findings, potential fraud indicators, and market comparables. All reports undergo human oversight for accuracy. Reports include photos with damage annotations and clickable hotspots.
+                    </div>
+                    <div class="step-features">
+                        <span class="feature-tag">Human-Verified Quality</span>
+                        <span class="feature-tag">AI-Assisted Report Generation</span>
+                        <span class="feature-tag">Damage Annotations</span>
+                        <span class="feature-tag">Market Comps</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step fade-in">
+                <div class="step-number" aria-label="Step 5">5</div>
+                <div class="step-content">
+                    <h2 class="step-title">Interactive 360° Report with Approximate Cost Guides</h2>
+                    <div class="step-description">
+                        Buyers receive a secure, shareable link to an interactive inspection report featuring a 360° damage map with clickable 
+                        hotspots, annotated photos showing damage locations, severity ratings, and approximate reconditioning cost guides for each issue based on regional averages. 
+                        Reports include VIN decode data, NHTSA safety ratings, recall history, title status, risk assessment breakdown, and AI-assisted 
+                        analysis summary. Premium reports add OBD-II diagnostic codes, third-party inspector notes, and live video walkthrough recordings.
+                    </div>
+                    <div class="step-features">
+                        <span class="feature-tag">360° Interactive Map</span>
+                        <span class="feature-tag">Approximate Cost Guides</span>
+                        <span class="feature-tag">Annotated Photos</span>
+                        <span class="feature-tag">PDF Export</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p style="font-size:0.85rem;color:#64748b;text-align:center;margin-top:2rem;">
+            Turnaround times and pricing are typical. All inspections include human review for accuracy.
+        </p>
+
+        <div class="why-section">
+            <h2>Why TrustCar is Different</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon" role="img" aria-label="AI robot">🤖</div>
+                    <h3 class="benefit-title">AI-Assisted Analysis</h3>
+                    <div class="benefit-text">Advanced computer vision models help detect damage and patterns humans might overlook. AI-assisted report generation analyzes multiple data points with human oversight for accuracy.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon" role="img" aria-label="Security lock">🔒</div>
+                    <h3 class="benefit-title">Fraud Detection</h3>
+                    <div class="benefit-text">Multi-signal fraud detection system helps identify potential odometer rollbacks, title issues, undisclosed accidents, location inconsistencies, and image tampering.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon" role="img" aria-label="Camera">📸</div>
+                    <h3 class="benefit-title">EXIF Verification</h3>
+                    <div class="benefit-text">GPS coordinates and timestamps extracted from photo metadata help verify images are authentic and taken at the declared location, adding an extra layer of confidence.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon" role="img" aria-label="Lightning bolt">⚡</div>
+                    <h3 class="benefit-title">Fast Turnaround</h3>
+                    <div class="benefit-text">Basic reports are instant. Plus inspections typically complete within 48 hours. Premium third-party inspections typically within 72 hours, depending on availability and location.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon" role="img" aria-label="Money">💰</div>
+                    <h3 class="benefit-title">Transparent Pricing</h3>
+                    <div class="benefit-text">No hidden fees. Choose the tier that fits your budget—from $49 instant VIN checks to $329 comprehensive inspections with live video. Prices vary by vehicle type and region.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon" role="img" aria-label="Checkmark">✅</div>
+                    <h3 class="benefit-title">Dealer Certification</h3>
+                    <div class="benefit-text">TrustCar Approved Dealers use our platform for every vehicle, giving buyers peace of mind with transparent pre-purchase inspection reports included in listings.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="trust-section">
+            <div class="trust-badge" role="img" aria-label="AI powered">🤖 AI-Powered Analysis</div>
+            <div class="trust-badge" role="img" aria-label="Human verified">✓ Human-Verified Reports</div>
+            <div class="trust-badge" role="img" aria-label="Secure data">🔒 Secure & Encrypted</div>
+            <div class="trust-badge" role="img" aria-label="48 hour turnaround">⚡ 48-72hr Turnaround</div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Ready to Buy with Confidence?</h2>
+            <p style="margin-bottom:2rem;opacity:.9;">Join thousands of buyers who trust TrustCar to provide transparent vehicle insights before purchase.</p>
+            <a href="/pricing.html" class="btn btn-white" aria-label="View pricing and get started">Get Started — From $49</a>
+        </div>
+        
+        <div class="disclaimer">
+            <strong>Important:</strong> Turnaround times are typical estimates and may vary based on inspection volume, complexity, and third-party availability. 
+            All automated analyses undergo human review for accuracy. Cost estimates are approximate guides based on regional averages—actual repair costs 
+            can vary significantly. Fraud detection systems flag potential indicators but do not guarantee detection of all issues. 
+            Reports are for informational purposes and do not replace professional mechanical inspection or legal title verification.
+        </div>
+    </main>
+    
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        
+        // Accessibility: Add keyboard navigation to step numbers
+        document.querySelectorAll('.step').forEach((step, index) => {
+            step.setAttribute('tabindex', '0');
+            step.setAttribute('role', 'article');
+            step.setAttribute('aria-labelledby', `step-title-${index + 1}`);
+            
+            const title = step.querySelector('.step-title');
+            if (title) {
+                title.id = `step-title-${index + 1}`;
+            }
+        });
+    </script>
+</body>
+</html>

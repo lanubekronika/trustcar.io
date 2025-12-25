@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing — TrustCar.io</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
+        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+        .logo { font-size: 1.8rem; font-weight: 800; }
+        main { padding: 3rem 5%; max-width: 1400px; margin: 0 auto; }
+        h1 { text-align: center; font-size: 3rem; margin-bottom: .75rem; font-weight: 800; background: linear-gradient(135deg, #0b1724 0%, #0553F0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .subtitle { text-align: center; color: #64748b; font-size: 1.15rem; margin-bottom: 3rem; font-weight: 500; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        .pricing-card { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 16px; padding: 2.5rem; box-shadow: 0 8px 24px rgba(2,6,23,0.1); transition: .3s; position: relative; border: 2px solid #e6eefc; }
+        .pricing-card:hover { transform: translateY(-8px); box-shadow: 0 12px 32px rgba(2,6,23,0.15); border-color: #0553F0; }
+        .pricing-card.featured { border: 3px solid #0553F0; box-shadow: 0 12px 32px rgba(5,83,240,0.2); }
+        .badge { position: absolute; top: -12px; right: 20px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: .5rem 1.25rem; border-radius: 999px; font-size: .85rem; font-weight: 700; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .tier-name { font-size: 1.6rem; font-weight: 800; margin-bottom: .5rem; }
+        .tier-price { font-size: 3.5rem; font-weight: 800; color: #0553F0; margin-bottom: .5rem; background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .tier-price span { font-size: 1.2rem; color: #64748b; font-weight: 600; }
+        .tier-desc { color: #64748b; margin-bottom: 1.5rem; font-size: .95rem; font-weight: 500; line-height: 1.6; }
+        .features { list-style: none; padding: 0; margin: 0 0 2rem 0; }
+        .features li { padding: .75rem 0; border-bottom: 1px solid #e6eefc; font-size: .95rem; display: flex; align-items: start; font-weight: 500; }
+        .features li:last-child { border: none; }
+        .features li::before { content: '✓'; color: #10b981; font-weight: 700; margin-right: .75rem; font-size: 1.2rem; }
+        .btn { display: block; width: 100%; padding: 1rem; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 1rem; transition: all .2s; text-align: center; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; box-shadow: 0 4px 12px rgba(5,83,240,0.25); }
+        .btn-primary:hover { background: linear-gradient(135deg, #0441c7 0%, #033ba3 100%); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(5,83,240,0.35); }
+        .btn-secondary { background: #e6eefc; color: #0553F0; border: 2px solid #d1e3fc; }
+        .btn-secondary:hover { background: #d1e3fc; transform: translateY(-2px); border-color: #0553F0; }
+        .comparison { margin-top: 4rem; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 16px; padding: 2.5rem; border: 2px solid #e6eefc; box-shadow: 0 4px 12px rgba(2,6,23,0.08); }
+        .comparison h2 { text-align: center; margin-bottom: 2rem; font-weight: 800; }
+        .comparison-table { width: 100%; border-collapse: collapse; }
+        .comparison-table th { background: linear-gradient(135deg, #f8fafc 0%, #e6eefc 100%); padding: 1rem; text-align: left; font-weight: 700; border-bottom: 2px solid #0553F0; }
+        .comparison-table td { padding: 1rem; border-bottom: 1px solid #e6eefc; font-weight: 500; }
+        .comparison-table td:first-child { font-weight: 700; color: #475569; }
+        .check { color: #10b981; font-weight: 700; }
+        .cross { color: #ef4444; font-weight: 700; }
+        @media (max-width: 768px) { .pricing-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="/" style="color:white;text-decoration:none;">TrustCar.io</a></div>
+        <nav style="display:flex;gap:2rem;">
+            <a href="/" style="color:white;text-decoration:none;font-weight:500;">Home</a>
+            <a href="/pricing.html" style="color:white;text-decoration:none;font-weight:500;">Pricing</a>
+            <a href="/dealers.html" style="color:white;text-decoration:none;font-weight:500;">Find Dealers</a>
+            <a href="/how-it-works.html" style="color:white;text-decoration:none;font-weight:500;">How It Works</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Choose Your Inspection Plan</h1>
+        <div class="subtitle">Transparent pricing. No hidden fees. Cancel anytime.</div>
+        
+        <!-- Competitor Comparison Section -->
+        <div style="background:linear-gradient(135deg,#0553F0,#0a84ff);color:white;border-radius:16px;padding:2rem;margin-bottom:3rem;text-align:center;">
+            <h3 style="margin:0 0 1rem 0;font-size:1.5rem;">Why TrustCar Beats Traditional Services</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;max-width:900px;margin:0 auto;">
+                <div style="background:rgba(255,255,255,0.15);padding:1.5rem;border-radius:12px;">
+                    <div style="font-size:2rem;margin-bottom:.5rem;">⚡</div>
+                    <div style="font-weight:700;margin-bottom:.5rem;">30 Seconds</div>
+                    <div style="font-size:.9rem;opacity:.9;">vs. days with traditional services</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.15);padding:1.5rem;border-radius:12px;">
+                    <div style="font-size:2rem;margin-bottom:.5rem;">💰</div>
+                    <div style="font-weight:700;margin-bottom:.5rem;">Starts at $49</div>
+                    <div style="font-size:.9rem;opacity:.9;">vs. $149-$399 elsewhere</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.15);padding:1.5rem;border-radius:12px;">
+                    <div style="font-size:2rem;margin-bottom:.5rem;">🤖</div>
+                    <div style="font-weight:700;margin-bottom:.5rem;">95%+ AI Accuracy</div>
+                    <div style="font-size:.9rem;opacity:.9;">Professional-grade precision</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.15);padding:1.5rem;border-radius:12px;">
+                    <div style="font-size:2rem;margin-bottom:.5rem;">📱</div>
+                    <div style="font-weight:700;margin-bottom:.5rem;">Your Smartphone</div>
+                    <div style="font-size:.9rem;opacity:.9;">No mechanic appointment needed</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Tier 1: Basic -->
+            <div class="pricing-card">
+                <div class="tier-name">Basic</div>
+                <div class="tier-price">$49<span>/report</span></div>
+                <div class="tier-desc">Essential vehicle history — perfect for quick checks before test drives</div>
+                <div style="background:#dcfce7;color:#166534;padding:.5rem;border-radius:6px;margin-bottom:1rem;font-size:.85rem;font-weight:600;">⚡ Results in 30 Seconds • No Appointment Needed</div>
+                <ul class="features">
+                    <li>VIN decode (make, model, year, specs)</li>
+                    <li>NHTSA safety ratings</li>
+                    <li>Recall history</li>
+                    <li>Title status check (salvage, rebuilt, junk)</li>
+                    <li>Odometer reading verification</li>
+                    <li>Ownership history (number of owners)</li>
+                    <li>AI-generated summary report</li>
+                    <li><strong>Instant results (30 seconds)</strong></li>
+                </ul>
+                <button class="btn btn-secondary" onclick="selectTier('basic', 49)">Get Started</button>
+            </div>
+
+            <!-- Tier 2: Standard (Most Popular) -->
+            <div class="pricing-card featured">
+                <div class="badge">Most Popular</div>
+                <div class="tier-name">Standard</div>
+                <div class="tier-price">$149<span>/report</span></div>
+                <div class="tier-desc">Complete remote inspection with AI damage detection</div>
+                <div style="background:#fef3c7;color:#92400e;padding:.5rem;border-radius:6px;margin-bottom:1rem;font-size:.85rem;font-weight:600;">🏆 150+ Inspection Points • 95% AI Accuracy</div>
+                <ul class="features">
+                    <li><strong>Everything in Basic, plus:</strong></li>
+                    <li>Accident & theft records</li>
+                    <li>Market comps (pricing analysis)</li>
+                    <li><strong>20-photo guided inspection</strong> (seller-provided)</li>
+                    <li><strong>360° AI damage mapping</strong> with pinpoint accuracy</li>
+                    <li>Damage detection (dents, scratches, cracks, rust, paint)</li>
+                    <li>Severity classification + reconditioning cost estimates</li>
+                    <li>EXIF validation (GPS + timestamp proof)</li>
+                    <li>Image quality checks (blur/darkness detection)</li>
+                    <li>Fraud risk scoring (0-100 scale)</li>
+                    <li>Detailed AI report with repair estimates</li>
+                    <li><strong>48-hour turnaround</strong> (awaiting seller photos)</li>
+                </ul>
+                <button class="btn btn-primary" onclick="selectTier('standard', 149)">Get Started</button>
+            </div>
+
+            <!-- Tier 3: Premium -->
+            <div class="pricing-card">
+                <div class="tier-name">Premium</div>
+                <div class="tier-price">$299<span>/report</span></div>
+                <div class="tier-desc">White-glove service with professional verification</div>
+                <div style="background:#e0e7ff;color:#3730a3;padding:.5rem;border-radius:6px;margin-bottom:1rem;font-size:.85rem;font-weight:600;">⭐ 500+ Inspection Points • Human + AI Verified</div>
+                <ul class="features">
+                    <li><strong>Everything in Standard, plus:</strong></li>
+                    <li>VinAudit title history (comprehensive)</li>
+                    <li>OBD-II diagnostic scan (dongle shipped overnight)</li>
+                    <li>Check engine light analysis</li>
+                    <li>Live video call inspection (optional)</li>
+                    <li><strong>3rd-party mechanical inspection</strong> (partnered shop)</li>
+                    <li>Test drive recording (seller-provided)</li>
+                    <li>Priority support (phone + email)</li>
+                    <li>Repair shop network (trusted quotes)</li>
+                    <li><strong>72-hour turnaround</strong> (includes 3rd-party inspection)</li>
+                </ul>
+                <button class="btn btn-primary" onclick="selectTier('premium', 299)">Get Started</button>
+            </div>
+        </div>
+
+        <!-- Sample Report Preview -->
+        <div style="background:#f8fafc;border-radius:16px;padding:2rem;margin-bottom:3rem;text-align:center;border:2px solid #e6eefc;">
+            <h3 style="margin:0 0 1rem 0;font-size:1.4rem;color:#0b1724;">See What You Get Before You Buy</h3>
+            <p style="color:#64748b;margin-bottom:1.5rem;">Preview a complete inspection report with 360° damage mapping</p>
+            <a href="/reports/damage-map.html" class="btn btn-primary" style="max-width:300px;margin:0 auto;display:block;">View Sample Report →</a>
+        </div>
+
+        <div class="comparison">
+            <h2>Feature Comparison</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Basic</th>
+                        <th>Standard</th>
+                        <th>Premium</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>VIN decode + safety ratings</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Title status (salvage, rebuilt)</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Accident & theft records</td>
+                        <td class="cross">✗</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Seller photo inspection (20 photos)</td>
+                        <td class="cross">✗</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>AI damage detection</td>
+                        <td class="cross">✗</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Fraud risk scoring</td>
+                        <td class="cross">✗</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>OBD-II diagnostic scan</td>
+                        <td class="cross">✗</td>
+                        <td class="cross">✗</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>3rd-party mechanical inspection</td>
+                        <td class="cross">✗</td>
+                        <td class="cross">✗</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Live video call support</td>
+                        <td class="cross">✗</td>
+                        <td class="cross">✗</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Turnaround time</td>
+                        <td>Instant</td>
+                        <td>48 hours</td>
+                        <td>72 hours</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        function selectTier(tier, price) {
+            // Store selected tier in session
+            sessionStorage.setItem('selectedTier', tier);
+            sessionStorage.setItem('selectedPrice', price);
+            
+            // Redirect to VIN entry with tier parameter
+            window.location.href = `/enter-vin.html?tier=${tier}&price=${price}`;
+        }
+    </script>
+</body>
+</html>

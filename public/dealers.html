@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find TrustCar Approved Dealers — TrustCar.io</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
+        header { background: #0553F0; color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: 700; }
+        nav { display: flex; gap: 2rem; }
+        nav a { color: white; text-decoration: none; font-weight: 500; }
+        main { padding: 3rem 5%; max-width: 1400px; margin: 0 auto; }
+        h1 { font-size: 2.8rem; margin-bottom: .5rem; }
+        .subtitle { color: #64748b; font-size: 1.1rem; margin-bottom: 2rem; }
+        .search-box { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(2,6,23,0.06); margin-bottom: 3rem; }
+        .search-row { display: flex; gap: 1rem; align-items: end; flex-wrap: wrap; }
+        .search-field { flex: 1; min-width: 200px; }
+        .search-field label { display: block; font-weight: 600; margin-bottom: .5rem; font-size: .9rem; }
+        .search-field input, .search-field select { width: 100%; padding: .75rem; border: 2px solid #e6eefc; border-radius: 8px; font-size: 1rem; }
+        .btn { padding: .75rem 2rem; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; font-size: 1rem; }
+        .btn-primary { background: #0553F0; color: white; }
+        .btn:hover { opacity: .9; }
+        .dealer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; }
+        .dealer-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(2,6,23,0.06); transition: .3s; }
+        .dealer-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(2,6,23,0.12); }
+        .dealer-header { display: flex; align-items: start; gap: 1rem; margin-bottom: 1rem; }
+        .dealer-logo { width: 60px; height: 60px; background: #e6eefc; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #0553F0; flex-shrink: 0; }
+        .dealer-info { flex: 1; }
+        .dealer-name { font-size: 1.3rem; font-weight: 700; margin-bottom: .25rem; }
+        .dealer-location { color: #64748b; font-size: .9rem; }
+        .trust-badge { display: inline-block; background: #10b981; color: white; padding: .3rem .75rem; border-radius: 999px; font-size: .75rem; font-weight: 700; margin-top: .5rem; }
+        .dealer-stats { display: flex; gap: 1.5rem; margin: 1rem 0; padding: 1rem 0; border-top: 1px solid #e6eefc; border-bottom: 1px solid #e6eefc; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: #0553F0; }
+        .stat-label { font-size: .8rem; color: #64748b; }
+        .dealer-actions { display: flex; gap: .75rem; margin-top: 1rem; }
+        .btn-secondary { background: #e6eefc; color: #0553F0; padding: .6rem 1.2rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; font-size: .9rem; text-decoration: none; display: inline-block; text-align: center; }
+        .empty-state { text-align: center; padding: 4rem 2rem; color: #64748b; }
+        .info-box { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+        .info-box h3 { margin: 0 0 .5rem 0; color: #92400e; }
+        .info-box p { margin: 0; color: #78350f; }
+        @media (max-width: 768px) { .dealer-grid { grid-template-columns: 1fr; } .search-row { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="/" style="color:white;text-decoration:none;">TrustCar.io</a></div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/pricing.html">Pricing</a>
+            <a href="/dealers.html">Find Dealers</a>
+            <a href="/how-it-works.html">How It Works</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>TrustCar Approved Dealers</h1>
+        <p class="subtitle">Find transparent, certified dealers who use TrustCar inspections for every vehicle.</p>
+
+        <div class="info-box">
+            <h3>💡 Why Choose a TrustCar Approved Dealer?</h3>
+            <p>Every vehicle comes with a pre-purchase TrustCar inspection report. No hidden damage, verified history, AI fraud detection included. You know exactly what you're buying before you commit.</p>
+        </div>
+
+        <div class="search-box">
+            <div class="search-row">
+                <div class="search-field">
+                    <label for="zip">Your ZIP Code</label>
+                    <input type="text" id="zip" placeholder="Enter ZIP code" maxlength="5">
+                </div>
+                <div class="search-field">
+                    <label for="radius">Search Radius</label>
+                    <select id="radius">
+                        <option value="25">25 miles</option>
+                        <option value="50" selected>50 miles</option>
+                        <option value="100">100 miles</option>
+                        <option value="200">200 miles</option>
+                    </select>
+                </div>
+                <div class="search-field">
+                    <label for="make">Make (optional)</label>
+                    <select id="make">
+                        <option value="">All Makes</option>
+                        <option value="Toyota">Toyota</option>
+                        <option value="Honda">Honda</option>
+                        <option value="Ford">Ford</option>
+                        <option value="Chevrolet">Chevrolet</option>
+                        <option value="BMW">BMW</option>
+                        <option value="Mercedes-Benz">Mercedes-Benz</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="searchDealers()">Search Dealers</button>
+            </div>
+        </div>
+
+        <div class="dealer-grid" id="dealerResults"></div>
+    </main>
+
+    <script>
+        // Demo dealers data (in production, fetch from API)
+        const DEMO_DEALERS = [
+            {
+                id: 1,
+                name: 'Prestige Auto Group',
+                location: 'San Francisco, CA',
+                zip: '94107',
+                distance: 2.3,
+                logo: 'PA',
+                inspections: 342,
+                transparencyScore: 98,
+                avgRating: 4.9,
+                inventory: 125,
+                phone: '(415) 555-0123',
+                website: 'https://prestigeauto.example.com'
+            },
+            {
+                id: 2,
+                name: 'Honest Wheels Motors',
+                location: 'Oakland, CA',
+                zip: '94601',
+                distance: 12.8,
+                logo: 'HW',
+                inspections: 218,
+                transparencyScore: 96,
+                avgRating: 4.8,
+                inventory: 87,
+                phone: '(510) 555-0456',
+                website: 'https://honestwheels.example.com'
+            },
+            {
+                id: 3,
+                name: 'Bay Area Certified Cars',
+                location: 'San Jose, CA',
+                zip: '95110',
+                distance: 45.2,
+                logo: 'BA',
+                inspections: 567,
+                transparencyScore: 99,
+                avgRating: 5.0,
+                inventory: 203,
+                phone: '(408) 555-0789',
+                website: 'https://bayareacars.example.com'
+            }
+        ];
+
+        function searchDealers() {
+            const zip = document.getElementById('zip').value;
+            const radius = document.getElementById('radius').value;
+            
+            if (!zip || zip.length !== 5) {
+                alert('Please enter a valid 5-digit ZIP code');
+                return;
+            }
+
+            // In production, fetch from API: /api/dealers?zip=${zip}&radius=${radius}
+            renderDealers(DEMO_DEALERS);
+        }
+
+        function renderDealers(dealers) {
+            const container = document.getElementById('dealerResults');
+            
+            if (dealers.length === 0) {
+                container.innerHTML = '<div class="empty-state">No TrustCar Approved Dealers found in your area. Check back soon!</div>';
+                return;
+            }
+
+            container.innerHTML = dealers.map(dealer => `
+                <div class="dealer-card">
+                    <div class="dealer-header">
+                        <div class="dealer-logo">${dealer.logo}</div>
+                        <div class="dealer-info">
+                            <div class="dealer-name">${dealer.name}</div>
+                            <div class="dealer-location">📍 ${dealer.location} • ${dealer.distance} mi away</div>
+                            <div class="trust-badge">✓ TrustCar Certified</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dealer-stats">
+                        <div class="stat">
+                            <div class="stat-value">${dealer.transparencyScore}</div>
+                            <div class="stat-label">Trust Score</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">${dealer.inspections}</div>
+                            <div class="stat-label">Inspections</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">${dealer.avgRating}</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                    </div>
+                    
+                    <div style="color:#64748b;font-size:.9rem;margin:.75rem 0;">
+                        ${dealer.inventory} vehicles in stock • All with TrustCar reports
+                    </div>
+                    
+                    <div class="dealer-actions">
+                        <a href="${dealer.website}" target="_blank" class="btn-secondary" style="flex:1;">View Inventory</a>
+                        <a href="tel:${dealer.phone}" class="btn-secondary">📞 Call</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Auto-search if user has ZIP in session
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedZip = sessionStorage.getItem('userZip');
+            if (savedZip) {
+                document.getElementById('zip').value = savedZip;
+                searchDealers();
+            }
+        });
+    </script>
+</body>
+</html>
