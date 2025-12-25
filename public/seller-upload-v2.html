@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Photos — TrustCar.io</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
+        header { background: #0553F0; color: white; padding: 1rem 5%; }
+        .logo { font-size: 1.6rem; font-weight: 700; }
+        main { padding: 1.5rem 5%; max-width: 900px; margin: 0 auto; }
+        .card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(2,6,23,0.06); margin-bottom: 1.5rem; }
+        h1 { margin: 0 0 .5rem 0; font-size: 1.8rem; }
+        .lead { color: #64748b; margin-bottom: 1rem; }
+        .progress-bar { background: #e6eefc; height: 8px; border-radius: 999px; overflow: hidden; margin-bottom: 1rem; }
+        .progress-fill { background: #0553F0; height: 100%; width: 0%; transition: width .3s; }
+        .progress-text { font-size: .9rem; color: #64748b; margin-bottom: 1.5rem; }
+        .checklist { display: grid; gap: .75rem; }
+        .checklist-item { background: #f8fafc; border: 2px solid #e6eefc; border-radius: 10px; padding: 1rem; display: flex; align-items: center; gap: 1rem; transition: .2s; }
+        .checklist-item.completed { border-color: #10b981; background: #d1fae5; }
+        .checklist-item.uploading { border-color: #f59e0b; background: #fef3c7; }
+        .checklist-icon { width: 48px; height: 48px; border-radius: 8px; background: #e6eefc; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .checklist-item.completed .checklist-icon { background: #10b981; color: white; }
+        .checklist-item.uploading .checklist-icon { background: #f59e0b; color: white; }
+        .checklist-body { flex: 1; }
+        .checklist-title { font-weight: 600; margin-bottom: .25rem; }
+        .checklist-desc { font-size: .85rem; color: #64748b; }
+        .checklist-action { flex-shrink: 0; }
+        .btn { display: inline-block; padding: .6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; font-size: .95rem; transition: .2s; }
+        .btn-primary { background: #0553F0; color: white; }
+        .btn-secondary { background: #e6eefc; color: #0553F0; }
+        .btn:disabled { opacity: .5; cursor: not-allowed; }
+        .btn:not(:disabled):hover { transform: translateY(-2px); }
+        input[type="file"] { display: none; }
+        .thumbnail { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
+        .error-msg { background: #fee; color: #c00; padding: .5rem .75rem; border-radius: 6px; font-size: .9rem; margin-top: .5rem; display: none; }
+        .submit-section { margin-top: 2rem; text-align: center; }
+        .disclaimer { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; font-size: .9rem; color: #92400e; }
+        @media (max-width: 720px) { main { padding: 1rem 3%; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TrustCar.io</div>
+    </header>
+
+    <main>
+        <div class="card">
+            <h1>Vehicle Photo Upload</h1>
+            <p class="lead">Complete all 20 required photos for a comprehensive inspection report.</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0 of 20 photos uploaded</div>
+
+            <div class="disclaimer">
+                <strong>⚠ Disclaimer:</strong> This is a remote, AI-assisted inspection of a used vehicle. While we use advanced technology to detect visible damage and verify information, this report is informational only and does not replace a professional in-person mechanic inspection. All photos must be clear, well-lit, and recent.
+            </div>
+
+            <div class="checklist" id="checklist"></div>
+
+            <div class="submit-section">
+                <button id="submitBtn" class="btn btn-primary" disabled>Submit for Review</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const REQUIRED_PHOTOS = [
+            { id: 'front', icon: '🚗', title: 'Front View', desc: 'Full front of vehicle, straight on' },
+            { id: 'rear', icon: '🚙', title: 'Rear View', desc: 'Full rear of vehicle, straight on' },
+            { id: 'driver_side', icon: '🚘', title: 'Driver Side', desc: 'Full side profile, driver side' },
+            { id: 'passenger_side', icon: '🚐', title: 'Passenger Side', desc: 'Full side profile, passenger side' },
+            { id: 'front_driver_angle', icon: '📐', title: 'Front Driver Corner', desc: 'Angled shot showing front and driver side' },
+            { id: 'front_passenger_angle', icon: '📐', title: 'Front Passenger Corner', desc: 'Angled shot showing front and passenger side' },
+            { id: 'rear_driver_angle', icon: '📐', title: 'Rear Driver Corner', desc: 'Angled shot showing rear and driver side' },
+            { id: 'rear_passenger_angle', icon: '📐', title: 'Rear Passenger Corner', desc: 'Angled shot showing rear and passenger side' },
+            { id: 'vin_plate', icon: '🔢', title: 'VIN Plate', desc: 'Close-up of VIN on dashboard or door jamb' },
+            { id: 'odometer', icon: '⏱', title: 'Odometer', desc: 'Clear shot of mileage display' },
+            { id: 'engine_bay', icon: '🔧', title: 'Engine Bay', desc: 'Open hood, full engine compartment' },
+            { id: 'trunk', icon: '📦', title: 'Trunk/Cargo Area', desc: 'Open trunk showing spare tire area' },
+            { id: 'interior_front', icon: '💺', title: 'Interior Front Seats', desc: 'Front seats and dashboard' },
+            { id: 'interior_rear', icon: '🪑', title: 'Interior Rear Seats', desc: 'Rear seats and floor' },
+            { id: 'dash_lights', icon: '💡', title: 'Dashboard Lights On', desc: 'Ignition on, showing all warning lights' },
+            { id: 'wheel_driver_front', icon: '⚙', title: 'Driver Front Wheel', desc: 'Tire tread and wheel condition' },
+            { id: 'wheel_driver_rear', icon: '⚙', title: 'Driver Rear Wheel', desc: 'Tire tread and wheel condition' },
+            { id: 'wheel_passenger_front', icon: '⚙', title: 'Passenger Front Wheel', desc: 'Tire tread and wheel condition' },
+            { id: 'wheel_passenger_rear', icon: '⚙', title: 'Passenger Rear Wheel', desc: 'Tire tread and wheel condition' },
+            { id: 'roof', icon: '🏠', title: 'Roof View', desc: 'Top of vehicle showing roof condition' }
+        ];
+
+        const state = {
+            uploads: {},
+            inspectionId: new URLSearchParams(location.search).get('id')
+        };
+
+        function renderChecklist() {
+            const list = document.getElementById('checklist');
+            list.innerHTML = '';
+            
+            REQUIRED_PHOTOS.forEach(photo => {
+                const upload = state.uploads[photo.id];
+                const status = upload?.complete ? 'completed' : upload?.uploading ? 'uploading' : '';
+                
+                const item = document.createElement('div');
+                item.className = `checklist-item ${status}`;
+                item.innerHTML = `
+                    <div class="checklist-icon">${upload?.complete ? '✓' : photo.icon}</div>
+                    <div class="checklist-body">
+                        <div class="checklist-title">${photo.title}</div>
+                        <div class="checklist-desc">${photo.desc}</div>
+                        ${upload?.error ? `<div class="error-msg" style="display:block;">${upload.error}</div>` : ''}
+                    </div>
+                    <div class="checklist-action">
+                        ${upload?.complete 
+                            ? `<img src="${upload.path}" class="thumbnail" alt="${photo.title}" />` 
+                            : upload?.uploading 
+                            ? '<span style="color:#f59e0b;">Uploading...</span>' 
+                            : `<button class="btn btn-secondary" onclick="selectPhoto('${photo.id}')">Add Photo</button>`
+                        }
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const completed = Object.values(state.uploads).filter(u => u?.complete).length;
+            const total = REQUIRED_PHOTOS.length;
+            const pct = Math.round((completed / total) * 100);
+            
+            document.getElementById('progressFill').style.width = `${pct}%`;
+            document.getElementById('progressText').textContent = `${completed} of ${total} photos uploaded`;
+            document.getElementById('submitBtn').disabled = completed < total;
+        }
+
+        function selectPhoto(photoId) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment'; // mobile camera
+            input.onchange = (e) => uploadPhoto(photoId, e.target.files[0]);
+            input.click();
+        }
+
+        async function uploadPhoto(photoId, file) {
+            if (!file) return;
+            
+            state.uploads[photoId] = { uploading: true };
+            renderChecklist();
+
+            try {
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    throw new Error('Photo must be under 10MB');
+                }
+
+                // Extract EXIF data
+                const exif = await extractEXIF(file);
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('checkItem', photoId);
+                formData.append('lat', exif.lat || '');
+                formData.append('lng', exif.lng || '');
+                formData.append('accuracy', exif.accuracy || '');
+
+                const res = await fetch(`/api/inspections/${state.inspectionId}/uploads?t=${getToken()}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error('Upload failed');
+
+                const data = await res.json();
+                state.uploads[photoId] = { 
+                    complete: true, 
+                    path: data.file.path,
+                    uploadId: data.file.id,
+                    exif
+                };
+                renderChecklist();
+            } catch (err) {
+                state.uploads[photoId] = { error: err.message };
+                renderChecklist();
+            }
+        }
+
+        async function extractEXIF(file) {
+            // Simplified EXIF extraction using browser EXIF library (add library in production)
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // In production, use exif-js or piexifjs library
+                    // For now, return empty EXIF
+                    resolve({ lat: null, lng: null, accuracy: null, timestamp: Date.now() });
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function getToken() {
+            return new URLSearchParams(location.search).get('t') || '';
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            if (confirm('Submit all photos for AI review? You cannot add more photos after submission.')) {
+                try {
+                    const res = await fetch(`/api/inspections/${state.inspectionId}/submit`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: getToken() })
+                    });
+                    if (!res.ok) throw new Error('Submission failed');
+                    alert('Photos submitted! You will receive your report within 24 hours.');
+                    location.href = '/success.html';
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        });
+
+        // Initialize
+        if (!state.inspectionId) {
+            alert('Invalid inspection link');
+        } else {
+            renderChecklist();
+        }
+    </script>
+</body>
+</html>

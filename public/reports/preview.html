@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Report Preview</title>
+  <style>body{font-family:Nunito,system-ui,Arial,sans-serif;padding:1.25rem;color:#0b1724}h1{color:#0553F0}</style>
+</head>
+<body>
+  <div id="root"><h1>Loading...</h1></div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    if (!id) document.getElementById('root').innerHTML = '<p>No id</p>';
+    async function load(){
+      const res = await fetch(`/api/inspections/${id}`);
+      if (!res.ok) return document.getElementById('root').innerHTML = '<p>Not found</p>';
+      const j = await res.json();
+      const insp = j.inspection;
+      const uploads = j.uploads || [];
+      const root = document.getElementById('root');
+      const tire = insp.tire || {};
+      root.innerHTML = `
+        <h1>Inspection Report — ${insp.id}</h1>
+        <p><strong>Order:</strong> ${insp.orderId || ''}</p>
+        <p><strong>Buyer ZIP:</strong> ${insp.buyerZip || ''} <small class="muted">(enter ZIP to fetch market comps & local shops)</small></p>
+        <h2>Tires & Wheels</h2>
+        <table>
+          <tr><td>Manufacturer (Driver Front)</td><td>${tire.manufacturer? tire.manufacturer.driverFront || '' : ''}</td></tr>
+          <tr><td>Manufacturer (Driver Rear)</td><td>${tire.manufacturer? tire.manufacturer.driverRear || '' : ''}</td></tr>
+          <tr><td>Manufacturer (Passenger Front)</td><td>${tire.manufacturer? tire.manufacturer.passengerFront || '' : ''}</td></tr>
+          <tr><td>Manufacturer (Passenger Rear)</td><td>${tire.manufacturer? tire.manufacturer.passengerRear || '' : ''}</td></tr>
+        </table>
+        <h3>Tread Depth Summary</h3>
+        <div>${tire.tread? `Driver Front: ${tire.tread.driverFront || 'N/A'} /32 — ${explain(tire.tread.driverFront)}<br/>Driver Rear: ${tire.tread.driverRear || 'N/A'} /32 — ${explain(tire.tread.driverRear)}<br/>Passenger Front: ${tire.tread.passFront || 'N/A'} /32 — ${explain(tire.tread.passFront)}<br/>Passenger Rear: ${tire.tread.passRear || 'N/A'} /32 — ${explain(tire.tread.passRear)}` : 'No tread data'}</div>
+        <h3>Photos</h3>
+        <div id="photos"></div>
+        <hr />
+        <h3>Market Snapshot & Local Services</h3>
+        <div id="marketSection"><em>Enter buyer ZIP below and click "Refresh Market Data" to fetch comps, repair shops, reconditioning estimate, and verdict.</em>
+          <div style="margin-top:.5rem"><input id="zipInput" placeholder="ZIP code" value="${insp.buyerZip||''}" /> <button id="refreshMarket" style="margin-left:.5rem">Refresh Market Data</button></div>
+          <div id="marketResults" style="margin-top:.8rem"></div>
+        </div>
+      `;
+      document.getElementById('refreshMarket').addEventListener('click', fetchMarketData);
+      document.getElementById('zipInput').addEventListener('keydown', (e)=>{ if (e.key==='Enter') fetchMarketData(); });
+      const photos = document.getElementById('photos');
+      uploads.forEach(u=>{ const img=document.createElement('img'); img.src = u.path.startsWith('/uploads') ? u.path : (u.s3Url || u.path); img.style.width='200px'; img.style.margin='6px'; photos.appendChild(img); });
+      // auto-fetch market if buyerZip exists
+      if (insp.buyerZip) fetchMarketData();
+    }
+
+    async function fetchMarketData(){
+      const zip = document.getElementById('zipInput').value.trim();
+      const marketDiv = document.getElementById('marketResults');
+      marketDiv.innerHTML = '<div class="muted">Loading market data...</div>';
+      try{
+        const res = await fetch(`/api/inspections/${id}/market?zip=${encodeURIComponent(zip||'')}`);
+        if (!res.ok) { marketDiv.innerHTML = '<div>Market data unavailable</div>'; return; }
+        const j = await res.json();
+        const comps = j.comps || {};
+        const shops = j.shops || {};
+        const recond = j.reconditioningEstimate;
+        const verdict = j.verdict;
+        marketDiv.innerHTML = `<div><strong>Estimated market average:</strong> $${comps.average || 'N/A'} (low $${comps.low||'N/A'} - high $${comps.high||'N/A'})</div>
+          <div><strong>List Price:</strong> $${j.listPrice || 'N/A'}</div>
+          <div><strong>Reconditioning estimate:</strong> $${recond}</div>
+          <div style="margin-top:.5rem"><strong>Verdict:</strong> <span style="font-weight:800">${verdict}</span></div>
+          <h4 style="margin-top:.6rem">Comparable Listings</h4>
+          <ul>${(comps.comps||[]).map(c=>`<li>${c.title} — $${c.price} • ${c.mileage} miles • ${c.location}</li>`).join('')}</ul>
+          <h4>Recommended Shops (4.5+)</h4>
+          <ul>${(shops.results||[]).map(s=>`<li>${s.name} — ${s.address} • ${s.rating} ⭐ (${s.user_ratings_total} reviews)</li>`).join('')}</ul>`;
+      }catch(err){ console.error(err); marketDiv.innerHTML = '<div>Error fetching market data</div>'; }
+    }
+    function explain(v){ if (!v && v!==0) return 'N/A'; if (v>=10) return '10/32 OR MORE — Tires have plenty of tread! (standard)'; if (v>=8) return '8/32 OR MORE — Tires have plenty of tread! (low profile)'; if (v>=5) return '5/32 TO 7/32 — Tires will need replacement soon!'; return '4/32 OR LESS — Tires need replacement!'; }
+    load();
+
+    // Load chatbot widget
+    fetch('/chatbot-widget.html')
+      .then(res => res.text())
+      .then(html => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        
+        // Extract and append style
+        const styles = tempDiv.querySelectorAll('style');
+        styles.forEach(style => document.head.appendChild(style));
+        
+        // Extract and append HTML content
+        const content = tempDiv.querySelector('#trustcar-chatbot-container');
+        if (content) {
+          document.body.appendChild(content);
+        }
+        
+        // Extract and execute scripts
+        const scripts = tempDiv.querySelectorAll('script');
+        scripts.forEach(oldScript => {
+          const newScript = document.createElement('script');
+          newScript.textContent = oldScript.textContent;
+          document.body.appendChild(newScript);
+        });
+      })
+      .catch(err => console.error('Failed to load chatbot:', err));
+  </script>
+</body>
+</html>

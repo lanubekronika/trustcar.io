@@ -1,0 +1,721 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Inspection View</title>
+  <style>
+    body{font-family:Nunito,system-ui,Arial,sans-serif;background:#f5f8fa;color:#0b1724;margin:0}
+    header{background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%);color:#fff;padding:1.5rem; box-shadow: 0 2px 8px rgba(5,83,240,0.15); font-weight: 800;}
+    main{padding:1.5rem}
+    .card{max-width:980px;background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);padding:1.5rem;border-radius:12px;margin:0 auto;box-shadow:0 8px 24px rgba(2,6,23,0.08); border: 2px solid #e6eefc;}
+    label{display:block;margin-top:.75rem;font-weight:700; color: #0553F0; font-size: .9rem;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    input,select,textarea{width:100%;padding:.65rem;border-radius:8px;border:2px solid #e6eefc; transition: all .2s;}
+    input:focus, select:focus, textarea:focus {border-color: #0553F0; box-shadow: 0 2px 8px rgba(5,83,240,0.1);}
+    .uploads{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.75rem}
+    .thumb{width:160px;height:120px;background:#eee;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center; border: 2px solid #e6eefc;}
+    .muted{color:#64748b; font-weight: 500;}
+    .btn{display:inline-block;padding:.65rem 1.25rem;border-radius:10px;background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%);color:#fff;border:none;margin-top:.75rem; font-weight: 700; cursor: pointer; transition: all .2s;}
+    .btn:hover {transform: translateY(-2px); box-shadow: 0 4px 12px rgba(5,83,240,0.25);}
+  </style>
+  <script>
+    // Load shared admin nav
+    fetch('/admin/admin-nav.html').then(r=>r.text()).then(html=>{
+      document.body.insertAdjacentHTML('afterbegin', html);
+    });
+  </script>
+</head>
+<body>
+  <main>
+    <div class="card" id="card">
+      <h2 id="title">Inspection</h2>
+      <div class="muted" id="meta"></div>
+      <div style="margin-top:.6rem">
+        <label>Buyer ZIP</label>
+        <input id="buyerZip" placeholder="e.g. 94107" />
+        <label style="margin-top:.5rem">Buyer Email</label>
+        <input id="buyerEmail" placeholder="buyer@example.com" />
+        <div style="margin-top:.6rem">
+          <button id="saveBuyerBtn" class="btn" style="background:#0a7be6;margin-right:.5rem">Save Buyer Info</button>
+          <button id="emailReportBtn" class="btn" style="background:#0b8a5f">Email Report</button>
+        </div>
+      </div>
+
+      <h3 style="margin-top:1rem">Inspection Checklist</h3>
+      <div id="checklistSummary" style="background:#f8fafc;padding:1rem;border-radius:8px;margin-bottom:1rem;border-left:4px solid #0553F0;"></div>
+
+      <h3 style="margin-top:1rem">Uploads</h3>
+      <div class="uploads" id="uploads"></div>
+      <div id="detectOutput" class="muted" style="margin-top:.5rem"></div>
+
+      <h3 style="margin-top:1rem">Tire & Wheel Info</h3>
+      <div class="grid">
+        <div>
+          <label>Manufacturer — Driver Front</label>
+          <input id="mf_driver_front" />
+          <label>Manufacturer — Driver Rear</label>
+          <input id="mf_driver_rear" />
+          <label>Manufacturer — Passenger Front</label>
+          <input id="mf_pass_front" />
+          <label>Manufacturer — Passenger Rear</label>
+          <input id="mf_pass_rear" />
+        </div>
+        <div>
+          <label>Size — Driver Front</label>
+          <input id="size_driver_front" />
+          <label>Size — Driver Rear</label>
+          <input id="size_driver_rear" />
+          <label>Size — Passenger Front</label>
+          <input id="size_pass_front" />
+          <label>Size — Passenger Rear</label>
+          <input id="size_pass_rear" />
+        </div>
+      </div>
+
+      <label>Axle Count</label>
+      <input id="axleCount" />
+
+      <div class="grid">
+        <div>
+          <label>Tire Condition — Driver Front</label>
+          <select id="tcond_driver_front" aria-label="Tire condition for driver front"></select>
+          <label>Tire Condition — Driver Rear</label>
+          <select id="tcond_driver_rear" aria-label="Tire condition for driver rear"></select>
+          <label>Tire Condition — Passenger Front</label>
+          <select id="tcond_pass_front" aria-label="Tire condition for passenger front"></select>
+          <label>Tire Condition — Passenger Rear</label>
+          <select id="tcond_pass_rear" aria-label="Tire condition for passenger rear"></select>
+        </div>
+        <div>
+          <label>Wheel Condition — Driver Front</label>
+          <select id="wcond_driver_front" aria-label="Wheel condition for driver front"></select>
+          <label>Wheel Condition — Driver Rear</label>
+          <select id="wcond_driver_rear" aria-label="Wheel condition for driver rear"></select>
+          <label>Wheel Condition — Passenger Front</label>
+          <select id="wcond_pass_front" aria-label="Wheel condition for passenger front"></select>
+          <label>Wheel Condition — Passenger Rear</label>
+          <select id="wcond_pass_rear" aria-label="Wheel condition for passenger rear"></select>
+        </div>
+      </div>
+
+      <label>Spare Tire</label>
+      <input id="spare_tire" />
+
+      <h4 style="margin-top:1rem">Tread Depth (32nds) — enter numeric values</h4>
+      <div class="grid">
+        <div>
+          <label>Driver Front (32nds)</label>
+          <input id="tread_df" type="number" min="0" />
+          <label>Driver Rear (32nds)</label>
+          <input id="tread_dr" type="number" min="0" />
+        </div>
+        <div>
+          <label>Passenger Front (32nds)</label>
+          <input id="tread_pf" type="number" min="0" />
+          <label>Passenger Rear (32nds)</label>
+          <input id="tread_pr" type="number" min="0" />
+        </div>
+      </div>
+
+      <div style="margin-top:1rem">
+        <button id="saveBtn" class="btn">Save Tire Data</button>
+        <button id="genReport" class="btn" style="margin-left:.5rem;background:#0b1724">Preview Report</button>
+      </div>
+
+      <div id="treadExplanation" style="margin-top:1rem" class="muted" role="status" aria-live="polite"></div>
+      
+      <div id="tireSummary" style="margin-top:1rem;padding:1rem;background:#f8fafc;border-radius:8px;border-left:4px solid #0553F0;display:none;">
+        <div style="font-weight:700;margin-bottom:.5rem;color:#0b1724;">Tire Summary</div>
+        <div id="tireSummaryContent"></div>
+      </div>
+
+    </div>
+  </main>
+  
+  <!-- Inline Report Preview Modal -->
+  <div id="reportModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;padding:2rem;" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+    <div style="background:#fff;border-radius:16px;max-width:1200px;margin:0 auto;height:100%;display:flex;flex-direction:column;">
+      <div style="padding:1.5rem;border-bottom:2px solid #e6eefc;display:flex;align-items:center;justify-content:space-between;">
+        <h3 id="reportModalTitle" style="margin:0;">Report Preview</h3>
+        <button id="closeReportModal" class="btn" style="background:#64748b;" aria-label="Close report preview">Close</button>
+      </div>
+      <iframe id="reportIframe" style="flex:1;border:none;width:100%;"></iframe>
+    </div>
+  </div>
+
+<script>
+  // Authentication check
+  async function checkAuth() {
+    try {
+      const res = await fetch('/api/auth/check', { credentials: 'include' });
+      if (!res.ok) {
+        window.location.href = '/admin/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error('Auth check failed:', err);
+      return false;
+    }
+  }
+  
+  // Sanitization utilities
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  function sanitizeNumericInput(value, min = 0, max = 32) {
+    const num = parseFloat(value);
+    if (isNaN(num)) return null;
+    return Math.max(min, Math.min(max, num));
+  }
+  
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if (!id) document.getElementById('card').innerHTML = '<p>No inspection id</p>';
+  
+  // Tire condition options for dropdowns
+  const tireConditionOptions = [
+    { value: '', label: '-- Select Condition --' },
+    { value: 'excellent', label: 'Excellent - Like New' },
+    { value: 'good', label: 'Good - Even Wear' },
+    { value: 'fair', label: 'Fair - Some Uneven Wear' },
+    { value: 'poor', label: 'Poor - Uneven/Bald Spots' },
+    { value: 'replace', label: 'Replace Immediately' }
+  ];
+  
+  const wheelConditionOptions = [
+    { value: '', label: '-- Select Condition --' },
+    { value: 'excellent', label: 'Excellent - No Damage' },
+    { value: 'good', label: 'Good - Minor Scratches' },
+    { value: 'fair', label: 'Fair - Visible Wear/Curb Rash' },
+    { value: 'poor', label: 'Poor - Dents/Cracks' },
+    { value: 'damaged', label: 'Damaged - Unsafe' }
+  ];
+
+  // Initialize condition dropdowns
+  function initializeDropdowns() {
+    ['tcond_driver_front', 'tcond_driver_rear', 'tcond_pass_front', 'tcond_pass_rear'].forEach(id => {
+      const select = document.getElementById(id);
+      tireConditionOptions.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        select.appendChild(option);
+      });
+    });
+    
+    ['wcond_driver_front', 'wcond_driver_rear', 'wcond_pass_front', 'wcond_pass_rear'].forEach(id => {
+      const select = document.getElementById(id);
+      wheelConditionOptions.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        select.appendChild(option);
+      });
+    });
+  }
+  
+  async function load(){
+    // Show loading skeleton
+    const card = document.getElementById('card');
+    const originalContent = card.innerHTML;
+    card.innerHTML = '<div style="text-align:center;padding:3rem;"><div style="color:#0553F0;font-size:1.2rem;">⏳ Loading inspection data...</div></div>';
+    
+    try {
+      const res = await fetch(`/api/inspections/${id}`, { credentials: 'include' });
+      
+      // Handle auth errors
+      if (res.status === 401 || res.status === 403) {
+        window.location.href = '/admin/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+        return;
+      }
+      
+      if (!res.ok) {
+        card.innerHTML = `
+          <div style="padding:2rem;text-align:center;">
+            <div style="color:#ef4444;font-size:1.2rem;margin-bottom:1rem;">⚠️ Failed to Load Inspection</div>
+            <div class="muted">Status: ${res.status}</div>
+            <button class="btn" onclick="location.reload()" style="margin-top:1rem;">Retry</button>
+          </div>
+        `;
+        return;
+      }
+      
+      card.innerHTML = originalContent;
+      initializeDropdowns();
+      
+      const j = await res.json();
+      const insp = j.inspection;
+      document.getElementById('title').textContent = `Inspection ${escapeHtml(insp.id)}`;
+      document.getElementById('meta').innerHTML = `Order: ${escapeHtml(insp.orderId || 'N/A')} • Status: <span style="font-weight:600;color:${insp.status === 'completed' ? '#10b981' : '#f59e0b'};">${escapeHtml(insp.status || 'pending')}</span>`;
+
+    const uploads = j.uploads || [];
+    
+    // Populate buyer info if available
+    if (insp.buyerZip) document.getElementById('buyerZip').value = escapeHtml(insp.buyerZip);
+    if (insp.buyerEmail) document.getElementById('buyerEmail').value = escapeHtml(insp.buyerEmail);
+    
+    // Build checklist summary with sanitization
+    const checklistItems = [...new Set(uploads.filter(u => u.checkItem).map(u => u.checkItem))];
+    const checklistSummary = document.getElementById('checklistSummary');
+    if (checklistItems.length > 0) {
+      checklistSummary.innerHTML = `
+        <div style="font-weight:600;margin-bottom:0.5rem;color:#0b1724;">✓ Completed Items (${checklistItems.length})</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+          ${checklistItems.map(item => `
+            <span style="background:#dcfce7;color:#166534;padding:0.25rem 0.75rem;border-radius:6px;font-size:0.85rem;font-weight:500;">
+              ${escapeHtml(item.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))}
+            </span>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      checklistSummary.innerHTML = '<div style="color:#64748b;">No checklist items completed yet</div>';
+    }
+    
+    const upl = document.getElementById('uploads'); upl.innerHTML='';
+    uploads.forEach(u=>{
+      const item = document.createElement('div');
+      item.style.display='flex'; item.style.flexDirection='column'; item.style.alignItems='stretch';
+      item.style.width='160px';
+      item.dataset.uploadId = u.id;
+      
+      // Show checklist item label (sanitized)
+      if (u.checkItem) {
+        const label = document.createElement('div');
+        label.style.fontSize = '.85rem';
+        label.style.fontWeight = '600';
+        label.style.color = '#0553F0';
+        label.style.marginBottom = '.25rem';
+        label.textContent = u.checkItem.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        item.appendChild(label);
+      }
+      
+      const d = document.createElement('div'); d.className='thumb';
+      const img = document.createElement('img'); 
+      img.src = u.path.startsWith('/uploads') ? u.path : (u.s3Url || u.path);
+      img.alt = escapeHtml(u.originalname || 'upload');
+      img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
+      img.loading = 'lazy'; // Performance: lazy load images
+      d.appendChild(img);
+
+      const btn = document.createElement('button');
+      btn.textContent = 'Detect Damage';
+      btn.className = 'btn';
+      btn.style.marginTop = '.4rem';
+      btn.style.background = '#0b8a5f';
+      btn.style.fontSize = '.85rem';
+      btn.style.padding = '.5rem .75rem';
+      btn.setAttribute('aria-label', `Detect damage for ${u.checkItem || 'upload'}`);
+      btn.onclick = ()=>detectDamage(u.id);
+
+      // Enhanced detection badge with confidence
+      const detectionBadge = document.createElement('div');
+      detectionBadge.className = 'detection-badge';
+      detectionBadge.dataset.uploadId = u.id;
+      if (u.detection && u.detection.result) {
+        const preds = (u.detection.result.predictions || []);
+        const avgConfidence = preds.length > 0 
+          ? (preds.reduce((sum, p) => sum + (p.confidence || 0), 0) / preds.length * 100).toFixed(0)
+          : 0;
+        detectionBadge.className = 'muted';
+        detectionBadge.style.fontSize = '.75rem';
+        detectionBadge.style.marginTop = '.25rem';
+        detectionBadge.style.padding = '.25rem';
+        detectionBadge.style.background = preds.length > 0 ? '#fef3c7' : '#dcfce7';
+        detectionBadge.style.borderRadius = '4px';
+        detectionBadge.innerHTML = `
+          <div style="font-weight:600;color:${preds.length > 0 ? '#92400e' : '#166534'};">
+            ${preds.length > 0 ? '⚠️' : '✓'} ${preds.length} finding(s)
+          </div>
+          ${avgConfidence > 0 ? `<div style="color:#64748b;font-size:.7rem;">Avg confidence: ${avgConfidence}%</div>` : ''}
+          <div style="color:#64748b;font-size:.7rem;">${new Date(u.detection.detectedAt).toLocaleString()}</div>
+        `;
+      }
+      item.appendChild(detectionBadge);
+
+      item.appendChild(d);
+      item.appendChild(btn);
+      upl.appendChild(item);
+    });
+
+    // Populate tire fields with helper function
+    const t = insp.tire || {};
+    setTireField('mf_driver_front', t.manufacturer?.driverFront);
+    setTireField('mf_driver_rear', t.manufacturer?.driverRear);
+    setTireField('mf_pass_front', t.manufacturer?.passengerFront);
+    setTireField('mf_pass_rear', t.manufacturer?.passengerRear);
+
+    setTireField('size_driver_front', t.size?.driverFront);
+    setTireField('size_driver_rear', t.size?.driverRear);
+    setTireField('size_pass_front', t.size?.passengerFront);
+    setTireField('size_pass_rear', t.size?.passengerRear);
+
+    setTireField('axleCount', t.axleCount);
+
+    setTireField('tcond_driver_front', t.tireCondition?.driverFront);
+    setTireField('tcond_driver_rear', t.tireCondition?.driverRear);
+    setTireField('tcond_pass_front', t.tireCondition?.passengerFront);
+    setTireField('tcond_pass_rear', t.tireCondition?.passengerRear);
+
+    setTireField('wcond_driver_front', t.wheelCondition?.driverFront);
+    setTireField('wcond_driver_rear', t.wheelCondition?.driverRear);
+    setTireField('wcond_pass_front', t.wheelCondition?.passengerFront);
+    setTireField('wcond_pass_rear', t.wheelCondition?.passengerRear);
+
+    setTireField('spare_tire', t.spareTire);
+
+    setTireField('tread_df', t.tread?.driverFront);
+    setTireField('tread_dr', t.tread?.driverRear);
+    setTireField('tread_pf', t.tread?.passFront);
+    setTireField('tread_pr', t.tread?.passRear);
+
+    updateTreadExplanation();
+    updateTireSummary();
+    
+  } catch (err) {
+    console.error('Load error:', err);
+    document.getElementById('card').innerHTML = `
+      <div style="padding:2rem;text-align:center;">
+        <div style="color:#ef4444;font-size:1.2rem;margin-bottom:1rem;">⚠️ Error Loading Inspection</div>
+        <div class="muted">${escapeHtml(err.message)}</div>
+        <button class="btn" onclick="location.reload()" style="margin-top:1rem;">Retry</button>
+      </div>
+    `;
+  }
+}
+
+  // Helper to set tire field value
+  function setTireField(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') {
+      el.value = value || '';
+    } else {
+      el.value = value !== null && value !== undefined ? value : '';
+    }
+  }
+
+  function updateTireSummary() {
+    const df = parseFloat(document.getElementById('tread_df').value) || null;
+    const dr = parseFloat(document.getElementById('tread_dr').value) || null;
+    const pf = parseFloat(document.getElementById('tread_pf').value) || null;
+    const pr = parseFloat(document.getElementById('tread_pr').value) || null;
+    
+    const values = [df, dr, pf, pr].filter(v => v !== null);
+    if (values.length === 0) {
+      document.getElementById('tireSummary').style.display = 'none';
+      return;
+    }
+    
+    const avg = (values.reduce((sum, v) => sum + v, 0) / values.length).toFixed(1);
+    const min = Math.min(...values).toFixed(1);
+    const max = Math.max(...values).toFixed(1);
+    
+    let rating = 'N/A';
+    let ratingColor = '#64748b';
+    if (avg >= 8) {
+      rating = 'Excellent';
+      ratingColor = '#10b981';
+    } else if (avg >= 5) {
+      rating = 'Good - Monitor';
+      ratingColor = '#f59e0b';
+    } else {
+      rating = 'Replace Soon';
+      ratingColor = '#ef4444';
+    }
+    
+    document.getElementById('tireSummaryContent').innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;">
+        <div>
+          <div class="muted" style="font-size:.85rem;">Average Tread</div>
+          <div style="font-size:1.5rem;font-weight:700;color:#0b1724;">${avg}/32"</div>
+        </div>
+        <div>
+          <div class="muted" style="font-size:.85rem;">Range</div>
+          <div style="font-size:1.2rem;font-weight:600;color:#64748b;">${min} - ${max}/32"</div>
+        </div>
+        <div>
+          <div class="muted" style="font-size:.85rem;">Overall Rating</div>
+          <div style="font-size:1.2rem;font-weight:700;color:${ratingColor};">${rating}</div>
+        </div>
+      </div>
+    `;
+    document.getElementById('tireSummary').style.display = 'block';
+  }
+  
+  function gatherTirePayload(){
+    return {
+      manufacturer: {
+        driverFront: document.getElementById('mf_driver_front').value.trim() || null,
+        driverRear: document.getElementById('mf_driver_rear').value.trim() || null,
+        passengerFront: document.getElementById('mf_pass_front').value.trim() || null,
+        passengerRear: document.getElementById('mf_pass_rear').value.trim() || null
+      },
+      size: {
+        driverFront: document.getElementById('size_driver_front').value.trim() || null,
+        driverRear: document.getElementById('size_driver_rear').value.trim() || null,
+        passengerFront: document.getElementById('size_pass_front').value.trim() || null,
+        passengerRear: document.getElementById('size_pass_rear').value.trim() || null
+      },
+      axleCount: document.getElementById('axleCount').value.trim() || null,
+      tireCondition: {
+        driverFront: document.getElementById('tcond_driver_front').value || null,
+        driverRear: document.getElementById('tcond_driver_rear').value || null,
+        passengerFront: document.getElementById('tcond_pass_front').value || null,
+        passengerRear: document.getElementById('tcond_pass_rear').value || null
+      },
+      wheelCondition: {
+        driverFront: document.getElementById('wcond_driver_front').value || null,
+        driverRear: document.getElementById('wcond_driver_rear').value || null,
+        passengerFront: document.getElementById('wcond_pass_front').value || null,
+        passengerRear: document.getElementById('wcond_pass_rear').value || null
+      },
+      spareTire: document.getElementById('spare_tire').value.trim() || null,
+      tread: {
+        driverFront: sanitizeNumericInput(document.getElementById('tread_df').value),
+        driverRear: sanitizeNumericInput(document.getElementById('tread_dr').value),
+        passFront: sanitizeNumericInput(document.getElementById('tread_pf').value),
+        passRear: sanitizeNumericInput(document.getElementById('tread_pr').value)
+      }
+    };
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', async ()=>{
+    const btn = document.getElementById('saveBtn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Saving...';
+    
+    try {
+      const payload = gatherTirePayload();
+      const res = await fetch(`/api/inspections/${id}/tire`, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(payload),
+        credentials: 'include'
+      });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Save failed');
+      }
+      
+      const j = await res.json();
+      btn.textContent = '✓ Saved';
+      btn.style.background = '#10b981';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = 'linear-gradient(135deg, #0553F0 0%, #0441c7 100%)';
+      }, 2000);
+      
+      updateTreadExplanation();
+      updateTireSummary();
+    } catch (err) {
+      alert('Save failed: ' + err.message);
+      btn.textContent = originalText;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  
+  // Add listeners to tread inputs to update summary in real-time
+  ['tread_df', 'tread_dr', 'tread_pf', 'tread_pr'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      updateTreadExplanation();
+      updateTireSummary();
+    });
+  });
+
+  document.getElementById('saveBuyerBtn').addEventListener('click', async ()=>{
+    const btn = document.getElementById('saveBuyerBtn');
+    const originalText = btn.textContent;
+    const buyerZip = document.getElementById('buyerZip').value.trim();
+    const buyerEmail = document.getElementById('buyerEmail').value.trim();
+    
+    // Validate email format
+    if (buyerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyerEmail)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+    
+    // Validate ZIP format (5 digits)
+    if (buyerZip && !/^\d{5}$/.test(buyerZip)) {
+      alert('Please enter a valid 5-digit ZIP code');
+      return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = '⏳ Saving...';
+    
+    try {
+      const payload = { buyerZip: buyerZip || null, buyerEmail: buyerEmail || null };
+      const res = await fetch(`/api/inspections/${id}`, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(payload),
+        credentials: 'include'
+      });
+      
+      if (!res.ok) throw new Error('Failed to save buyer info');
+      
+      btn.textContent = '✓ Saved';
+      btn.style.background = '#10b981';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '#0a7be6';
+      }, 2000);
+    } catch (err) {
+      alert('Failed to save: ' + err.message);
+      btn.textContent = originalText;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('emailReportBtn').addEventListener('click', async ()=>{
+    if (!confirm('Generate PDF and email to buyer if SendGrid configured?')) return;
+    const to = document.getElementById('buyerEmail').value.trim();
+    const res = await fetch(`/api/inspections/${id}/email-report`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to }) });
+    if (!res.ok) {
+      const txt = await res.text();
+      return alert('Email report failed: ' + txt);
+    }
+    const j = await res.json();
+    alert('Report generated' + (j.emailed ? ' and emailed' : ' (not emailed - check server config)'));
+    if (j.reportPath) window.open(j.reportPath, '_blank');
+  });
+
+  function treadExplanationFor(val){
+    if (val === null || val === undefined || isNaN(val)) return 'N/A';
+    if (val >= 10) return '10/32 OR MORE — Tires have plenty of tread! (standard)';
+    if (val >= 8) return '8/32 OR MORE — Tires have plenty of tread! (low profile)';
+    if (val >= 5) return '5/32 TO 7/32 — Tires will need replacement soon!';
+    return '4/32 OR LESS — Tires need replacement!';
+  }
+
+  function updateTreadExplanation(){
+    const df = parseFloat(document.getElementById('tread_df').value) || null;
+    const dr = parseFloat(document.getElementById('tread_dr').value) || null;
+    const pf = parseFloat(document.getElementById('tread_pf').value) || null;
+    const pr = parseFloat(document.getElementById('tread_pr').value) || null;
+    const lines = [];
+    lines.push('Driver Front: ' + treadExplanationFor(df));
+    lines.push('Driver Rear: ' + treadExplanationFor(dr));
+    lines.push('Passenger Front: ' + treadExplanationFor(pf));
+    lines.push('Passenger Rear: ' + treadExplanationFor(pr));
+    document.getElementById('treadExplanation').innerHTML = lines.join('<br>');
+  }
+
+  document.getElementById('genReport').addEventListener('click', ()=>{
+    const modal = document.getElementById('reportModal');
+    const iframe = document.getElementById('reportIframe');
+    iframe.src = `/reports/preview.html?id=${id}`;
+    modal.style.display = 'flex';
+  });
+  
+  document.getElementById('closeReportModal').addEventListener('click', ()=>{
+    document.getElementById('reportModal').style.display = 'none';
+    document.getElementById('reportIframe').src = '';
+  });
+  
+  // Close modal on ESC key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('reportModal').style.display === 'flex') {
+      document.getElementById('closeReportModal').click();
+    }
+  });
+
+  async function detectDamage(uploadId){
+    const outputEl = document.getElementById('detectOutput');
+    const uploadItem = document.querySelector(`[data-upload-id="${uploadId}"]`);
+    const btn = uploadItem?.querySelector('button');
+    
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Analyzing...';
+    }
+    
+    outputEl.textContent = 'Running AI damage detection...';
+    outputEl.style.color = '#0553F0';
+    outputEl.setAttribute('aria-live', 'polite');
+    
+    try {
+      const res = await fetch('/api/roboflow/detect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uploadId }),
+        credentials: 'include'
+      });
+      
+      const j = await res.json();
+      if (!res.ok || !j.ok) throw new Error(j.error || 'Detection failed');
+      
+      const preds = j.result && Array.isArray(j.result.predictions) ? j.result.predictions : [];
+      const avgConfidence = preds.length > 0 
+        ? (preds.reduce((sum, p) => sum + (p.confidence || 0), 0) / preds.length * 100).toFixed(0)
+        : 0;
+      
+      // Update badge in real-time
+      const badge = uploadItem?.querySelector('.detection-badge');
+      if (badge) {
+        badge.style.fontSize = '.75rem';
+        badge.style.marginTop = '.25rem';
+        badge.style.padding = '.25rem';
+        badge.style.background = preds.length > 0 ? '#fef3c7' : '#dcfce7';
+        badge.style.borderRadius = '4px';
+        badge.innerHTML = `
+          <div style="font-weight:600;color:${preds.length > 0 ? '#92400e' : '#166534'};">
+            ${preds.length > 0 ? '⚠️' : '✓'} ${preds.length} finding(s)
+          </div>
+          ${avgConfidence > 0 ? `<div style="color:#64748b;font-size:.7rem;">Avg confidence: ${avgConfidence}%</div>` : ''}
+          <div style="color:#64748b;font-size:.7rem;">${new Date().toLocaleString()}</div>
+        `;
+      }
+      
+      const byClass = {};
+      preds.forEach(p=>{ byClass[p.class] = (byClass[p.class]||0)+1; });
+      const parts = Object.keys(byClass).map(k=>`${k}: ${byClass[k]}`);
+      
+      outputEl.innerHTML = `
+        <div style="padding:1rem;background:${preds.length > 0 ? '#fef3c7' : '#dcfce7'};border-radius:8px;margin-top:.5rem;">
+          <div style="font-weight:700;color:${preds.length > 0 ? '#92400e' : '#166534'};margin-bottom:.5rem;">
+            ${preds.length > 0 ? '⚠️ Damage Detected' : '✓ No Damage Detected'}
+          </div>
+          <div style="color:#64748b;font-size:.9rem;">
+            ${preds.length} finding(s)${parts.length ? ' • ' + parts.join(' • ') : ''}
+            ${avgConfidence > 0 ? `<br>Average confidence: ${avgConfidence}%` : ''}
+          </div>
+        </div>
+      `;
+      outputEl.style.color = '#0b1724';
+      
+    } catch (e) {
+      console.error('Detection error:', e);
+      outputEl.innerHTML = `
+        <div style="padding:1rem;background:#fee;border-radius:8px;margin-top:.5rem;">
+          <div style="font-weight:700;color:#ef4444;margin-bottom:.25rem;">⚠️ Detection Error</div>
+          <div style="color:#64748b;font-size:.85rem;">${escapeHtml(e.message)}</div>
+        </div>
+      `;
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Detect Damage';
+      }
+    }
+  }
+
+  // Initialize page (check auth then load)
+  (async function init() {
+    const isAuthed = await checkAuth();
+    if (!isAuthed) return;
+    load();
+  })();
+</script>
+</body>
+</html>

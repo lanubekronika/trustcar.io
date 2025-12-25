@@ -1,0 +1,90 @@
+{
+  "laborRates": {
+    "paintless_dent_repair": 75,
+    "body_shop_paint": 125,
+    "mechanical_repair": 95,
+    "detailing": 50
+  },
+  "commonParts": {
+    "bumper_cover_front": { "min": 150, "max": 400, "labor_hours": 2 },
+    "bumper_cover_rear": { "min": 150, "max": 400, "labor_hours": 2 },
+    "fender": { "min": 200, "max": 500, "labor_hours": 3 },
+    "door": { "min": 250, "max": 600, "labor_hours": 4 },
+    "hood": { "min": 300, "max": 700, "labor_hours": 3 },
+    "trunk_lid": { "min": 250, "max": 600, "labor_hours": 3 },
+    "quarter_panel": { "min": 400, "max": 1200, "labor_hours": 8 },
+    "headlight_assembly": { "min": 100, "max": 800, "labor_hours": 1 },
+    "taillight_assembly": { "min": 80, "max": 400, "labor_hours": 0.5 },
+    "side_mirror": { "min": 150, "max": 400, "labor_hours": 1 },
+    "windshield": { "min": 200, "max": 500, "labor_hours": 2 },
+    "door_handle": { "min": 50, "max": 150, "labor_hours": 0.5 },
+    "grille": { "min": 100, "max": 300, "labor_hours": 1 },
+    "rocker_panel": { "min": 200, "max": 500, "labor_hours": 4 },
+    "wheel_rim": { "min": 100, "max": 500, "labor_hours": 0.5 }
+  },
+  "paintRepair": {
+    "scratch_touch_up": { "cost_per_panel": 75, "description": "Minor scratch, touch-up paint" },
+    "panel_blend": { "cost_per_panel": 250, "description": "Paint blending for moderate damage" },
+    "full_panel_paint": { "cost_per_panel": 400, "description": "Full panel refinish with clear coat" }
+  },
+  "dentRepair": {
+    "pdr_small": { "cost": 75, "description": "Paintless dent repair, coin-sized" },
+    "pdr_medium": { "cost": 150, "description": "Paintless dent repair, palm-sized" },
+    "pdr_large": { "cost": 300, "description": "Paintless dent repair, panel-width" },
+    "body_filler": { "cost": 400, "description": "Body filler and paint for deep dents" }
+  },
+  "tires": {
+    "economy": {
+      "13_14_inch": { "price_per_tire": 60, "brands": ["Douglas", "Westlake", "Falken"] },
+      "15_16_inch": { "price_per_tire": 75, "brands": ["Cooper", "General", "Hankook"] },
+      "17_18_inch": { "price_per_tire": 95, "brands": ["Kumho", "Nexen", "Yokohama"] },
+      "19_20_inch": { "price_per_tire": 130, "brands": ["Bridgestone Ecopia", "Firestone"] }
+    },
+    "mid_range": {
+      "13_14_inch": { "price_per_tire": 85, "brands": ["Goodyear", "Firestone", "BFGoodrich"] },
+      "15_16_inch": { "price_per_tire": 110, "brands": ["Michelin Defender", "Continental"] },
+      "17_18_inch": { "price_per_tire": 145, "brands": ["Bridgestone Turanza", "Pirelli P4"] },
+      "19_20_inch": { "price_per_tire": 180, "brands": ["Michelin Pilot Sport", "Continental ExtremeContact"] }
+    },
+    "premium": {
+      "13_14_inch": { "price_per_tire": 110, "brands": ["Michelin", "Continental PureContact"] },
+      "15_16_inch": { "price_per_tire": 150, "brands": ["Michelin Premier", "Bridgestone DriveGuard"] },
+      "17_18_inch": { "price_per_tire": 200, "brands": ["Michelin Pilot Sport 4S", "Continental ExtremeContact DWS"] },
+      "19_20_inch": { "price_per_tire": 280, "brands": ["Michelin Pilot Super Sport", "Pirelli P Zero"] },
+      "21_plus_inch": { "price_per_tire": 350, "brands": ["Michelin Pilot Sport Cup 2", "Pirelli P Zero Trofeo"] }
+    },
+    "truck_suv": {
+      "15_16_inch": { "price_per_tire": 140, "brands": ["Goodyear Wrangler", "BFGoodrich All-Terrain"] },
+      "17_18_inch": { "price_per_tire": 170, "brands": ["Michelin LTX", "Bridgestone Dueler"] },
+      "20_22_inch": { "price_per_tire": 220, "brands": ["Nitto Ridge Grappler", "Toyo Open Country"] }
+    },
+    "installation": {
+      "mount_balance_per_tire": 25,
+      "valve_stem_per_tire": 5,
+      "disposal_per_tire": 5,
+      "alignment_2_wheel": 75,
+      "alignment_4_wheel": 100,
+      "tpms_sensor": 50
+    }
+  },
+  "estimationGuidelines": {
+    "damage_severity_multipliers": {
+      "minor": 1.0,
+      "moderate": 1.5,
+      "severe": 2.5
+    },
+    "geographic_multipliers": {
+      "urban": 1.2,
+      "suburban": 1.0,
+      "rural": 0.85
+    },
+    "notes": [
+      "Prices are national averages and may vary by region",
+      "OEM (original manufacturer) parts typically 30-50% more expensive than aftermarket",
+      "Luxury/import vehicles: add 40-60% to part costs",
+      "Electric vehicles: add 20-30% to part costs",
+      "Paint color matching may add $50-150 for metallic/pearl finishes",
+      "Structural damage repairs require frame straightening ($500-2000+)"
+    ]
+  }
+}

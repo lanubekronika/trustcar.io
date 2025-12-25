@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustCar.io — Your Reliable Ride, Our Priority</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #333; }
+        header { background: #0553F0; color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 2rem; font-weight: bold; }
+        nav a { color: white; margin-left: 2rem; text-decoration: none; font-weight: 500; }
+        .hero {
+            padding: 4rem 5%;
+            display: flex;
+            justify-content: center;
+            /* right-aligned scaled image with a gradient that fades it into the left side */
+            /* slightly larger right-side image and much less fade so the vehicle shows through more */
+            background-image: linear-gradient(to left, rgba(245,248,250,0) 0%, rgba(245,248,250,1) 99.9%), url('https://images.unsplash.com/photo-1765748255819-a77275fe1875?q=80&w=1034&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-size: 45% auto; /* increased from 40% to 45% */
+            background-color: #f5f8fa; /* fallback */
+            position: relative;
+        }
+
+        /* White rounded card with content on the left and image on the right (matches screenshot) */
+        .hero-card { width: 100%; max-width: 1200px; /* slightly more transparent on the right so background image is clearer */ background: linear-gradient(to left, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.85) 30%, rgba(255,255,255,1) 55%); border-radius: 16px; padding: 3rem; display: flex; gap: 2.5rem; align-items: center; box-shadow: 0 12px 40px rgba(2,6,23,0.08); overflow: hidden; position: relative; z-index: 2; }
+        .hero-content { flex: 1 1 55%; position: relative; z-index: 2; color: #0b1724; }
+        .hero-image { display:none; }
+        .hero h1 { font-size: 4.8rem; font-weight: 800; margin: 0 0 1rem; line-height: 1.02; color: #0b1724; }
+        .hero p { font-size: 1.125rem; margin-bottom: 1.5rem; color: #475569; }
+        /* VIN input removed from landing page (moved to post-payment form) */
+        .buttons { margin-top: 2rem; }
+        .btn { display: inline-block; padding: 0.9rem 2.2rem; border-radius: 999px; font-size: 1rem; margin-right: 1rem; text-decoration: none; transition: 0.18s ease; font-weight: 600; }
+        .btn-primary { background: #0553F0; color: white; box-shadow: 0 8px 24px rgba(5,83,240,0.18); }
+        .btn-secondary { background: white; color: #0b1724; border: 2px solid #e6eefc; }
+        .btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .services { padding: 5rem 5%; background: #ffffff; text-align: center; }
+        .services h2 { font-size: 2.8rem; margin-bottom: 3rem; color: #0b1724; }
+        .cards { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+        .card { background: #f8fafc; padding: 2.5rem; border-radius: 16px; width: 350px; box-shadow: 0 6px 20px rgba(2,6,23,0.06); transition: 0.3s; }
+        .card:hover { transform: translateY(-8px); }
+        .card h3 { margin-bottom: 1.5rem; color: #0b1724; font-size: 1.8rem; }
+        .card h3 { margin-bottom: 1.5rem; color: #0553F0; font-size: 1.8rem; }
+        /* Footer and branding accents */
+        footer { background: #0553F0; color: white; text-align: center; padding: 2rem; }
+
+        /* Spinner for VIN lookup */
+        .spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.12); border-top-color: #0553F0; border-radius: 50%; display: inline-block; vertical-align: middle; margin-left: 0.5rem; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn[disabled] { opacity: 0.6; cursor: default; transform: none; }
+        .inline-input { padding: 0.8rem 1rem; border-radius: 999px; border: 2px solid #e6eefc; font-size: 1rem; outline: none; }
+        .inline-input:focus { border-color: #0553F0; box-shadow: 0 6px 18px rgba(5,83,240,0.12); }
+        @media (max-width: 992px) {
+            .hero-card { flex-direction: column-reverse; padding: 2rem; }
+            .hero-image { width: 100%; height: 320px; }
+            .hero-content { width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2.4rem; }
+            .hero p { font-size: 1rem; }
+            .vin-input { width: 100%; }
+            .cards { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TrustCar.io</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Services</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Your Reliable Ride, Our Priority</h1>
+            <p>Remote vehicle inspections + fraud detection — starting at $149</p>
+            <div class="buttons">
+                <button id="getStartedBtn" class="btn btn-primary">Let's Get Started</button>
+            </div>
+        </div>
+    </section>
+
+        <script>
+        async function decodeVIN() {
+            const vin = document.getElementById('vinInput').value.trim();
+            if (!vin) return alert('Enter a VIN');
+
+            const resultsEl = document.getElementById('vinResults');
+            const btn = document.getElementById('vinDecodeBtn');
+            resultsEl.style.display = 'block';
+            resultsEl.textContent = 'Looking up VIN...';
+
+            // show spinner and disable button
+            btn.disabled = true;
+            const spinner = document.createElement('span');
+            spinner.className = 'spinner';
+            btn.appendChild(spinner);
+
+            try {
+                // Decode VIN
+                const decodeUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${vin}?format=json`;
+                const decodeRes = await fetch(decodeUrl);
+                const decodeData = await decodeRes.json();
+
+                // Recalls (may return different shape)
+                const recallsUrl = `https://api.nhtsa.gov/recalls/recallsByVehicle?vin=${vin}`;
+                const recallsRes = await fetch(recallsUrl);
+                const recallsData = await recallsRes.json();
+
+                // Helper to extract a variable from decode results
+                const findVar = (name) => {
+                    const item = decodeData.Results && decodeData.Results.find(r => r.Variable === name);
+                    return item && item.Value ? item.Value : 'N/A';
+                };
+
+                const make = findVar('Make');
+                const model = findVar('Model');
+                const modelYear = findVar('Model Year') || findVar('ModelYear') || 'N/A';
+
+                resultsEl.innerHTML = `
+                    <div><strong>Make:</strong> ${make}</div>
+                    <div><strong>Model:</strong> ${model}</div>
+                    <div><strong>Year:</strong> ${modelYear}</div>
+                    <div style="margin-top:.5rem;"><strong>Recalls found:</strong> ${Array.isArray(recallsData.results) ? recallsData.results.length : (recallsData.count || 0)}</div>
+                `;
+                console.log('Vehicle Info:', decodeData.Results);
+                console.log('Recalls:', recallsData.results || recallsData);
+            } catch (err) {
+                resultsEl.textContent = 'Error fetching VIN data';
+                console.error(err);
+            } finally {
+                // cleanup spinner and re-enable
+                if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
+                btn.disabled = false;
+            }
+        }
+
+                </script>
+
+        <!-- Stripe Checkout via server-created sessions -->
+        <script src="https://js.stripe.com/v3/"></script>
+        <script>
+            let stripe;
+            async function initStripe() {
+                try {
+                    const res = await fetch('/api/stripe/config');
+                    const data = await res.json();
+                    if (!data.publishableKey) throw new Error('No publishable key');
+                    stripe = Stripe(data.publishableKey);
+                } catch (e) {
+                    console.warn('Stripe not configured:', e.message);
+                    // expose dev skip button when Stripe isn’t configured
+                    const skip = document.getElementById('skipDev');
+                    if (skip) skip.style.display = 'inline-block';
+                }
+            }
+
+            async function startCheckout(plan) {
+                const input = document.getElementById('listingOrVinInput');
+                const val = (input && input.value || '').trim();
+                // persist for post-checkout VIN page
+                if (val) localStorage.setItem('listingUrlOrVin', val);
+                localStorage.setItem('selectedPlan', plan || 'basic');
+
+                try {
+                    const resp = await fetch('/api/checkout/session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ plan: plan || 'basic', listingUrl: /^https?:\/\//i.test(val) ? val : '', vin: /^[A-HJ-NPR-Z0-9]{17}$/i.test(val) ? val : '' })
+                    });
+                    const json = await resp.json();
+                    if (!resp.ok) {
+                        // fallback to dev flow: go straight to VIN page
+                        console.warn('Checkout session failed, using dev fallback:', json);
+                        window.location.href = '/enter-vin.html?dev=1';
+                        return;
+                    }
+                    if (!stripe) {
+                        await initStripe();
+                        if (!stripe) throw new Error('Stripe not configured');
+                    }
+                    const result = await stripe.redirectToCheckout({ sessionId: json.id });
+                    if (result.error) alert(`Checkout error: ${result.error.message}`);
+                } catch (err) {
+                    console.error('Checkout error', err);
+                    // last-resort fallback to dev flow
+                    window.location.href = '/enter-vin.html?dev=1';
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('getStartedBtn').addEventListener('click', () => {
+                    window.location.href = '/enter-vin.html';
+                });
+            });
+        </script>
+
+    <section class="services">
+        <h2>Our Services</h2>
+        <div class="cards">
+            <div class="card">
+                <h3>Pre-Purchase Inspection</h3>
+                <p>Full remote check — photos, OBD scan, AI + expert review for peace of mind.</p>
+            </div>
+            <div class="card">
+                <h3>Fraud Detection</h3>
+                <p>VIN history, accident records, odometer verification — no surprises.</p>
+            </div>
+            <div class="card">
+                <h3>Repair Forecast</h3>
+                <p>Common issues + local shop quotes tailored to your area.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 TrustCar.io — Building Trust in Every Journey</p>
+    </footer>
+</body>
+</html>

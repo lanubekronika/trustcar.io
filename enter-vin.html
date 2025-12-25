@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Enter VIN — TrustCar.io</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #0b1724; }
+        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+        .logo { font-size: 1.8rem; font-weight: 800; }
+        a.nav-link { color: white; text-decoration: none; margin-left: 1.5rem; font-weight: 600; transition: opacity .2s; }
+        a.nav-link:hover { opacity: 0.85; }
+        main { padding: 3rem 5%; display: flex; justify-content: center; }
+        .card { width: 100%; max-width: 920px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 16px; padding: 2.5rem; box-shadow: 0 8px 24px rgba(2,6,23,0.08); border: 2px solid #e6eefc; }
+        h1 { margin: 0 0 0.75rem 0; font-size: 2.2rem; font-weight: 800; color: #0b1724; }
+        p.lead { margin: 0 0 1.5rem 0; color: #475569; font-weight: 500; line-height: 1.6; }
+        label { display:block; font-weight:700; margin-bottom: .5rem; color: #0553F0; font-size: .95rem; }
+        .vin-input { width: 100%; padding: 1rem 1.25rem; border-radius: 12px; border: 2px solid #e6eefc; font-size: 1.05rem; outline: none; box-sizing: border-box; transition: all .2s; font-family: 'Courier New', monospace; background: white; }
+        .vin-input:focus { border-color: #0553F0; box-shadow: 0 6px 18px rgba(5,83,240,0.15); transform: translateY(-1px); }
+        .actions { margin-top: 1.5rem; display:flex; gap: .75rem; align-items:center; flex-wrap: wrap; }
+        .btn { display:inline-block; padding:.85rem 1.5rem; border-radius: 10px; font-weight:700; cursor:pointer; border: none; transition: all .2s; font-size: .95rem; }
+        .btn-primary { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; box-shadow: 0 4px 12px rgba(5,83,240,0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(5,83,240,0.3); }
+        .btn-ghost { background: white; color: #0553F0; border: 2px solid #e6eefc; }
+        .btn-ghost:hover { background: #f8fafc; border-color: #0553F0; transform: translateY(-2px); }
+        .spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.12); border-top-color: #0553F0; border-radius: 50%; display: inline-block; vertical-align: middle; margin-left: .6rem; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #vinResults { margin-top: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #e6eefc; display: none; }
+        #vinResults pre { white-space: pre-wrap; word-break: break-word; margin: 0; }
+        .result-row { margin-bottom: .75rem; }
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+        .result-item { background: white; padding: 1rem 1.25rem; border-radius: 10px; border: 2px solid #e6eefc; box-shadow: 0 2px 8px rgba(2,6,23,0.04); transition: .2s; }
+        .result-item:hover { border-color: #0553F0; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(2,6,23,0.08); }
+        .result-item strong { display: block; font-size: .85rem; color: #64748b; text-transform: uppercase; letter-spacing: .5px; margin-bottom: .5rem; font-weight: 700; }
+        .result-item span { display: block; font-size: 1.05rem; color: #0b1724; font-weight: 700; }
+        .muted { color:#64748b; font-size:.95rem; }
+        .recall-badge { display: inline-block; padding: .25rem .75rem; border-radius: 999px; font-weight: 600; font-size: .9rem; }
+        .recall-ok { background: #d1fae5; color: #065f46; }
+        .recall-warn { background: #fef3c7; color: #92400e; }
+        footer { text-align:center; padding: 2rem 0; color:#475569; }
+        @media (max-width:720px){ .actions { flex-direction: column; align-items: stretch; } }
+
+            /* Safety and Market Comps UI */
+            .section { margin-top: 1rem; background: #fff; border: 1px solid #e6eefc; border-radius: 10px; padding: 0.75rem 1rem; }
+            .section h4 { margin: 0 0 .5rem 0; font-size: 1.05rem; color:#0b1724; }
+            .mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .5rem; }
+            .mini-item { background:#f8fafc; border:1px solid #e6eefc; border-radius:8px; padding:.5rem .75rem; }
+            .mini-item strong { display:block; font-size:.8rem; color:#64748b; text-transform:uppercase; letter-spacing:.4px; }
+            .mini-item span { display:block; font-weight:700; color:#0b1724; }
+            .comps-controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; margin:.25rem 0 .5rem 0; }
+            .comps-controls input { width: 120px; padding:.5rem; border-radius:8px; border:1px solid #e6eefc; }
+        .comps-table { width:100%; border-collapse: collapse; }
+        .comps-table th, .comps-table td { text-align:left; padding:.5rem; border-bottom:1px solid #eef2f7; font-size:.95rem; }
+        .comps-table th { color:#64748b; text-transform:uppercase; letter-spacing:.4px; font-size:.8rem; }
+        .comps-scroll { overflow-x:auto; margin-top:.5rem; -webkit-overflow-scrolling: touch; }
+        @media (max-width:720px){ .comps-table { min-width: 600px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="/" style="color:white;text-decoration:none;" aria-label="TrustCar.io homepage">TrustCar.io</a></div>
+        <nav aria-label="Main navigation">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/pricing.html">Pricing</a>
+            <a class="nav-link" href="/how-it-works.html">How It Works</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="card">
+            <h1>Enter the Vehicle VIN</h1>
+            <p class="lead">Enter the 17-character VIN of the vehicle you're considering. We'll instantly decode it, check for open recalls, safety ratings, and (when available) local market pricing.</p>
+            <div id="checkoutMeta" class="muted" style="margin:.5rem 0 1rem 0; display:none"></div>
+
+            <label for="vinInput">VIN</label>
+            <input id="vinInput" class="vin-input" maxlength="17" placeholder="1HGCM82633A004352" aria-label="Vehicle VIN" />
+
+            <div class="actions">
+                <button id="vinDecodeBtn" class="btn btn-primary">Decode VIN</button>
+                <button id="copyReportBtn" class="btn btn-ghost">Copy Report</button>
+                <div id="statusMsg" class="muted" style="margin-left:auto"></div>
+            </div>
+
+            <div id="vinResults" aria-live="polite" aria-busy="false" role="region" aria-label="VIN decode results"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="muted">© 2025 TrustCar.io — Instant VIN decoding with recalls, safety ratings, and market data</div>
+    </footer>
+
+    <script>
+        // VIN decode + recall logic (adapted from index.html)
+        let lastDecode = null;
+        function showCheckoutMeta(){
+            const metaEl = document.getElementById('checkoutMeta');
+            const carried = localStorage.getItem('listingUrlOrVin') || '';
+            const plan = localStorage.getItem('selectedPlan') || '';
+            let txt = '';
+            if (carried) {
+                if (/^https?:\/\//i.test(carried)) {
+                    txt += `Car listing: ${carried}`;
+                } else if (/^[A-HJ-NPR-Z0-9]{17}$/i.test(carried)) {
+                    txt += `VIN from checkout: ${carried}`;
+                    const vinEl = document.getElementById('vinInput');
+                    if (vinEl && !vinEl.value) vinEl.value = carried.toUpperCase();
+                }
+            }
+            if (plan) txt += (txt ? ' • ' : '') + `Plan: ${plan}`;
+            if (txt) { metaEl.textContent = txt; metaEl.style.display = 'block'; }
+        }
+        async function decodeVIN() {
+            const vinEl = document.getElementById('vinInput');
+            const vin = vinEl.value.trim();
+            const statusEl = document.getElementById('statusMsg');
+            
+            if (!vin) {
+                statusEl.textContent = 'Please enter a VIN';
+                vinEl.style.borderColor = '#ef4444';
+                vinEl.focus();
+                return;
+            }
+            
+            if (vin.length !== 17) {
+                statusEl.textContent = 'VIN must be exactly 17 characters';
+                vinEl.style.borderColor = '#ef4444';
+                vinEl.focus();
+                return;
+            }
+            
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                statusEl.textContent = 'VIN contains invalid characters';
+                vinEl.style.borderColor = '#ef4444';
+                vinEl.focus();
+                return;
+            }
+            
+            vinEl.style.borderColor = '#e6eefc';
+
+            const resultsEl = document.getElementById('vinResults');
+            const statusEl = document.getElementById('statusMsg');
+            const btn = document.getElementById('vinDecodeBtn');
+
+            resultsEl.style.display = 'block';
+            resultsEl.setAttribute('aria-busy', 'true');
+            resultsEl.innerHTML = '<div class="muted">Looking up VIN…</div>';
+            statusEl.textContent = '';
+
+            // show spinner and disable button
+            btn.disabled = true;
+            const spinner = document.createElement('span');
+            spinner.className = 'spinner';
+            btn.appendChild(spinner);
+
+            try {
+                const decodeUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`;
+                const recallsUrl = `https://api.nhtsa.gov/recalls/recallsByVehicle?vin=${encodeURIComponent(vin)}`;
+
+                const [decodeRes, recallsRes] = await Promise.all([
+                    fetch(decodeUrl),
+                    fetch(recallsUrl)
+                ]);
+
+                const decodeData = await decodeRes.json();
+                const recallsData = await recallsRes.json();
+
+                lastDecode = { decodeData, recallsData };
+
+                const findVar = (name) => {
+                    const item = decodeData.Results && decodeData.Results.find(r => r.Variable === name);
+                    return item && item.Value ? item.Value : 'N/A';
+                };
+
+                const make = findVar('Make');
+                const model = findVar('Model');
+                const modelYear = findVar('Model Year') || findVar('ModelYear') || 'N/A';
+                const bodyClass = findVar('Body Class') || 'N/A';
+                const fuel = findVar('Fuel Type - Primary') || 'N/A';
+                const trim = findVar('Trim') || 'N/A';
+                const drivetrain = findVar('Drive Type') || 'N/A';
+                const manufacturer = findVar('Manufacturer Name') || 'N/A';
+                const vehicleType = findVar('Vehicle Type') || 'N/A';
+                const plantCity = findVar('Plant City') || 'N/A';
+                const plantCountry = findVar('Plant Country') || 'N/A';
+                const engineCyl = findVar('Engine Number of Cylinders') || 'N/A';
+                const engineDisp = findVar('Displacement (L)') || findVar('Displacement (CC)') || 'N/A';
+                const transmission = findVar('Transmission Style') || 'N/A';
+                const doors = findVar('Doors') || 'N/A';
+                const series = findVar('Series') || 'N/A';
+
+                const recallsCount = Array.isArray(recallsData.results) ? recallsData.results.length : (recallsData.count || 0);
+                const recallBadge = recallsCount === 0 
+                    ? '<span class="recall-badge recall-ok">✓ No Recalls</span>' 
+                    : `<span class="recall-badge recall-warn">⚠ ${recallsCount} Recall${recallsCount > 1 ? 's' : ''}</span>`;
+
+                // fetch safety ratings
+                let safetyData = null;
+                try {
+                    const safetyRes = await fetch(`/api/vin/safety?vin=${encodeURIComponent(vin)}`);
+                    if (safetyRes.ok) safetyData = await safetyRes.json();
+                } catch(_e) { /* ignore */ }
+                const overall = safetyData && safetyData.rated && safetyData.overallRating && safetyData.overallRating !== 'Not Rated' ? safetyData.overallRating : null;
+                const safetyBadge = overall 
+                    ? `<span class="recall-badge" style="background:#dbeafe;color:#1e40af">★ Overall Safety: ${escapeHtml(overall)}</span>`
+                    : '';
+
+                // Build safety breakdown mini-grid
+                let safetySection = '';
+                if (safetyData && safetyData.rated) {
+                    const f = (v) => (v && v !== 'Not Rated') ? escapeHtml(v) : '—';
+                    safetySection = `
+                        <div class="section" id="safetySection">
+                            <h4>Safety Ratings (NHTSA)</h4>
+                            <div class="mini-grid">
+                                <div class="mini-item"><strong>Overall</strong><span>${f(safetyData.overallRating)}</span></div>
+                                <div class="mini-item"><strong>Front Crash</strong><span>${f(safetyData.overallFrontCrashRating)}</span></div>
+                                <div class="mini-item"><strong>Side Crash</strong><span>${f(safetyData.overallSideCrashRating)}</span></div>
+                                <div class="mini-item"><strong>Rollover</strong><span>${f(safetyData.rolloverRating)}</span></div>
+                            </div>
+                            ${safetyData.vehicleDescription ? `<div class="muted" style="margin-top:.4rem">${escapeHtml(safetyData.vehicleDescription)}</div>` : ''}
+                        </div>`;
+                }
+
+                // Market comps section shell (only if enabled server-side)
+                let compsSection = '';
+                try {
+                    const cfgRes = await fetch('/api/config/features');
+                    const cfg = cfgRes.ok ? await cfgRes.json() : {};
+                    if (cfg.marketCompsEnabled) {
+                        compsSection = `
+                            <div class="section" id="compsSection">
+                                <h4>Market Comps</h4>
+                                <div class="comps-controls">
+                                    <label for="zipInput" class="muted" style="font-weight:600;">ZIP Code</label>
+                                    <input id="zipInput" placeholder="e.g. 94107" maxlength="5" aria-label="ZIP code for market search" />
+                                    <label for="radiusInput" class="muted" style="font-weight:600;">Radius (mi)</label>
+                                    <input id="radiusInput" type="number" min="10" max="500" placeholder="100" value="100" aria-label="Search radius in miles" />
+                                    <button id="fetchCompsBtn" class="btn btn-ghost" aria-label="Fetch market comparables">Fetch Comps</button>
+                                </div>
+                                <div id="compsSummary" class="muted" role="status" aria-live="polite">No comps yet.</div>
+                                <div class="comps-scroll">
+                                    <table class="comps-table" id="compsTable" style="display:none;">
+                                        <thead>
+                                            <tr>
+                                                <th>Price</th>
+                                                <th>Miles</th>
+                                                <th>Dealer</th>
+                                                <th>Location</th>
+                                                <th>DOM</th>
+                                                <th>Link</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="compsTbody"></tbody>
+                                    </table>
+                                </div>
+                            </div>`;
+                    }
+                } catch(_e) { /* comps unavailable */ }
+
+                resultsEl.innerHTML = `
+                    <div style="margin-bottom: 1.5rem;">
+                        <h2 style="margin: 0 0 .5rem 0; font-size: 1.5rem;">${escapeHtml(modelYear)} ${escapeHtml(make)} ${escapeHtml(model)}</h2>
+                        <div style="margin-bottom: .5rem; display:flex; gap:.5rem; flex-wrap:wrap;">${recallBadge}${overall ? ' ' + safetyBadge : ''}</div>
+                    </div>
+                    <div class="result-grid">
+                        <div class="result-item"><strong>Manufacturer</strong><span>${escapeHtml(manufacturer)}</span></div>
+                        <div class="result-item"><strong>Body Style</strong><span>${escapeHtml(bodyClass)}</span></div>
+                        <div class="result-item"><strong>Vehicle Type</strong><span>${escapeHtml(vehicleType)}</span></div>
+                        <div class="result-item"><strong>Trim</strong><span>${escapeHtml(trim)}</span></div>
+                        <div class="result-item"><strong>Series</strong><span>${escapeHtml(series)}</span></div>
+                        <div class="result-item"><strong>Drive Type</strong><span>${escapeHtml(drivetrain)}</span></div>
+                        <div class="result-item"><strong>Fuel Type</strong><span>${escapeHtml(fuel)}</span></div>
+                        <div class="result-item"><strong>Engine</strong><span>${escapeHtml(engineCyl)} cyl, ${escapeHtml(engineDisp)}</span></div>
+                        <div class="result-item"><strong>Transmission</strong><span>${escapeHtml(transmission)}</span></div>
+                        <div class="result-item"><strong>Doors</strong><span>${escapeHtml(doors)}</span></div>
+                        <div class="result-item"><strong>Plant Location</strong><span>${escapeHtml(plantCity)}, ${escapeHtml(plantCountry)}</span></div>
+                    </div>
+                    ${safetySection}
+                    ${compsSection}
+                    <div style="margin-top:2rem;padding-top:1.5rem;border-top:2px solid #e6eefc;text-align:center;">
+                        <p style="margin-bottom:1rem;color:#475569;font-weight:500;">Ready to get a complete inspection of this vehicle?</p>
+                        <a href="/pricing.html" class="btn btn-primary" style="text-decoration:none;display:inline-block;">Start Inspection — From $49</a>
+                    </div>
+                `;
+
+                // Wire up Market Comps fetch
+                const fetchBtn = document.getElementById('fetchCompsBtn');
+                if (fetchBtn) {
+                    fetchBtn.addEventListener('click', () => fetchAndRenderComps(vin));
+                    // initial fetch without zip
+                    fetchAndRenderComps(vin);
+                }
+
+                // Save the full decode data to server for admin/auditing
+                saveVinDecodeToServer(vin, decodeData, recallsData, safetyData);
+
+            } catch (err) {
+                resultsEl.innerHTML = '<div class="muted">Error fetching VIN data — try again later.</div>';
+                resultsEl.setAttribute('aria-busy', 'false');
+                console.error(err);
+            } finally {
+                if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
+                btn.disabled = false;
+                resultsEl.setAttribute('aria-busy', 'false');
+            }
+        }
+
+        function escapeHtml(s){
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        async function saveVinDecodeToServer(vin, decodeData, recallsData, safetyData) {
+            try {
+                await fetch('/api/vin-records', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        vin: vin,
+                        decodeData: decodeData,
+                        recallsData: recallsData,
+                        safetyData: safetyData || null,
+                        timestamp: Date.now()
+                    })
+                });
+            } catch (err) {
+                console.warn('Could not save VIN data to server:', err);
+            }
+        }
+
+        async function fetchAndRenderComps(vin) {
+            const zipInput = document.getElementById('zipInput');
+            const radiusInput = document.getElementById('radiusInput');
+            const zip = (zipInput?.value || '').trim();
+            const radiusRaw = (radiusInput?.value || '').trim();
+            const radius = parseInt(radiusRaw || '100', 10);
+            
+            // Validate ZIP format if provided
+            if (zip && !/^\d{5}$/.test(zip)) {
+                const sumEl = document.getElementById('compsSummary');
+                if (sumEl) sumEl.textContent = 'Invalid ZIP code format (must be 5 digits)';
+                if (zipInput) zipInput.style.borderColor = '#ef4444';
+                return;
+            }
+            if (zipInput) zipInput.style.borderColor = '#e6eefc';
+            
+            // Validate radius range
+            if (isNaN(radius) || radius < 10 || radius > 500) {
+                const sumEl = document.getElementById('compsSummary');
+                if (sumEl) sumEl.textContent = 'Radius must be between 10 and 500 miles';
+                if (radiusInput) radiusInput.style.borderColor = '#ef4444';
+                return;
+            }
+            if (radiusInput) radiusInput.style.borderColor = '#e6eefc';
+            
+            const qs = new URLSearchParams({ vin });
+            if (zip) qs.set('zip', zip);
+            if (!isNaN(radius)) qs.set('radius', String(radius));
+            const sumEl = document.getElementById('compsSummary');
+            const table = document.getElementById('compsTable');
+            const tbody = document.getElementById('compsTbody');
+            if (sumEl) sumEl.textContent = 'Loading comps...';
+            if (table) table.style.display = 'none';
+            if (tbody) tbody.innerHTML = '';
+            try {
+                const res = await fetch(`/api/vin/market-comps?${qs.toString()}`);
+                if (!res.ok) throw new Error('Request failed');
+                const data = await res.json();
+                const s = data.stats || {};
+                const parts = [];
+                if (s.count) parts.push(`${s.count} matches`);
+                if (s.min != null && s.max != null) parts.push(`$${s.min.toLocaleString()}–$${s.max.toLocaleString()}`);
+                if (s.median != null) parts.push(`median $${s.median.toLocaleString()}`);
+                if (s.avg_days_on_market != null) parts.push(`avg ${s.avg_days_on_market} DOM`);
+                if (sumEl) {
+                    if (parts.length) {
+                        sumEl.textContent = parts.join(' • ');
+                        sumEl.style.color = '#475569';
+                    } else {
+                        sumEl.textContent = 'No comps found in the specified area. Try increasing the search radius.';
+                        sumEl.style.color = '#64748b';
+                    }
+                }
+
+                const rows = (data.sample || []).slice(0, 8).map(item => {
+                    const price = item.price != null ? `$${Number(item.price).toLocaleString()}` : '—';
+                    const miles = item.miles != null ? Number(item.miles).toLocaleString() : '—';
+                    const dealer = item.dealer || '—';
+                    const loc = [item.city, item.state].filter(Boolean).join(', ') || '—';
+                    const dom = item.dom != null ? item.dom : '—';
+                    const link = item.vdp_url ? `<a href="${escapeHtml(item.vdp_url)}" target="_blank" rel="noopener">View</a>` : '—';
+                    return `<tr>
+                        <td>${price}</td>
+                        <td>${miles}</td>
+                        <td>${escapeHtml(dealer)}</td>
+                        <td>${escapeHtml(loc)}</td>
+                        <td>${escapeHtml(dom)}</td>
+                        <td>${link}</td>
+                    </tr>`;
+                }).join('');
+                if (tbody) tbody.innerHTML = rows;
+                if (table && rows) table.style.display = '';
+            } catch (e) {
+                if (sumEl) sumEl.textContent = 'Comps unavailable (server not configured or network error).';
+                console.warn('comps error', e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showCheckoutMeta();
+            
+            const vinInput = document.getElementById('vinInput');
+            
+            // Real-time VIN validation and formatting
+            vinInput.addEventListener('input', (e) => {
+                // Convert to uppercase and remove invalid characters (I, O, Q not allowed in VINs)
+                e.target.value = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
+            });
+            
+            // Validate on blur
+            vinInput.addEventListener('blur', (e) => {
+                const vin = e.target.value.trim();
+                if (vin && vin.length !== 17) {
+                    e.target.style.borderColor = '#ef4444';
+                    const statusEl = document.getElementById('statusMsg');
+                    if (statusEl) statusEl.textContent = 'VIN must be exactly 17 characters';
+                } else {
+                    e.target.style.borderColor = '#e6eefc';
+                    const statusEl = document.getElementById('statusMsg');
+                    if (statusEl) statusEl.textContent = '';
+                }
+            });
+            
+            // Clear error on focus
+            vinInput.addEventListener('focus', (e) => {
+                e.target.style.borderColor = '#0553F0';
+                const statusEl = document.getElementById('statusMsg');
+                if (statusEl) statusEl.textContent = '';
+            });
+            
+            document.getElementById('vinDecodeBtn').addEventListener('click', (e) => {
+                decodeVIN();
+            });
+
+            vinInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    decodeVIN();
+                }
+            });
+
+            document.getElementById('copyReportBtn').addEventListener('click', () => {
+                if (!lastDecode) return alert('Run a VIN lookup first.');
+                const text = buildReportText(lastDecode);
+                navigator.clipboard.writeText(text).then(() => {
+                    const s = document.getElementById('statusMsg');
+                    s.textContent = 'Report copied to clipboard';
+                    setTimeout(() => s.textContent = '', 3000);
+                }).catch(() => alert('Could not copy to clipboard.'));
+            });
+
+
+        });
+
+        function buildReportText(data){
+            const vin = document.getElementById('vinInput').value.trim();
+            const decode = data.decodeData || {};
+            const recalls = data.recallsData || {};
+            
+            // Helper to extract decode variables
+            const findVar = (name) => {
+                const item = decode.Results && decode.Results.find(r => r.Variable === name);
+                return item && item.Value ? item.Value : 'N/A';
+            };
+            
+            const make = findVar('Make');
+            const model = findVar('Model');
+            const year = findVar('Model Year') || findVar('ModelYear');
+            const bodyClass = findVar('Body Class');
+            const fuel = findVar('Fuel Type - Primary');
+            const trim = findVar('Trim');
+            const drivetrain = findVar('Drive Type');
+            const engineCyl = findVar('Engine Number of Cylinders');
+            const engineDisp = findVar('Displacement (L)');
+            const transmission = findVar('Transmission Style');
+            const doors = findVar('Doors');
+            
+            const recallsCount = Array.isArray(recalls.results) ? recalls.results.length : (recalls.count || 0);
+
+            let report = `TRUSTCAR.IO VIN DECODE REPORT\n`;
+            report += `=================================\n\n`;
+            report += `VIN: ${vin}\n`;
+            report += `Vehicle: ${year} ${make} ${model}\n\n`;
+            report += `VEHICLE DETAILS:\n`;
+            report += `  Trim: ${trim}\n`;
+            report += `  Body Style: ${bodyClass}\n`;
+            report += `  Doors: ${doors}\n`;
+            report += `  Drive Type: ${drivetrain}\n`;
+            report += `  Fuel Type: ${fuel}\n\n`;
+            report += `ENGINE & TRANSMISSION:\n`;
+            report += `  Engine: ${engineCyl} cylinders, ${engineDisp}L\n`;
+            report += `  Transmission: ${transmission}\n\n`;
+            report += `RECALLS: ${recallsCount === 0 ? 'None' : recallsCount + ' open recall(s)'}\n\n`;
+            report += `Report generated: ${new Date().toLocaleString()}\n`;
+            report += `\n---\nFor full inspection and market analysis, visit TrustCar.io`;
+            
+            return report;
+        }
+    </script>
+</body>
+</html>

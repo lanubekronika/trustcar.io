@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360° Damage Map — TrustCar.io</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
+        header { background: #0553F0; color: white; padding: 1.5rem 5%; }
+        .logo { font-size: 1.8rem; font-weight: 700; }
+        main { padding: 2rem 5%; max-width: 1400px; margin: 0 auto; }
+        h1 { font-size: 2.5rem; margin-bottom: .5rem; }
+        .subtitle { color: #64748b; margin-bottom: 2rem; }
+        .view-selector { display: flex; gap: .75rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .view-btn { padding: .75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: 2px solid #e6eefc; background: white; transition: .2s; }
+        .view-btn.active { background: #0553F0; color: white; border-color: #0553F0; }
+        .view-btn:hover:not(.active) { border-color: #0553F0; }
+        .viewer-container { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(2,6,23,0.06); margin-bottom: 2rem; }
+        .vehicle-canvas { position: relative; max-width: 900px; margin: 0 auto; aspect-ratio: 16/9; background: #f8fafc; border-radius: 12px; overflow: hidden; }
+        .vehicle-image { width: 100%; height: 100%; object-fit: contain; }
+        .damage-marker { position: absolute; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transform: translate(-50%, -50%); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: .7rem; transition: .2s; }
+        .damage-marker:hover { transform: translate(-50%, -50%) scale(1.2); z-index: 10; }
+        .damage-marker:focus { outline: 3px solid #0553F0; outline-offset: 2px; transform: translate(-50%, -50%) scale(1.2); }
+        .damage-marker.minor { background: #f59e0b; }
+        .damage-marker.moderate { background: #f97316; }
+        .damage-marker.severe { background: #dc2626; }
+        
+        /* Marker tooltip */
+        .damage-tooltip { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); color: white; padding: .5rem .75rem; border-radius: 6px; font-size: .75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
+        .damage-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: rgba(0,0,0,0.9); }
+        .damage-marker:hover .damage-tooltip { opacity: 1; }
+        .damage-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .damage-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(2,6,23,0.06); border-left: 4px solid #64748b; transition: all .3s; }
+        .damage-card.highlighted { box-shadow: 0 8px 24px rgba(5,83,240,0.2); transform: translateY(-4px); border-left-color: #0553F0; }
+        .damage-card.minor { border-left-color: #f59e0b; }
+        .damage-card.moderate { border-left-color: #f97316; }
+        .damage-card.severe { border-left-color: #dc2626; }
+        .damage-header { display: flex; align-items: start; gap: 1rem; margin-bottom: 1rem; }
+        .damage-thumbnail { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #f1f5f9; border: 2px solid #e6eefc; }
+        .damage-info { flex: 1; }
+        .damage-title { font-weight: 700; font-size: 1.1rem; margin-bottom: .25rem; }
+        .damage-location { color: #64748b; font-size: .9rem; margin-bottom: .5rem; }
+        .severity-badge { display: inline-block; padding: .25rem .75rem; border-radius: 999px; font-size: .75rem; font-weight: 700; text-transform: uppercase; }
+        .severity-badge.minor { background: #fef3c7; color: #92400e; }
+        .severity-badge.moderate { background: #fed7aa; color: #7c2d12; }
+        .severity-badge.severe { background: #fecaca; color: #7f1d1d; }
+        .damage-details { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e6eefc; }
+        .damage-detail-row { display: flex; justify-content: space-between; margin-bottom: .5rem; font-size: .9rem; }
+        .damage-detail-label { color: #64748b; }
+        .damage-detail-value { font-weight: 600; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .summary-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(2,6,23,0.06); text-align: center; }
+        .summary-value { font-size: 2.5rem; font-weight: 800; color: #0553F0; margin-bottom: .5rem; }
+        .summary-label { color: #64748b; font-size: .9rem; }
+        .cost-estimate { background: linear-gradient(135deg, #0553F0 0%, #0284c7 100%); color: white; padding: 2rem; border-radius: 16px; text-align: center; }
+        .cost-amount { font-size: 3rem; font-weight: 800; margin: 1rem 0; }
+        .cost-disclaimer { font-size: .85rem; opacity: .9; margin-top: 1rem; line-height: 1.6; }
+        
+        /* Chatbot integration button */
+        .ask-chatbot-btn { background: white; color: #0553F0; border: 2px solid #0553F0; padding: .5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all .2s; margin-top: .75rem; font-size: .85rem; }
+        .ask-chatbot-btn:hover { background: #0553F0; color: white; }
+        
+        /* Pan/zoom controls */
+        .canvas-controls { position: absolute; top: 1rem; right: 1rem; display: flex; gap: .5rem; z-index: 10; }
+        .canvas-control-btn { background: white; border: 2px solid #e6eefc; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 700; color: #64748b; transition: all .2s; }
+        .canvas-control-btn:hover { border-color: #0553F0; color: #0553F0; background: #f8fafc; }
+        
+        /* Loading skeleton */
+        .loading-skeleton { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TrustCar.io</div>
+    </header>
+
+    <main>
+        <h1>360° Damage Analysis</h1>
+        <p class="subtitle">AI-powered visual inspection with pinpoint damage mapping and repair estimates</p>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-value" id="totalDamages">0</div>
+                <div class="summary-label">Total Issues Found</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="severeCount">0</div>
+                <div class="summary-label">Severe Damage</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="moderateCount">0</div>
+                <div class="summary-label">Moderate Damage</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="minorCount">0</div>
+                <div class="summary-label">Minor Issues</div>
+            </div>
+        </div>
+
+        <div class="view-selector" role="tablist" aria-label="Vehicle view selector">
+            <button class="view-btn active" role="tab" aria-selected="true" aria-controls="vehicleCanvas" onclick="switchView('front')">Front View</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('rear')">Rear View</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('driver')">Driver Side</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('passenger')">Passenger Side</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('top')">Top View</button>
+        </div>
+
+        <div class="viewer-container">
+            <div class="canvas-controls">
+                <button class="canvas-control-btn" onclick="zoomIn()" title="Zoom In" aria-label="Zoom in">+</button>
+                <button class="canvas-control-btn" onclick="zoomOut()" title="Zoom Out" aria-label="Zoom out">−</button>
+                <button class="canvas-control-btn" onclick="resetZoom()" title="Reset View" aria-label="Reset zoom">⟲</button>
+            </div>
+            <div class="vehicle-canvas" id="vehicleCanvas" role="img" aria-label="Interactive vehicle damage map" tabindex="0">
+                <!-- SVG vehicle diagram and damage markers rendered here -->
+            </div>
+        </div>
+
+        <div class="cost-estimate">
+            <div style="font-size:1.2rem;margin-bottom:.5rem;">Approximate Reconditioning Cost Guide</div>
+            <div class="cost-amount" id="totalCost">$0</div>
+            <div class="cost-disclaimer">
+                <strong>Important:</strong> These are approximate cost guides based on average regional rates and AI-detected issues. Actual repair costs can vary significantly (often 30–50% or more) depending on geographic location, shop rates, parts quality (OEM vs. aftermarket), labor complexity, and vehicle-specific factors. TrustCar.io provides this information for general guidance only—we strongly recommend obtaining multiple formal quotes from qualified, certified mechanics before proceeding with any repairs. This estimate does not constitute a warranty or guarantee of actual repair costs.
+            </div>
+        </div>
+
+        <div style="margin-top:3rem;">
+            <h2 style="margin-bottom:1.5rem;">Detailed Damage Report</h2>
+            <div class="damage-list" id="damageList"></div>
+        </div>
+    </main>
+
+    <script>
+        // SECURITY: Use token-based access instead of raw inspection ID
+        const urlParams = new URLSearchParams(location.search);
+        const accessToken = urlParams.get('token'); // Secure token from server
+        const inspectionId = urlParams.get('id'); // For display only, validated server-side
+        
+        let damageData = [];
+        let currentView = 'front';
+        let zoomLevel = 1;
+        const MIN_ZOOM = 0.5;
+        const MAX_ZOOM = 3;
+        
+        // XSS Protection Utility
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Fetch with authentication and error handling
+        async function secureFetch(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                        ...options.headers
+                    },
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        throw new Error('Unauthorized access. This report link may have expired.');
+                    }
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+                
+                return response.json();
+            } catch (error) {
+                console.error('API fetch error:', error);
+                throw error;
+            }
+        }
+
+        // Demo data structure (in production, fetch from API)
+        const DEMO_DAMAGES = [
+            {
+                id: 1,
+                type: 'Dent',
+                location: 'Front Bumper - Driver Side',
+                severity: 'moderate',
+                view: 'front',
+                x: 25, y: 60,
+                confidence: 94,
+                size: '4 x 3 inches',
+                estimatedCost: 450,
+                photoUrl: null, // Will be populated from API
+                photoPath: '/uploads/placeholder.jpg',
+                description: 'Medium-depth dent with paint damage, likely from impact with stationary object'
+            },
+            {
+                id: 2,
+                type: 'Scratch',
+                location: 'Driver Door',
+                severity: 'minor',
+                view: 'driver',
+                x: 45, y: 50,
+                confidence: 89,
+                size: '8 inch linear',
+                estimatedCost: 200,
+                photoUrl: null,
+                photoPath: '/uploads/placeholder.jpg',
+                description: 'Surface-level scratch through clear coat, does not reach primer'
+            },
+            {
+                id: 3,
+                type: 'Crack',
+                location: 'Rear Bumper',
+                severity: 'severe',
+                view: 'rear',
+                x: 50, y: 55,
+                confidence: 97,
+                size: '6 x 2 inches',
+                estimatedCost: 850,
+                photoUrl: null,
+                photoPath: '/uploads/placeholder.jpg',
+                description: 'Structural crack extending through bumper cover, requires replacement'
+            },
+            {
+                id: 4,
+                type: 'Paint Chip',
+                location: 'Hood',
+                severity: 'minor',
+                view: 'front',
+                x: 50, y: 35,
+                confidence: 82,
+                size: '1 x 0.5 inches',
+                estimatedCost: 75,
+                photoUrl: null,
+                photoPath: '/uploads/placeholder.jpg',
+                description: 'Small paint chip exposing metal, recommend touch-up to prevent rust'
+            },
+            {
+                id: 5,
+                type: 'Dent',
+                location: 'Rear Quarter Panel',
+                severity: 'moderate',
+                view: 'passenger',
+                x: 70, y: 45,
+                confidence: 91,
+                size: '5 x 4 inches',
+                estimatedCost: 550,
+                photoUrl: null,
+                photoPath: '/uploads/placeholder.jpg',
+                description: 'Deep dent with creasing, PDR may not be sufficient - body filler needed'
+            }
+        ];
+
+        async function init() {
+            // Show loading state
+            showLoadingState();
+            
+            try {
+                // Production: Fetch real damage analysis from API
+                if (accessToken && inspectionId) {
+                    damageData = await secureFetch(`/api/inspections/${inspectionId}/damage-analysis`);
+                } else {
+                    // Fallback to demo data for development/testing
+                    console.warn('Using demo data - no access token provided');
+                    damageData = DEMO_DAMAGES;
+                }
+                
+                updateSummary();
+                switchView('front');
+                renderDamageList();
+            } catch (error) {
+                showErrorState(error.message);
+            }
+        }
+        
+        function showLoadingState() {
+            const canvas = document.getElementById('vehicleCanvas');
+            canvas.innerHTML = '<div class="loading-skeleton" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;color:#64748b;">⏳ Loading damage analysis...</div></div>';
+        }
+        
+        function showErrorState(message) {
+            const canvas = document.getElementById('vehicleCanvas');
+            canvas.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;color:#dc2626;"><div><div style="font-size:2rem;margin-bottom:1rem;">⚠️</div><div style="font-weight:600;margin-bottom:.5rem;">Unable to Load Damage Analysis</div><div style="color:#64748b;">${escapeHtml(message)}</div></div></div>`;
+        }
+
+        function updateSummary() {
+            const severe = damageData.filter(d => d.severity === 'severe').length;
+            const moderate = damageData.filter(d => d.severity === 'moderate').length;
+            const minor = damageData.filter(d => d.severity === 'minor').length;
+            const total = damageData.reduce((sum, d) => sum + d.estimatedCost, 0);
+
+            document.getElementById('totalDamages').textContent = damageData.length;
+            document.getElementById('severeCount').textContent = severe;
+            document.getElementById('moderateCount').textContent = moderate;
+            document.getElementById('minorCount').textContent = minor;
+            document.getElementById('totalCost').textContent = `$${total.toLocaleString()}`;
+        }
+
+        function switchView(view) {
+            currentView = view;
+            
+            // Update active button with ARIA attributes
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            
+            const activeBtn = event?.target || document.querySelector(`.view-btn[onclick*="${view}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.setAttribute('aria-selected', 'true');
+            }
+
+            // Generate SVG vehicle diagram for the selected view
+            const canvas = document.getElementById('vehicleCanvas');
+            canvas.innerHTML = generateVehicleSVG(view);
+            canvas.setAttribute('aria-label', `${view.charAt(0).toUpperCase() + view.slice(1)} view of vehicle with damage markers`);
+
+            // Render damage markers for this view
+            renderMarkers(view);
+            
+            // Reset zoom on view change
+            resetZoom();
+        }
+
+        function generateVehicleSVG(view) {
+            const svgs = {
+                'front': `<svg viewBox="0 0 600 450" style="width:100%;height:100%;">
+                    <!-- Main body -->
+                    <path d="M 140 200 L 120 240 L 110 280 L 110 300 L 490 300 L 490 280 L 480 240 L 460 200 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                    <!-- Hood curve -->
+                    <path d="M 140 200 Q 140 180 170 170 L 430 170 Q 460 180 460 200" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                    <!-- Windshield -->
+                    <path d="M 170 170 L 190 120 Q 200 100 220 95 L 380 95 Q 400 100 410 120 L 430 170 Z" fill="#94a3b8" stroke="#64748b" stroke-width="2" opacity="0.7"/>
+                    <!-- Roof -->
+                    <path d="M 220 95 L 210 75 Q 220 65 240 65 L 360 65 Q 380 65 390 75 L 380 95 Z" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                    <!-- Headlights with realistic shape -->
+                    <path d="M 135 235 Q 125 240 125 250 Q 125 260 135 265 Q 145 260 145 250 Q 145 240 135 235" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                    <path d="M 465 235 Q 455 240 455 250 Q 455 260 465 265 Q 475 260 475 250 Q 475 240 465 235" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                    <!-- Grille -->
+                    <rect x="240" y="270" width="120" height="25" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+                    <!-- License plate area -->
+                    <rect x="265" y="298" width="70" height="18" rx="2" fill="#f1f5f9" stroke="#64748b" stroke-width="1"/>
+                    <!-- Fog lights -->
+                    <circle cx="170" cy="288" r="8" fill="#fef3c7" stroke="#64748b" stroke-width="1"/>
+                    <circle cx="430" cy="288" r="8" fill="#fef3c7" stroke="#64748b" stroke-width="1"/>
+                    <!-- Wheels with realistic rims -->
+                    <circle cx="160" cy="330" r="40" fill="#1e293b" stroke="#475569" stroke-width="4"/>
+                    <circle cx="160" cy="330" r="25" fill="#64748b"/>
+                    <circle cx="160" cy="330" r="15" fill="#334155"/>
+                    <circle cx="440" cy="330" r="40" fill="#1e293b" stroke="#475569" stroke-width="4"/>
+                    <circle cx="440" cy="330" r="25" fill="#64748b"/>
+                    <circle cx="440" cy="330" r="15" fill="#334155"/>
+                    <!-- Wheel wells -->
+                    <path d="M 120 300 Q 120 280 160 280 Q 200 280 200 300" fill="none" stroke="#475569" stroke-width="2"/>
+                    <path d="M 400 300 Q 400 280 440 280 Q 480 280 480 300" fill="none" stroke="#475569" stroke-width="2"/>
+                    <!-- Bumper detail -->
+                    <path d="M 110 300 L 115 310 Q 300 320 485 310 L 490 300" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
+                    <text x="300" y="410" text-anchor="middle" fill="#64748b" font-size="18" font-weight="600">FRONT VIEW</text>
+                </svg>`,
+                'rear': `<svg viewBox="0 0 600 450" style="width:100%;height:100%;">
+                    <!-- Main body -->
+                    <path d="M 140 200 L 120 240 L 110 280 L 110 300 L 490 300 L 490 280 L 480 240 L 460 200 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                    <!-- Trunk lid -->
+                    <path d="M 140 200 Q 140 180 170 170 L 430 170 Q 460 180 460 200" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                    <!-- Rear window -->
+                    <path d="M 170 170 L 190 120 Q 200 100 220 95 L 380 95 Q 400 100 410 120 L 430 170 Z" fill="#94a3b8" stroke="#64748b" stroke-width="2" opacity="0.7"/>
+                    <!-- Roof -->
+                    <path d="M 220 95 L 210 75 Q 220 65 240 65 L 360 65 Q 380 65 390 75 L 380 95 Z" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                    <!-- Modern LED tail lights -->
+                    <path d="M 115 230 L 125 230 L 125 275 Q 125 280 120 285 L 115 285 Q 110 280 110 275 Z" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>
+                    <rect x="118" y="235" width="5" height="45" fill="#ef4444" opacity="0.8"/>
+                    <path d="M 485 230 L 475 230 L 475 275 Q 475 280 480 285 L 485 285 Q 490 280 490 275 Z" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>
+                    <rect x="477" y="235" width="5" height="45" fill="#ef4444" opacity="0.8"/>
+                    <!-- License plate -->
+                    <rect x="250" y="265" width="100" height="30" rx="4" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                    <text x="300" y="283" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="700">ABC 1234</text>
+                    <!-- Reverse lights -->
+                    <rect x="210" y="270" width="30" height="20" rx="3" fill="#fef3c7" stroke="#64748b" stroke-width="1"/>
+                    <rect x="360" y="270" width="30" height="20" rx="3" fill="#fef3c7" stroke="#64748b" stroke-width="1"/>
+                    <!-- Wheels with realistic rims -->
+                    <circle cx="160" cy="330" r="40" fill="#1e293b" stroke="#475569" stroke-width="4"/>
+                    <circle cx="160" cy="330" r="25" fill="#64748b"/>
+                    <circle cx="160" cy="330" r="15" fill="#334155"/>
+                    <circle cx="440" cy="330" r="40" fill="#1e293b" stroke="#475569" stroke-width="4"/>
+                    <circle cx="440" cy="330" r="25" fill="#64748b"/>
+                    <circle cx="440" cy="330" r="15" fill="#334155"/>
+                    <!-- Wheel wells -->
+                    <path d="M 120 300 Q 120 280 160 280 Q 200 280 200 300" fill="none" stroke="#475569" stroke-width="2"/>
+                    <path d="M 400 300 Q 400 280 440 280 Q 480 280 480 300" fill="none" stroke="#475569" stroke-width="2"/>
+                    <!-- Bumper -->
+                    <path d="M 110 300 L 115 310 Q 300 320 485 310 L 490 300" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
+                    <text x="300" y="410" text-anchor="middle" fill="#64748b" font-size="18" font-weight="600">REAR VIEW</text>
+                </svg>`,
+                'driver': `<svg viewBox="0 0 600 350" style="width:100%;height:100%;">
+                    <!-- Body -->
+                    <path d="M 100 180 L 140 160 L 180 140 L 250 135 L 350 135 L 430 140 L 480 160 L 520 180 L 520 230 L 100 230 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                    <!-- Roof -->
+                    <path d="M 180 140 L 200 100 L 400 100 L 420 140" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                    <!-- Windshield -->
+                    <path d="M 200 100 L 220 140 L 380 140 L 400 100 Z" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
+                    <!-- Side windows -->
+                    <rect x="230" y="142" width="60" height="35" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
+                    <rect x="300" y="142" width="70" height="35" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
+                    <!-- Door lines -->
+                    <line x1="290" y1="140" x2="290" y2="230" stroke="#64748b" stroke-width="2"/>
+                    <line x1="370" y1="140" x2="370" y2="230" stroke="#64748b" stroke-width="2"/>
+                    <!-- Door handles -->
+                    <rect x="260" y="185" width="20" height="6" rx="3" fill="#475569"/>
+                    <rect x="330" y="185" width="20" height="6" rx="3" fill="#475569"/>
+                    <!-- Side mirrors -->
+                    <ellipse cx="210" cy="155" rx="8" ry="12" fill="#64748b"/>
+                    <ellipse cx="420" cy="155" rx="8" ry="12" fill="#64748b"/>
+                    <!-- Wheels -->
+                    <circle cx="180" cy="240" r="35" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <circle cx="180" cy="240" r="18" fill="#475569"/>
+                    <circle cx="450" cy="240" r="35" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <circle cx="450" cy="240" r="18" fill="#475569"/>
+                    <!-- Wheel arches -->
+                    <path d="M 145 230 Q 145 200 180 200 Q 215 200 215 230" fill="none" stroke="#64748b" stroke-width="2"/>
+                    <path d="M 415 230 Q 415 200 450 200 Q 485 200 485 230" fill="none" stroke="#64748b" stroke-width="2"/>
+                    <text x="310" y="320" text-anchor="middle" fill="#64748b" font-size="16" font-weight="600">DRIVER SIDE</text>
+                </svg>`,
+                'passenger': `<svg viewBox="0 0 600 350" style="width:100%;height:100%;">
+                    <!-- Body (mirrored) -->
+                    <path d="M 520 180 L 480 160 L 440 140 L 370 135 L 270 135 L 190 140 L 140 160 L 100 180 L 100 230 L 520 230 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                    <!-- Roof -->
+                    <path d="M 440 140 L 420 100 L 220 100 L 200 140" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                    <!-- Windshield -->
+                    <path d="M 420 100 L 400 140 L 240 140 L 220 100 Z" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
+                    <!-- Side windows -->
+                    <rect x="330" y="142" width="60" height="35" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
+                    <rect x="250" y="142" width="70" height="35" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
+                    <!-- Door lines -->
+                    <line x1="330" y1="140" x2="330" y2="230" stroke="#64748b" stroke-width="2"/>
+                    <line x1="250" y1="140" x2="250" y2="230" stroke="#64748b" stroke-width="2"/>
+                    <!-- Door handles -->
+                    <rect x="340" y="185" width="20" height="6" rx="3" fill="#475569"/>
+                    <rect x="270" y="185" width="20" height="6" rx="3" fill="#475569"/>
+                    <!-- Side mirrors -->
+                    <ellipse cx="410" cy="155" rx="8" ry="12" fill="#64748b"/>
+                    <ellipse cx="200" cy="155" rx="8" ry="12" fill="#64748b"/>
+                    <!-- Wheels -->
+                    <circle cx="440" cy="240" r="35" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <circle cx="440" cy="240" r="18" fill="#475569"/>
+                    <circle cx="170" cy="240" r="35" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <circle cx="170" cy="240" r="18" fill="#475569"/>
+                    <!-- Wheel arches -->
+                    <path d="M 475 230 Q 475 200 440 200 Q 405 200 405 230" fill="none" stroke="#64748b" stroke-width="2"/>
+                    <path d="M 205 230 Q 205 200 170 200 Q 135 200 135 230" fill="none" stroke="#64748b" stroke-width="2"/>
+                    <text x="310" y="320" text-anchor="middle" fill="#64748b" font-size="16" font-weight="600">PASSENGER SIDE</text>
+                </svg>`,
+                'top': `<svg viewBox="0 0 400 500" style="width:100%;height:100%;">
+                    <!-- Hood -->
+                    <path d="M 150 100 L 120 150 L 120 200 L 280 200 L 280 150 L 250 100 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                    <!-- Windshield -->
+                    <rect x="120" y="200" width="160" height="50" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
+                    <!-- Roof -->
+                    <rect x="120" y="250" width="160" height="100" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+                    <!-- Rear window -->
+                    <rect x="120" y="350" width="160" height="40" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
+                    <!-- Trunk -->
+                    <path d="M 120 390 L 120 420 L 280 420 L 280 390 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                    <!-- Side mirrors -->
+                    <rect x="95" y="240" width="20" height="15" rx="3" fill="#64748b"/>
+                    <rect x="285" y="240" width="20" height="15" rx="3" fill="#64748b"/>
+                    <!-- Door lines -->
+                    <line x1="120" y1="290" x2="280" y2="290" stroke="#64748b" stroke-width="2"/>
+                    <line x1="200" y1="250" x2="200" y2="350" stroke="#64748b" stroke-width="2"/>
+                    <!-- Wheels -->
+                    <ellipse cx="110" cy="150" rx="20" ry="30" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <ellipse cx="290" cy="150" rx="20" ry="30" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <ellipse cx="110" cy="370" rx="20" ry="30" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <ellipse cx="290" cy="370" rx="20" ry="30" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <text x="200" y="470" text-anchor="middle" fill="#64748b" font-size="16" font-weight="600">TOP VIEW</text>
+                </svg>`
+            };
+            return svgs[view] || svgs['front'];
+        }
+
+        function renderMarkers(view) {
+            const canvas = document.getElementById('vehicleCanvas');
+            // Remove existing markers
+            canvas.querySelectorAll('.damage-marker').forEach(m => m.remove());
+
+            // Add markers for current view
+            damageData
+                .filter(d => d.view === view)
+                .forEach(damage => {
+                    const marker = document.createElement('div');
+                    marker.className = `damage-marker ${damage.severity}`;
+                    marker.style.left = `${damage.x}%`;
+                    marker.style.top = `${damage.y}%`;
+                    marker.textContent = damage.id;
+                    marker.setAttribute('role', 'button');
+                    marker.setAttribute('tabindex', '0');
+                    marker.setAttribute('aria-label', `Damage #${damage.id}: ${damage.type} - ${damage.severity} severity - ${damage.confidence}% confidence`);
+                    
+                    // Add tooltip
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'damage-tooltip';
+                    tooltip.innerHTML = `<strong>${damage.type}</strong><br>${damage.severity} • ${damage.confidence}% confidence`;
+                    marker.appendChild(tooltip);
+                    
+                    // Click handler
+                    marker.onclick = () => scrollToDamage(damage.id);
+                    
+                    // Keyboard accessibility
+                    marker.onkeydown = (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            scrollToDamage(damage.id);
+                        }
+                    };
+                    
+                    // Highlight corresponding card on hover
+                    marker.onmouseenter = () => highlightCard(damage.id);
+                    marker.onmouseleave = () => unhighlightCard(damage.id);
+                    
+                    canvas.appendChild(marker);
+                });
+        }
+
+        function renderDamageList() {
+            const container = document.getElementById('damageList');
+            container.innerHTML = damageData.map(damage => {
+                // Determine thumbnail: use real photo if available, otherwise placeholder
+                const thumbnailContent = damage.photoUrl 
+                    ? `<img src="${escapeHtml(damage.photoUrl)}" alt="${escapeHtml(damage.type)} photo" class="damage-thumbnail" loading="lazy">`
+                    : `<div class="damage-thumbnail" style="display:flex;align-items:center;justify-content:center;font-size:2rem;">🚗</div>`;
+                
+                return `
+                <div class="damage-card ${damage.severity}" id="damage-${damage.id}" data-damage-id="${damage.id}">
+                    <div class="damage-header">
+                        ${thumbnailContent}
+                        <div class="damage-info">
+                            <div class="damage-title">#${damage.id} ${escapeHtml(damage.type)}</div>
+                            <div class="damage-location">📍 ${escapeHtml(damage.location)}</div>
+                            <span class="severity-badge ${damage.severity}">${damage.severity}</span>
+                        </div>
+                    </div>
+                    <p style="color:#475569;font-size:.9rem;margin:.5rem 0;">${escapeHtml(damage.description)}</p>
+                    <div class="damage-details">
+                        <div class="damage-detail-row">
+                            <span class="damage-detail-label">AI Confidence</span>
+                            <span class="damage-detail-value">${damage.confidence}%</span>
+                        </div>
+                        <div class="damage-detail-row">
+                            <span class="damage-detail-label">Damage Size</span>
+                            <span class="damage-detail-value">${escapeHtml(damage.size)}</span>
+                        </div>
+                        <div class="damage-detail-row">
+                            <span class="damage-detail-label">Approximate Repair Cost</span>
+                            <span class="damage-detail-value" style="color:#0553F0;">$${damage.estimatedCost.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <button class="ask-chatbot-btn" onclick="askAboutDamage(${damage.id})" aria-label="Ask chatbot about this damage">
+                        🤖 Ask AI About This Issue
+                    </button>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function scrollToDamage(id) {
+            const card = document.getElementById(`damage-${id}`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Flash highlight effect
+                card.classList.add('highlighted');
+                setTimeout(() => card.classList.remove('highlighted'), 2000);
+            }
+        }
+        
+        function highlightCard(id) {
+            const card = document.getElementById(`damage-${id}`);
+            if (card) card.classList.add('highlighted');
+        }
+        
+        function unhighlightCard(id) {
+            const card = document.getElementById(`damage-${id}`);
+            if (card) card.classList.remove('highlighted');
+        }
+        
+        // Pan/zoom functionality
+        function zoomIn() {
+            if (zoomLevel < MAX_ZOOM) {
+                zoomLevel += 0.25;
+                applyZoom();
+            }
+        }
+        
+        function zoomOut() {
+            if (zoomLevel > MIN_ZOOM) {
+                zoomLevel -= 0.25;
+                applyZoom();
+            }
+        }
+        
+        function resetZoom() {
+            zoomLevel = 1;
+            applyZoom();
+        }
+        
+        function applyZoom() {
+            const canvas = document.getElementById('vehicleCanvas');
+            const svg = canvas.querySelector('svg');
+            if (svg) {
+                svg.style.transform = `scale(${zoomLevel})`;
+                svg.style.transition = 'transform 0.3s ease';
+            }
+        }
+        
+        // Chatbot integration
+        function askAboutDamage(damageId) {
+            const damage = damageData.find(d => d.id === damageId);
+            if (!damage) return;
+            
+            // Open chatbot with pre-filled question
+            const question = `Can you explain the ${damage.type} damage on the ${damage.location}? What are my repair options?`;
+            
+            // Trigger chatbot open (assumes chatbot widget is loaded)
+            const chatBubble = document.getElementById('trustcar-chat-bubble');
+            const chatInput = document.getElementById('trustcar-chat-input');
+            
+            if (chatBubble && chatInput) {
+                chatBubble.click(); // Open chat panel
+                setTimeout(() => {
+                    chatInput.value = question;
+                    chatInput.focus();
+                }, 300);
+            } else {
+                // Fallback if chatbot not loaded
+                alert('Chatbot feature is loading. Please try again in a moment.');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+
+        // Load chatbot widget with access token
+        fetch('/public/chatbot-widget.html')
+            .then(res => {
+                if (!res.ok) throw new Error('Chatbot not available');
+                return res.text();
+            })
+            .then(html => {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // Extract and append style
+                const styles = tempDiv.querySelectorAll('style');
+                styles.forEach(style => document.head.appendChild(style));
+                
+                // Extract and append HTML content
+                const content = tempDiv.querySelector('#trustcar-chatbot-container');
+                if (content) {
+                    // Pass access token to chatbot
+                    content.setAttribute('data-chat-token', accessToken);
+                    document.body.appendChild(content);
+                }
+                
+                // Extract and execute scripts
+                const scripts = tempDiv.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = oldScript.textContent;
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(err => console.warn('Chatbot widget unavailable:', err));
+    </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Queue — TrustCar Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
+        main { padding: 1.5rem 3%; max-width: 1600px; margin: 0 auto; }
+        h1 { margin: 0 0 1rem 0; font-size: 2rem; font-weight: 800; }
+        .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+        .column { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 12px; padding: 1rem; box-shadow: 0 4px 12px rgba(2,6,23,0.08); border: 2px solid #e6eefc; }
+        .column-header { font-weight: 800; font-size: 1.1rem; margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 3px solid; }
+        .column-pending .column-header { border-color: #94a3b8; color: #64748b; }
+        .column-in-review .column-header { border-color: #3b82f6; color: #3b82f6; }
+        .column-flagged .column-header { border-color: #ef4444; color: #ef4444; }
+        .column-completed .column-header { border-color: #10b981; color: #10b981; }
+        .card-list { display: flex; flex-direction: column; gap: .75rem; min-height: 300px; }
+        .inspection-card { background: #f8fafc; border: 2px solid #e6eefc; border-radius: 10px; padding: 1rem; cursor: pointer; transition: all .2s; }
+        .inspection-card:hover { border-color: #0553F0; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(5,83,240,0.15); }
+        .inspection-card.flagged { border-color: #fecaca; background: linear-gradient(135deg, #fef2f2 0%, #fee 100%); }
+        .card-vin { font-weight: 700; font-size: 1.05rem; margin-bottom: .25rem; }
+        .card-meta { font-size: .85rem; color: #64748b; margin-bottom: .5rem; }
+        .card-thumbnails { display: flex; gap: .5rem; margin-bottom: .75rem; }
+        .card-thumb { width: 60px; height: 60px; border-radius: 6px; object-fit: cover; }
+        .card-actions { display: flex; gap: .5rem; }
+        .btn { padding: .5rem 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; font-size: .85rem; transition: all .2s; }
+        .btn-primary { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; box-shadow: 0 2px 6px rgba(5,83,240,0.2); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; box-shadow: 0 2px 6px rgba(239,68,68,0.2); }
+        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 2px 6px rgba(16,185,129,0.2); }
+        .btn:hover { transform: translateY(-1px); opacity: .95; }
+        .fraud-badge { display: inline-block; padding: .25rem .5rem; border-radius: 4px; font-size: .75rem; font-weight: 700; margin-left: .5rem; }
+        .fraud-low { background: #d1fae5; color: #065f46; }
+        .fraud-medium { background: #fef3c7; color: #92400e; }
+        .fraud-high { background: #fecaca; color: #991b1b; }
+        .empty-state { text-align: center; padding: 2rem; color: #94a3b8; font-size: .9rem; }
+        @media (max-width: 1200px) { .board { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 720px) { .board { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>🚦 Review Queue</h1>
+        
+        <div class="board">
+            <div class="column column-pending">
+                <div class="column-header">📋 Pending (<span id="countPending">0</span>)</div>
+                <div class="card-list" id="listPending"></div>
+            </div>
+            
+            <div class="column column-in-review">
+                <div class="column-header">👁 In Review (<span id="countInReview">0</span>)</div>
+                <div class="card-list" id="listInReview"></div>
+            </div>
+            
+            <div class="column column-flagged">
+                <div class="column-header">🚨 Flagged (<span id="countFlagged">0</span>)</div>
+                <div class="card-list" id="listFlagged"></div>
+            </div>
+            
+            <div class="column column-completed">
+                <div class="column-header">✅ Completed (<span id="countCompleted">0</span>)</div>
+                <div class="card-list" id="listCompleted"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        console.log('🔵 QUEUE SCRIPT STARTED');
+        
+        // Load admin navigation
+        fetch('/admin/admin-nav.html')
+            .then(r => r.text())
+            .then(html => {
+                console.log('✅ Nav loaded');
+                document.body.insertAdjacentHTML('afterbegin', html);
+            })
+            .catch(err => console.warn('Nav load failed:', err));
+
+        let inspections = [];
+        let uploads = [];
+        let authHeader = 'Basic ' + btoa('admin:admin'); // Default auth
+        
+        console.log('🔵 Auth header set:', authHeader);
+
+        async function loadQueue() {
+            try {
+                console.log('=== LOADING QUEUE ===');
+                const auth = authHeader;
+
+                console.log('Fetching data with auth...');
+                const [inspRes, uploadsRes] = await Promise.all([
+                    fetch('/api/inspections', { headers: { Authorization: auth } }),
+                    fetch('/api/inspections/all-uploads', { headers: { Authorization: auth } })
+                ]);
+
+                console.log('Response statuses:', inspRes.status, uploadsRes.status);
+
+                if (!inspRes.ok || !uploadsRes.ok) {
+                    if (inspRes.status === 401 || uploadsRes.status === 401) {
+                        const username = prompt('Admin username:');
+                        const password = prompt('Admin password:');
+                        if (username && password) {
+                            authHeader = 'Basic ' + btoa(username + ':' + password);
+                            return loadQueue(); // Retry with new credentials
+                        }
+                    }
+                    throw new Error(`Auth failed: ${inspRes.status}, ${uploadsRes.status}`);
+                }
+
+                inspections = await inspRes.json();
+                uploads = await uploadsRes.json();
+
+                console.log('SUCCESS: Loaded', inspections.length, 'inspections and', uploads.length, 'uploads');
+                console.log('First inspection:', inspections[0]);
+
+                renderQueue();
+            } catch (err) {
+                console.error('ERROR loading queue:', err);
+                document.getElementById('listPending').innerHTML = `
+                    <div style="color:#ef4444;padding:1rem;background:#fee;border-radius:8px;">
+                        <strong>Error loading queue:</strong><br>${err.message}<br>
+                        <button onclick="location.reload()" style="margin-top:.5rem;padding:.5rem 1rem;background:#0553F0;color:white;border:none;border-radius:6px;cursor:pointer;">
+                            Reload Page
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderQueue() {
+            console.log('=== RENDERING QUEUE ===');
+            console.log('Total inspections:', inspections.length);
+            
+            const columns = {
+                pending: [],
+                'in-review': [],
+                flagged: [],
+                completed: []
+            };
+
+            inspections.forEach((insp, idx) => {
+                // Determine which column this inspection belongs to
+                let columnKey;
+                
+                console.log(`[${idx}] ID: ${insp.id?.slice(0,8)}, Status: ${insp.status}, OrderID: ${insp.orderId}`);
+                
+                // Check status first, then fraudScore
+                if (insp.status === 'flagged' || insp.fraudScore?.autoFlag) {
+                    columnKey = 'flagged';
+                } else if (insp.status === 'completed') {
+                    columnKey = 'completed';
+                } else if (insp.status === 'in-progress' || insp.status === 'in-review') {
+                    columnKey = 'in-review';
+                } else {
+                    // Default: pending, submitted, or any other status goes to pending
+                    columnKey = 'pending';
+                }
+                
+                console.log(`  → Column: ${columnKey}`);
+                
+                if (columns[columnKey]) {
+                    columns[columnKey].push(insp);
+                }
+            });
+
+            console.log('Column counts:', {
+                pending: columns.pending.length,
+                inReview: columns['in-review'].length,
+                flagged: columns.flagged.length,
+                completed: columns.completed.length
+            });
+
+            renderColumn('Pending', columns.pending);
+            renderColumn('InReview', columns['in-review']);
+            renderColumn('Flagged', columns.flagged);
+            renderColumn('Completed', columns.completed);
+            
+            console.log('=== RENDER COMPLETE ===');
+        }
+
+        function renderColumn(columnId, items) {
+            console.log(`Rendering column ${columnId} with ${items.length} items`);
+            
+            const list = document.getElementById(`list${columnId}`);
+            const count = document.getElementById(`count${columnId}`);
+            
+            if (!list) {
+                console.error(`Column element not found: list${columnId}`);
+                return;
+            }
+            
+            count.textContent = items.length;
+            list.innerHTML = items.length === 0 
+                ? '<div class="empty-state">No inspections</div>' 
+                : '';
+
+            items.forEach((insp, idx) => {
+                console.log(`  Rendering card ${idx} for ${insp.orderId || insp.id?.slice(0,8)}`);
+                const inspUploads = uploads.filter(u => u.inspectionId === insp.id);
+                const thumbnails = inspUploads.slice(0, 4).map(u => `<img src="${u.path}" class="card-thumb" />`).join('');
+                
+                const fraudBadge = insp.fraudScore 
+                    ? `<span class="fraud-badge fraud-${insp.fraudScore.level}">Risk: ${insp.fraudScore.score}</span>` 
+                    : '';
+
+                const card = document.createElement('div');
+                card.className = `inspection-card ${insp.fraudScore?.autoFlag ? 'flagged' : ''}`;
+                
+                // Build action buttons based on current status
+                let actionButtons = `<button class="btn btn-primary" onclick="openInspection('${insp.id}')">View Details</button>`;
+                
+                if (columnId === 'Pending') {
+                    actionButtons += `<button class="btn btn-success" onclick="approve('${insp.id}')">✓ Complete</button>`;
+                    actionButtons += `<button class="btn btn-primary" style="background:#3b82f6;" onclick="startReview('${insp.id}')">Start Review</button>`;
+                    actionButtons += `<button class="btn btn-danger" onclick="flag('${insp.id}')">⚠ Flag</button>`;
+                }
+                
+                if (columnId === 'InReview' || columnId === 'Flagged') {
+                    actionButtons += `<button class="btn btn-primary" style="background:#10b981;" onclick="generateAIReport('${insp.id}')">🤖 AI Report</button>`;
+                    actionButtons += `<button class="btn btn-success" onclick="approve('${insp.id}')">✓ Complete</button>`;
+                    if (columnId !== 'Flagged') {
+                        actionButtons += `<button class="btn btn-danger" onclick="flag('${insp.id}')">⚠ Flag</button>`;
+                    }
+                }
+                
+                if (columnId === 'Completed') {
+                    actionButtons += `<button class="btn btn-primary" style="background:#3b82f6;" onclick="startReview('${insp.id}')">↩️ Move to Review</button>`;
+                }
+                
+                // Display VIN or Order ID
+                const displayTitle = insp.vin || insp.orderId || `Inspection ${insp.id.slice(0, 8)}`;
+                const hasReport = insp.aiReport?.markdown ? ' 📄' : '';
+                
+                card.innerHTML = `
+                    <div class="card-vin">${displayTitle}${hasReport} ${fraudBadge}</div>
+                    <div class="card-meta">
+                        Order: ${insp.orderId || 'N/A'} • ID: ${insp.id.slice(0, 8)} • ${inspUploads.length} photos • ${new Date(insp.createdAt).toLocaleDateString()}
+                    </div>
+                    <div class="card-thumbnails">${thumbnails || '<div style="color:#94a3b8;font-size:.85rem;padding:.5rem;">No photos yet</div>'}</div>
+                    <div class="card-actions">
+                        ${actionButtons}
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function openInspection(id) {
+            window.open(`/admin/view.html?id=${id}`, '_blank');
+        }
+
+        async function startReview(id) {
+            try {
+                const insp = inspections.find(i => i.id === id);
+                const displayName = insp ? (insp.orderId || insp.vin || id.slice(0, 8)) : id.slice(0, 8);
+                console.log(`Moving ${displayName} to In Review`);
+                
+                const res = await fetch(`/api/inspections/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', Authorization: authHeader },
+                    body: JSON.stringify({ status: 'in-review' })
+                });
+                if (!res.ok) throw new Error('Failed to start review');
+                alert(`✓ ${displayName} moved to In Review`);
+                loadQueue();
+            } catch (err) {
+                console.error('Start review error:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function generateAIReport(id) {
+            try {
+                if (confirm('Generate AI report for this inspection? This will use OpenAI credits.')) {
+                    const res = await fetch(`/api/inspections/${id}/generate-ai-report`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Authorization: authHeader }
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'Failed');
+                    
+                    // Show report in new window with PDF download option
+                    const reportWindow = window.open('', '_blank');
+                    const reportHTML = '<html><head><title>AI Report - ' + id.slice(0,8) + '</title>' +
+                        '<style>' +
+                        'body{font-family:system-ui;max-width:900px;margin:2rem auto;padding:2rem;line-height:1.6;background:#f5f8fa;}' +
+                        '.toolbar{background:#fff;padding:1rem;border-radius:8px;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;gap:1rem;align-items:center;}' +
+                        '.btn{padding:0.75rem 1.5rem;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:14px;transition:.2s;}' +
+                        '.btn-primary{background:#0553F0;color:#fff;}' +
+                        '.btn-primary:hover{background:#0441c7;}' +
+                        '.btn-success{background:#10b981;color:#fff;}' +
+                        '.btn-success:hover{background:#059669;}' +
+                        '.report-container{background:#fff;padding:2rem;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08);}' +
+                        'h1,h2,h3{color:#0553F0;}' +
+                        'h2{border-bottom:2px solid #e6eefc;padding-bottom:.5rem;margin-top:2rem;}' +
+                        'pre{background:#f8fafc;padding:1rem;border-radius:8px;overflow:auto;border-left:3px solid #0553F0;}' +
+                        'code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:90%;}' +
+                        'ul{line-height:1.8;}' +
+                        'strong{color:#0b1724;}' +
+                        '</style>' +
+                        '<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"><\/script>' +
+                        '</head><body>' +
+                        '<div class="toolbar">' +
+                        '<h3 style="margin:0;flex:1;color:#0b1724;">📄 Inspection Report</h3>' +
+                        '<button class="btn btn-success" onclick="downloadPDF()">📥 Download PDF</button>' +
+                        '<button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>' +
+                        '</div>' +
+                        '<div class="report-container" id="report"></div>' +
+                        '<script>' +
+                        'const markdown = ' + JSON.stringify(data.report) + ';' +
+                        'const inspectionId = "' + id + '";' +
+                        'document.getElementById("report").innerHTML = marked.parse(markdown);' +
+                        'function downloadPDF() {' +
+                        'window.open("/api/inspections/" + inspectionId + "/generate-pdf", "_blank");' +
+                        '}' +
+                        '<\/script>' +
+                        '</body></html>';
+                    reportWindow.document.write(reportHTML);
+                    alert('AI report generated! Check the new window. You can download as PDF.');
+                    loadQueue(); // Refresh to show updated status
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function approve(id) {
+            try {
+                const insp = inspections.find(i => i.id === id);
+                const displayName = insp ? (insp.orderId || insp.vin || id.slice(0, 8)) : id.slice(0, 8);
+                console.log(`Completing inspection ${displayName}`);
+                
+                const res = await fetch(`/api/inspections/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', Authorization: authHeader },
+                    body: JSON.stringify({ status: 'completed' })
+                });
+                if (!res.ok) throw new Error('Failed to approve');
+                alert(`✓ ${displayName} completed and available to buyer`);
+                loadQueue();
+            } catch (err) {
+                console.error('Approve error:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+
+        async function flag(id) {
+            // Find the inspection to show which one we're flagging
+            const insp = inspections.find(i => i.id === id);
+            const displayName = insp ? (insp.orderId || insp.vin || id.slice(0, 8)) : id.slice(0, 8);
+            
+            const reason = prompt(`Flag inspection ${displayName}?\n\nEnter reason:`);
+            if (!reason) return;
+            
+            try {
+                console.log(`Flagging inspection ${id} (${displayName})`);
+                const res = await fetch(`/api/inspections/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', Authorization: authHeader },
+                    body: JSON.stringify({ status: 'flagged', flagReason: reason })
+                });
+                if (!res.ok) throw new Error('Failed to flag');
+                alert(`✓ Inspection ${displayName} flagged`);
+                loadQueue();
+            } catch (err) {
+                console.error('Flag error:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+
+        console.log('🔵 About to call loadQueue()...');
+        loadQueue();
+        console.log('🔵 loadQueue() called');
+    </script>
+</body>
+</html>

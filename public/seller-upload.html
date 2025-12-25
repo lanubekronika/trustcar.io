@@ -1,0 +1,1172 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://docs.opencv.org; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' https://vpic.nhtsa.dot.gov https://api.nhtsa.gov; media-src 'self' blob:; frame-src 'none';" />
+  <title>Seller Upload — TrustCar</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Nunito', system-ui, Arial, sans-serif; background: #f5f8fa; color: #0b1724; margin: 0; padding: 0; }
+    header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: #fff; padding: 1.5rem 5%; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+    header strong { font-size: 1.5rem; font-weight: 800; }
+    main { padding: 2rem 5%; max-width: 1200px; margin: 0 auto; }
+    .card { background: #fff; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(2,6,23,0.08); }
+    .card h2 { margin: 0 0 .5rem 0; font-size: 1.8rem; color: #0b1724; }
+    .card > p { margin: .5rem 0 1.5rem 0; }
+    
+    /* VIN Block */
+    #vinBlock { margin: 1rem 0 1.5rem; padding: 1.25rem; border: 2px solid #e6eefc; border-radius: 12px; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); }
+    #vinBlock label { font-weight: 700; font-size: 1rem; color: #0553F0; display: block; margin-bottom: .5rem; }
+    #vinBlock input { flex: 1; padding: .75rem 1rem; border: 2px solid #e6eefc; border-radius: 8px; font-size: 1rem; font-family: 'Courier New', monospace; transition: border-color .2s; }
+    #vinBlock input:focus { outline: none; border-color: #0553F0; }
+    #sellerVinResult { margin-top: .75rem; padding: .75rem; background: #f8fafc; border-radius: 8px; font-size: .9rem; }
+    
+    /* Camera Area */
+    .camera-wrapper { width: 100%; max-width: 100%; margin: 1.5rem 0; aspect-ratio: 1/1; background: #000; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+    video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    canvas { display: none; }
+    .guide { position: absolute; inset: 10%; border: 3px dashed rgba(255,255,255,0.9); border-radius: 12px; pointer-events: none; display: flex; align-items: flex-start; justify-content: center; }
+    .guide-label { background: rgba(5,83,240,0.85); color: #fff; padding: .5rem 1rem; border-radius: 8px; margin: 12px; font-size: 1rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    
+    /* Controls */
+    .controls { display: flex; gap: .75rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; }
+    button { padding: .75rem 1.25rem; border-radius: 10px; border: none; background: #0553F0; color: #fff; font-weight: 700; font-size: .95rem; cursor: pointer; transition: all .2s; white-space: nowrap; }
+    button:hover:not(:disabled) { background: #0441c7; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(5,83,240,0.3); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-ghost { background: #fff; color: #0b1724; border: 2px solid #e6eefc; }
+    .btn-ghost:hover:not(:disabled) { background: #f8fafc; border-color: #0553F0; color: #0553F0; }
+    .btn-success { background: #10b981; }
+    .btn-success:hover:not(:disabled) { background: #059669; }
+    select { padding: .75rem 1rem; border-radius: 8px; border: 2px solid #e6eefc; font-family: inherit; min-width: 200px; font-size: .95rem; cursor: pointer; transition: border-color .2s; }
+    select:focus { outline: none; border-color: #0553F0; }
+    #status { margin-left: auto; padding: .5rem 1rem; background: #f8fafc; border-radius: 8px; font-size: .9rem; white-space: nowrap; }
+    
+    /* Thumbnails */
+    .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .thumb { aspect-ratio: 1/1; background: #f8fafc; border: 2px solid #e6eefc; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: .2s; cursor: pointer; }
+    .thumb:hover { transform: translateY(-4px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); border-color: #0553F0; }
+    .thumb img { width: 100%; height: 85%; object-fit: cover; }
+    .thumb div { height: 15%; font-size: .75rem; padding: .25rem; text-align: center; background: #0553F0; color: white; font-weight: 600; display: flex; align-items: center; justify-content: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    /* Tread Analysis */
+    #treadAnalysis { margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border: 2px solid #e6eefc; border-radius: 12px; }
+    #treadAnalysis strong { font-size: 1.2rem; color: #0553F0; display: block; margin-bottom: .75rem; }
+    #analysisResult { margin-top: .75rem; padding: 1rem; background: #fff; border-radius: 8px; border-left: 4px solid #0553F0; }
+    #treadForm { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 1rem; }
+    #treadForm > div label { font-weight: 600; font-size: .9rem; display: block; margin-bottom: .35rem; color: #0b1724; }
+    #treadForm input { width: 100%; padding: .75rem; border: 2px solid #e6eefc; border-radius: 8px; font-size: .95rem; transition: border-color .2s; }
+    #treadForm input:focus { outline: none; border-color: #0553F0; }
+    
+    /* Checklist */
+    .checklist-header { margin: 2rem 0 1rem; padding-bottom: .75rem; border-bottom: 3px solid #e6eefc; }
+    .checklist-header h3 { margin: 0; font-size: 1.5rem; color: #0b1724; }
+    .checklist-progress { margin-top: .5rem; font-size: .9rem; color: #64748b; font-weight: 600; }
+    #checklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: .75rem; margin-top: 1rem; }
+    .check-row { background: #f8fafc; padding: .75rem 1rem; border-radius: 8px; border: 2px solid #e6eefc; transition: .2s; }
+    .check-row:has(input:checked) { background: #d1fae5; border-color: #10b981; }
+    .check-row label { display: flex; align-items: center; gap: .75rem; cursor: pointer; user-select: none; }
+    .check-row input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #10b981; }
+    .check-row span { font-size: .95rem; line-height: 1.4; }
+    
+    .muted { color: #64748b; font-size: .9rem; }
+    
+    /* Permission Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
+    .modal-overlay.active { display: flex; }
+    .modal-card { background: #fff; padding: 2rem; border-radius: 16px; max-width: 500px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    .modal-card h3 { margin: 0 0 1rem 0; font-size: 1.5rem; color: #0b1724; }
+    .modal-card p { margin: 0 0 1.5rem 0; line-height: 1.6; color: #475569; }
+    .modal-buttons { display: flex; gap: .75rem; justify-content: flex-end; }
+    
+    /* File Upload Fallback */
+    .fallback-upload { margin-top: 1.5rem; padding: 1.25rem; background: #fef3c7; border: 2px dashed #f59e0b; border-radius: 12px; }
+    .fallback-upload strong { color: #92400e; display: block; margin-bottom: .5rem; }
+    .fallback-upload input[type="file"] { display: block; margin-top: .75rem; padding: .5rem; }
+    
+    /* Upload Progress */
+    .upload-progress { margin-top: .75rem; background: #e6eefc; border-radius: 8px; height: 8px; overflow: hidden; display: none; }
+    .upload-progress.active { display: block; }
+    .upload-progress-bar { height: 100%; background: linear-gradient(90deg, #0553F0 0%, #10b981 100%); transition: width .3s; width: 0%; }
+    
+    /* Progress Ring */
+    .progress-ring { position: relative; width: 60px; height: 60px; margin-left: auto; }
+    .progress-ring-circle { transform: rotate(-90deg); }
+    .progress-ring-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; color: #0553F0; }
+    
+    /* Checklist Groups */
+    .checklist-group { margin-bottom: 1.5rem; }
+    .checklist-group-header { background: #f8fafc; padding: .75rem 1rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: .5rem; font-weight: 700; color: #0b1724; transition: .2s; user-select: none; }
+    .checklist-group-header:hover { background: #e6eefc; }
+    .checklist-group-header .icon { transition: transform .2s; }
+    .checklist-group-header.collapsed .icon { transform: rotate(-90deg); }
+    .checklist-group-items { margin-top: .75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: .75rem; }
+    .checklist-group-items.collapsed { display: none; }
+    
+    /* Improved Contrast */
+    .muted { color: #475569; font-size: .9rem; }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      main { padding: 1.5rem 3%; }
+      .card { padding: 1.5rem; }
+      .controls { gap: .5rem; }
+      button { padding: .65rem 1rem; font-size: .9rem; }
+      select { min-width: 150px; }
+      #status { margin-left: 0; width: 100%; text-align: center; }
+      .thumbs { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+      #checklist { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>🚗 TrustCar Seller Capture</strong>
+    <p style="margin:.5rem 0 0; font-size:.9rem; opacity:0.9;">Professional Vehicle Inspection System</p>
+  </header>
+  
+  <!-- Permission Request Modal -->
+  <div class="modal-overlay" id="permissionModal">
+    <div class="modal-card">
+      <h3>📷 Camera & Location Access</h3>
+      <p>
+        <strong>Why we need these permissions:</strong><br>
+        • <strong>Camera:</strong> Required to capture inspection photos directly from your device<br>
+        • <strong>Location (Optional):</strong> Geotagging photos adds authenticity and verifies inspection location
+      </p>
+      <p class="muted"><strong>Privacy Note:</strong> Your location data is encrypted and only shared with authorized buyers. You can opt out of location tracking, though this may reduce inspection authenticity.</p>
+      <div class="modal-buttons">
+        <button id="denyPermissions" class="btn-ghost">Use Manual Upload</button>
+        <button id="allowPermissions" class="btn-primary">Allow Access</button>
+      </div>
+    </div>
+  </div>
+  
+  <main>
+    <div class="card">
+      <h2>📸 Capture Photos & Video</h2>
+      <p class="muted">Follow the checklist below to capture all required photos. Your upload link is valid for 48 hours. All photos are geotagged and timestamped for authenticity.</p>
+
+      <div id="vinBlock">
+        <label>🔍 Verify Vehicle VIN</label>
+        <div style="display:flex;gap:.75rem;align-items:center;margin-top:.5rem">
+          <input id="sellerVinInput" placeholder="Enter 17-character VIN" maxlength="17" style="flex:1" />
+          <button id="sellerVinBtn" class="btn-ghost">Verify VIN</button>
+        </div>
+        <div id="sellerVinResult" class="muted" style="margin-top:.75rem">
+          💡 <strong>Tip:</strong> Capture VIN photos from both windshield plate and driver-door jamb sticker for verification.
+        </div>
+      </div>
+
+      <div id="cameraArea" class="camera-wrapper">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div class="guide" id="guide"><div class="guide-label">Frame the component inside the box</div></div>
+      </div>
+
+      <div class="controls">
+        <button id="startBtn" class="btn-ghost" aria-label="Start camera for capturing inspection photos"><span role="img" aria-label="camera">📷</span> Start Camera</button>
+        <select id="checkSelect" aria-label="Select checklist item to capture">
+          <option value="">-- Select Item to Capture --</option>
+        </select>
+        <select id="coinSelect" aria-label="Select coin size for tire tread measurement" style="display:none">
+          <option value="penny"><span role="img" aria-label="coin">🪙</span> Penny (19.05mm)</option>
+          <option value="quarter"><span role="img" aria-label="coin">🪙</span> Quarter (24.26mm)</option>
+        </select>
+        <button id="analyzeBtn" style="display:none" class="btn-ghost" aria-label="Analyze tire tread depth using coin detection"><span role="img" aria-label="microscope">🔬</span> Analyze Tread</button>
+        <button id="captureBtn" aria-label="Capture photo of selected checklist item"><span role="img" aria-label="camera">📸</span> Capture Photo</button>
+        <button id="uploadBtn" class="btn-ghost" aria-label="Upload last captured photo to server"><span role="img" aria-label="cloud">☁️</span> Upload Last</button>
+        <button id="finishBtn" class="btn-success" disabled aria-label="Finish and submit inspection"><span role="img" aria-label="checkmark">✓</span> Finish Inspection</button>
+        <div id="status" class="muted" role="status" aria-live="polite" aria-atomic="true">Ready to capture</div>
+      </div>
+      <div class="upload-progress" id="uploadProgress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="upload-progress-bar" id="uploadProgressBar"></div>
+      </div>
+
+      <div class="thumbs" id="thumbs"></div>
+
+      <div id="treadAnalysis" style="display:none">
+        <strong>🔬 Tire Tread Depth Analysis</strong>
+        <div id="analysisResult" class="muted">
+          Place a penny or quarter inside the dashed guide area on the tire tread, then click "Analyze Tread" to detect the coin and calculate tread depth.
+        </div>
+        <div id="analysisCanvasWrap" style="margin-top:.75rem"></div>
+        <div id="treadForm" style="display:none">
+          <div>
+            <label>Driver Front (32nds inch)</label>
+            <input id="tread_df_input" type="number" min="0" step="0.5" placeholder="e.g. 8.0" />
+          </div>
+          <div>
+            <label>Driver Rear (32nds inch)</label>
+            <input id="tread_dr_input" type="number" min="0" step="0.5" placeholder="e.g. 7.5" />
+          </div>
+          <div>
+            <label>Passenger Front (32nds inch)</label>
+            <input id="tread_pf_input" type="number" min="0" step="0.5" placeholder="e.g. 8.0" />
+          </div>
+          <div>
+            <label>Passenger Rear (32nds inch)</label>
+            <input id="tread_pr_input" type="number" min="0" step="0.5" placeholder="e.g. 7.5" />
+          </div>
+          <div class="muted" style="grid-column:1/-1">
+            <strong>Note:</strong> Fields unlock after successful coin detection. Minimum safe tread depth is 4/32". Legal limit in most states is 2/32".
+          </div>
+        </div>
+      </div>
+
+      <div class="checklist-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <h3><span role="img" aria-label="checklist">✅</span> Inspection Checklist</h3>
+          <div class="checklist-progress">
+            <span id="checklistProgress">0 of 0 items completed</span>
+          </div>
+          <p class="muted" style="margin-top:.5rem">Check each item after capturing photos. All items must be completed to finish the inspection.</p>
+        </div>
+        <svg class="progress-ring" width="60" height="60" role="img" aria-label="Inspection progress indicator">
+          <circle class="progress-ring-circle" stroke="#e6eefc" stroke-width="4" fill="transparent" r="26" cx="30" cy="30" />
+          <circle id="progressRingCircle" class="progress-ring-circle" stroke="#0553F0" stroke-width="4" fill="transparent" r="26" cx="30" cy="30" stroke-dasharray="163.36" stroke-dashoffset="163.36" />
+          <text id="progressRingText" class="progress-ring-text" x="30" y="30" text-anchor="middle" dominant-baseline="middle" fill="#0553F0" font-size="12" font-weight="700">0%</text>
+        </svg>
+      </div>
+      <div id="checklist"></div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <script>
+    // Lazy-load OpenCV.js only when needed (performance optimization)
+    let opencvLoading = false;
+    let opencvLoaded = false;
+    
+    function lazyLoadOpenCV() {
+      if (opencvLoaded || opencvLoading) return Promise.resolve();
+      opencvLoading = true;
+      
+      return new Promise((resolve, reject) => {
+        const opencvScript = document.createElement('script');
+        opencvScript.src = 'https://docs.opencv.org/4.x/opencv.js';
+        opencvScript.onload = () => {
+          console.log('OpenCV.js loaded');
+          opencvLoaded = true;
+          opencvLoading = false;
+          // Wait for cv to be ready
+          const checkCV = setInterval(() => {
+            if (window.cv && window.cv.imread) {
+              clearInterval(checkCV);
+              resolve();
+            }
+          }, 100);
+        };
+        opencvScript.onerror = () => {
+          console.warn('OpenCV.js failed to load');
+          opencvLoading = false;
+          reject(new Error('OpenCV.js load failed'));
+        };
+        document.head.appendChild(opencvScript);
+      });
+    }
+
+    // Seller upload client — camera-only capture and upload to server
+    const params = new URLSearchParams(location.search);
+    const token = params.get('t');
+    const pathParts = location.pathname.split('/');
+    const inspectionId = pathParts[pathParts.length-1];
+
+    const statusEl = document.getElementById('status');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const thumbs = document.getElementById('thumbs');
+    const checkSelect = document.getElementById('checkSelect');
+    const checklistEl = document.getElementById('checklist');
+    const finishBtn = document.getElementById('finishBtn');
+    const sellerVinInput = document.getElementById('sellerVinInput');
+    const sellerVinBtn = document.getElementById('sellerVinBtn');
+    const sellerVinResult = document.getElementById('sellerVinResult');
+    const checklistProgress = document.getElementById('checklistProgress');
+    let stream = null;
+    let lastBlob = null;
+    let lastCheckItem = '';
+    let uploadCount = 0;
+    const checklistItems = [
+      "VIN Plate (Windshield)",
+      "VIN Sticker (Driver Door Jamb)",
+      "Air Filter",
+      "Battery Condition",
+      "Charging System",
+      "Cooling Fan Condition",
+      "Radiator Cap Sealing Properly",
+      "Hoses",
+      "Radiator",
+      "Engine Coolant",
+      "Coolant Leaks",
+      "Belts",
+      "Power Steering",
+      "Engine Oil",
+      "Engine Fluid Leaks",
+      "Transmission Leaks",
+      "Brake System",
+      "Brake Fluid Leaks",
+      "Transfer Case Leaks",
+      "Differential leaks",
+      "Muffler System",
+      "CV Joints and Axles",
+      "Tire Tread Depth (Penny/Quarter Test)",
+      "Shocks and bushings",
+      "Ball Joints and Tie Rods",
+      "Key Fob",
+      "Back-up Camera",
+      "Wiper Blades",
+      "Windshield Washer",
+      "Body Alignment",
+      "Scratches",
+      "Dings AND Dents",
+      "Paint Condition",
+      "Rust",
+      "Exterior Lights",
+      "Sunroof",
+      "Door Mirrors",
+      "Bumpers",
+      "Side Moldings",
+      "Frame Damage",
+      "Glass WINDSHIELD",
+      "Body Seals",
+      "Steering Wheel",
+      "Horn",
+      "Cruise Control",
+      "Seat Condition",
+      "Heated Seats",
+      "Seat Belts",
+      "Clock",
+      "Radio/Navigation",
+      "Inner Door Panels",
+      "Power Locks",
+      "Window Switches",
+      "Window Function",
+      "Center Console",
+      "Dash",
+      "Sun Visors",
+      "Dash Lights",
+      "Dash Gauges",
+      "Air Conditioning",
+      "Heater",
+      "Rear Defroster",
+      "Carpet",
+      "Floor Mats",
+      "Cup Holders",
+      "Headliner",
+      "Blower Motor",
+      "Interior Trim"
+    ];
+    const checklistState = {};
+    let treadScaleMmPerPixel = null;
+    let vinVerifiedOK = false;
+    let lastLocation = null;
+    let ocrDetectedVin = null;
+    let manuallyEnteredVin = null;
+    let cameraPermissionGranted = false;
+    let locationPermissionGranted = false;
+
+    const coinSelect = document.getElementById('coinSelect');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const treadAnalysis = document.getElementById('treadAnalysis');
+    const analysisResult = document.getElementById('analysisResult');
+    const treadForm = document.getElementById('treadForm');
+
+    function setStatus(s, isError = false){ 
+      statusEl.textContent = s;
+      statusEl.style.background = isError ? '#fee' : '#f8fafc';
+      statusEl.style.color = isError ? '#c00' : '#64748b';
+    }
+
+    function updateProgress() {
+      const completed = Object.values(checklistState).filter(Boolean).length;
+      const total = checklistItems.length;
+      const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
+      checklistProgress.textContent = `${completed} of ${total} items completed (${uploadCount} photos uploaded)`;
+      
+      // Update progress ring
+      const circle = document.getElementById('progressRingCircle');
+      const text = document.getElementById('progressRingText');
+      if (circle && text) {
+        const circumference = 163.36; // 2 * PI * 26
+        const offset = circumference - (percent / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+        text.textContent = `${percent}%`;
+      }
+    }
+
+    function getGeo(){
+      return new Promise((resolve)=>{
+        if (!navigator.geolocation) return resolve(null);
+        
+        // High-accuracy geolocation for authenticity
+        navigator.geolocation.getCurrentPosition(
+          (pos)=>{
+            const { latitude, longitude, accuracy } = pos.coords || {};
+            lastLocation = { lat: latitude, lng: longitude, accuracy };
+            console.log(`Location captured: ±${accuracy?.toFixed(0)}m accuracy`);
+            resolve(lastLocation);
+          },
+          (err)=>{
+            console.warn('Geolocation denied or unavailable:', err.message);
+            setStatus('⚠️ Location unavailable (photos will not be geotagged)', true);
+            resolve(null);
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      });
+    }
+
+    async function verifySellerVIN(){
+      const vin = (sellerVinInput.value || '').trim().toUpperCase();
+      
+      // Validate VIN format
+      if (vin.length !== 17) { 
+        sellerVinResult.innerHTML = '<span style="color:#ef4444">⚠️ Please enter a valid 17-character VIN.</span>';
+        return;
+      }
+      
+      if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+        sellerVinResult.innerHTML = '<span style="color:#ef4444">⚠️ Invalid VIN format (contains invalid characters)</span>';
+        return;
+      }
+      
+      // Cross-check with OCR if available
+      if (ocrDetectedVin && ocrDetectedVin !== vin) {
+        const mismatchWarning = `
+          <div style="padding:1rem;background:#fef3c7;border-left:4px solid #f59e0b;border-radius:8px;margin-bottom:.75rem;">
+            <strong style="color:#92400e;">⚠️ VIN Mismatch Detected</strong><br>
+            <span style="color:#78350f;font-size:.9rem;">Photo OCR: <code>${ocrDetectedVin}</code><br>Manual Entry: <code>${vin}</code></span>
+          </div>
+        `;
+        sellerVinResult.innerHTML = mismatchWarning + '<span style="color:#0553F0">Proceeding with manual entry...</span>';
+      }
+      
+      manuallyEnteredVin = vin;
+      sellerVinBtn.disabled = true;
+      sellerVinBtn.textContent = 'Verifying...';
+      sellerVinResult.innerHTML = '<span style="color:#0553F0">🔄 Decoding VIN from NHTSA database...</span>';
+      try{
+        const decodeUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${vin}?format=json`;
+        const decodeRes = await fetch(decodeUrl);
+        const decodeData = await decodeRes.json();
+        const findVar = (name) => {
+          const item = decodeData.Results && decodeData.Results.find(r => r.Variable === name);
+          return item && item.Value ? item.Value : '';
+        };
+        const make = findVar('Make') || null;
+        const model = findVar('Model') || null;
+        const modelYear = findVar('Model Year') || findVar('ModelYear') || null;
+        if (!make && !model && !modelYear) {
+          sellerVinResult.innerHTML = '<span style="color:#ef4444">⚠️ VIN decode returned no details. Please double-check the VIN.</span>';
+        } else {
+          // Fetch recalls count
+          let recallsCount = null;
+          try {
+            const recallsUrl = `https://api.nhtsa.gov/recalls/recallsByVehicle?vin=${vin}`;
+            const recallsRes = await fetch(recallsUrl);
+            const recallsData = await recallsRes.json();
+            recallsCount = Array.isArray(recallsData.results) ? recallsData.results.length : (recallsData.count || null);
+          } catch (e) {}
+
+          const recallBadge = recallsCount !== null && recallsCount > 0 
+            ? `<span style="background:#fef3c7;color:#92400e;padding:.25rem .5rem;border-radius:6px;font-size:.85rem;margin-left:.5rem">⚠️ ${recallsCount} recall(s)</span>`
+            : '';
+          
+          sellerVinResult.innerHTML = `
+            <div style="padding:1rem;background:#d1fae5;border-radius:8px;border-left:4px solid #10b981">
+              <strong style="color:#065f46;font-size:1.1rem">✓ VIN Verified</strong><br>
+              <span style="color:#065f46;font-size:1rem">${vin}</span><br>
+              <span style="color:#047857;font-size:.95rem;margin-top:.25rem;display:block">${modelYear||''} ${make||''} ${model||''}</span>
+              ${recallBadge}
+            </div>
+          `;
+
+          // Persist to inspection metadata (store both VINs for audit trail)
+          const payload = { 
+            vehicle: { 
+              vin, 
+              make, 
+              model, 
+              year: modelYear? parseInt(modelYear,10) : null, 
+              vinVerified: true, 
+              recallsCount,
+              ocrDetectedVin: ocrDetectedVin || null,
+              manuallyEnteredVin: manuallyEnteredVin || null,
+              vinSource: ocrDetectedVin === vin ? 'ocr-confirmed' : 'manual'
+            } 
+          };
+          await fetch(`/api/inspections/${inspectionId}`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+          setStatus('✓ VIN saved to inspection');
+          vinVerifiedOK = true;
+          updateFinishState();
+        }
+      }catch(err){
+        console.error('VIN decode error', err);
+        sellerVinResult.innerHTML = '<span style="color:#ef4444">⚠️ Error connecting to NHTSA database. Please try again.</span>';
+      } finally {
+        sellerVinBtn.disabled = false;
+        sellerVinBtn.textContent = 'Verify VIN';
+      }
+    }
+
+    function disableForMissingToken(){
+      setStatus('⚠️ Missing token. Please use the full seller link provided.', true);
+      document.getElementById('uploadBtn').disabled = true;
+      document.getElementById('finishBtn').disabled = true;
+      document.getElementById('captureBtn').disabled = true;
+    }
+
+    // Grouped checklist structure
+    const checklistGroups = {
+      'VIN & Identification': ['VIN Plate (Windshield)', 'VIN Sticker (Driver Door Jamb)'],
+      'Engine & Fluids': ['Air Filter', 'Battery Condition', 'Charging System', 'Engine Oil', 'Engine Fluid Leaks', 'Transmission Leaks', 'Power Steering'],
+      'Cooling System': ['Cooling Fan Condition', 'Radiator Cap Sealing Properly', 'Hoses', 'Radiator', 'Engine Coolant', 'Coolant Leaks'],
+      'Belts & Drivetrain': ['Belts', 'CV Joints and Axles', 'Transfer Case Leaks', 'Differential leaks'],
+      'Brakes & Suspension': ['Brake System', 'Brake Fluid Leaks', 'Shocks and bushings', 'Ball Joints and Tie Rods'],
+      'Tires': ['Tire Tread Depth (Penny/Quarter Test)'],
+      'Exhaust': ['Muffler System'],
+      'Exterior Body': ['Body Alignment', 'Scratches', 'Dings AND Dents', 'Paint Condition', 'Rust', 'Bumpers', 'Side Moldings', 'Frame Damage', 'Body Seals'],
+      'Exterior Lights & Glass': ['Exterior Lights', 'Glass WINDSHIELD', 'Wiper Blades', 'Windshield Washer'],
+      'Exterior Features': ['Sunroof', 'Door Mirrors'],
+      'Interior Seats & Comfort': ['Seat Condition', 'Heated Seats', 'Seat Belts', 'Carpet', 'Floor Mats', 'Headliner'],
+      'Interior Controls & Dash': ['Steering Wheel', 'Horn', 'Cruise Control', 'Dash', 'Dash Lights', 'Dash Gauges', 'Sun Visors', 'Center Console', 'Cup Holders'],
+      'Interior Electronics': ['Clock', 'Radio/Navigation', 'Key Fob', 'Back-up Camera', 'Power Locks', 'Window Switches', 'Window Function'],
+      'Interior Panels & Trim': ['Inner Door Panels', 'Interior Trim'],
+      'Climate Control': ['Air Conditioning', 'Heater', 'Rear Defroster', 'Blower Motor']
+    };
+    
+    function renderChecklist(){
+      checkSelect.innerHTML = '<option value="">-- Select Item to Capture --</option>';
+      checklistEl.innerHTML = '';
+      
+      // Add all items to select dropdown
+      checklistItems.forEach(item=>{
+        const opt = document.createElement('option'); 
+        opt.value = item; 
+        opt.textContent = item;
+        checkSelect.appendChild(opt);
+        checklistState[item] = checklistState[item] || false;
+      });
+      
+      // Render grouped checklist
+      Object.entries(checklistGroups).forEach(([groupName, items]) => {
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'checklist-group';
+        
+        const header = document.createElement('div');
+        header.className = 'checklist-group-header';
+        header.innerHTML = `<span class="icon">▼</span> <span>${groupName}</span> <span class="muted" style="margin-left:auto;font-size:.85rem;" data-group="${groupName}">0/${items.length}</span>`;
+        header.setAttribute('role', 'button');
+        header.setAttribute('aria-expanded', 'true');
+        header.setAttribute('tabindex', '0');
+        
+        const itemsContainer = document.createElement('div');
+        itemsContainer.className = 'checklist-group-items';
+        
+        items.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'check-row';
+          const label = document.createElement('label');
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.dataset.item = item;
+          cb.dataset.group = groupName;
+          cb.checked = !!checklistState[item];
+          cb.setAttribute('aria-label', item);
+          const span = document.createElement('span');
+          span.textContent = item;
+          label.appendChild(cb);
+          label.appendChild(span);
+          div.appendChild(label);
+          itemsContainer.appendChild(div);
+        });
+        
+        groupDiv.appendChild(header);
+        groupDiv.appendChild(itemsContainer);
+        checklistEl.appendChild(groupDiv);
+        
+        // Toggle group visibility
+        header.addEventListener('click', () => {
+          const isCollapsed = header.classList.toggle('collapsed');
+          itemsContainer.classList.toggle('collapsed');
+          header.setAttribute('aria-expanded', !isCollapsed);
+        });
+        
+        // Keyboard support
+        header.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            header.click();
+          }
+        });
+      });
+      
+      // Update group counters
+      function updateGroupCounters() {
+        Object.entries(checklistGroups).forEach(([groupName, items]) => {
+          const completed = items.filter(item => checklistState[item]).length;
+          const counter = document.querySelector(`[data-group="${groupName}"]`);
+          if (counter) counter.textContent = `${completed}/${items.length}`;
+        });
+      }
+      
+      checklistEl.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+        cb.addEventListener('change', (e)=>{
+          const it = e.currentTarget.dataset.item;
+          checklistState[it] = e.currentTarget.checked;
+          updateFinishState();
+          updateProgress();
+          updateGroupCounters();
+        });
+      });
+      
+      checkSelect.addEventListener('change', () => {
+        const val = checkSelect.value || '';
+        if (val.toLowerCase().includes('tire tread')) {
+          coinSelect.style.display = 'inline-block';
+          analyzeBtn.style.display = 'inline-block';
+          treadAnalysis.style.display = 'block';
+          // Reset attempts when switching to tire tread
+          treadAnalysisAttempts = 0;
+        } else {
+          coinSelect.style.display = 'none';
+          analyzeBtn.style.display = 'none';
+          treadAnalysis.style.display = 'none';
+        }
+      });
+      
+      updateProgress();
+      updateGroupCounters();
+    }
+
+    function updateFinishState(){
+      const allDone = checklistItems.every(i => checklistState[i]);
+      const vinShotsOk = (checklistState['VIN Plate (Windshield)'] === true) && (checklistState['VIN Sticker (Driver Door Jamb)'] === true);
+      finishBtn.disabled = !(allDone && vinShotsOk && vinVerifiedOK);
+      
+      if (finishBtn.disabled) {
+        let reasons = [];
+        if (!vinVerifiedOK) reasons.push('Verify VIN');
+        if (!vinShotsOk) reasons.push('Capture both VIN photos');
+        if (!allDone) reasons.push(`Complete all ${checklistItems.length} items`);
+        finishBtn.title = 'Requirements: ' + reasons.join(', ');
+      } else {
+        finishBtn.title = 'Click to submit inspection';
+      }
+    }
+
+    async function validateToken(){
+      if (!token) return alert('Missing token');
+      const res = await fetch(`/api/inspections/${inspectionId}/validate?t=${encodeURIComponent(token)}`);
+      if (!res.ok) {
+        const err = await res.json().catch(()=>({}));
+        alert('Invalid or expired link: ' + (err.error||res.status));
+        setStatus('Invalid link');
+        throw new Error('Invalid link');
+      }
+      setStatus('Link valid — ready');
+    }
+
+    // Permission request flow
+    document.getElementById('allowPermissions').addEventListener('click', async () => {
+      document.getElementById('permissionModal').classList.remove('active');
+      await requestCameraAndLocation();
+    });
+    
+    document.getElementById('denyPermissions').addEventListener('click', () => {
+      document.getElementById('permissionModal').classList.remove('active');
+      showManualUploadFallback();
+    });
+    
+    async function requestCameraAndLocation() {
+      // Request camera
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        video.srcObject = stream;
+        cameraPermissionGranted = true;
+        setStatus('✓ Camera access granted');
+      } catch(e) {
+        console.error('Camera denied:', e);
+        setStatus('⚠️ Camera access denied', true);
+        showManualUploadFallback();
+        return;
+      }
+      
+      // Request location (optional)
+      if (navigator.geolocation) {
+        const geo = await getGeo();
+        if (geo) {
+          locationPermissionGranted = true;
+          setStatus('✓ Camera + Location enabled');
+        } else {
+          setStatus('✓ Camera enabled (location optional)', true);
+        }
+      }
+    }
+    
+    function showManualUploadFallback() {
+      const fallbackHtml = `
+        <div class="fallback-upload">
+          <strong>⚠️ Manual Photo Upload Mode</strong>
+          <p class="muted">Camera access not available. You can upload photos from your gallery instead. Note: Manual uploads won't include automatic geotagging.</p>
+          <input type="file" id="manualFileInput" accept="image/*" capture="environment" />
+        </div>
+      `;
+      const vinBlock = document.getElementById('vinBlock');
+      if (!document.getElementById('manualFileInput')) {
+        vinBlock.insertAdjacentHTML('afterend', fallbackHtml);
+        document.getElementById('manualFileInput').addEventListener('change', handleManualUpload);
+      }
+    }
+    
+    async function handleManualUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const selected = checkSelect.value;
+      if (!selected) {
+        alert('⚠️ Please select the checklist item you are uploading');
+        return;
+      }
+      
+      lastBlob = file;
+      lastCheckItem = selected;
+      const url = URL.createObjectURL(file);
+      const el = document.createElement('div'); 
+      el.className='thumb';
+      el.title = 'Click to view full size';
+      const img = document.createElement('img'); 
+      img.src = url; 
+      const caption = document.createElement('div');
+      caption.textContent = selected.length > 25 ? selected.substring(0,22) + '...' : selected;
+      el.appendChild(img);
+      el.appendChild(caption);
+      el.onclick = () => window.open(url, '_blank');
+      thumbs.appendChild(el);
+      setStatus(`✓ Ready to upload: ${selected}`);
+      
+      // Auto-upload
+      document.getElementById('uploadBtn').click();
+    }
+    
+    document.getElementById('startBtn').addEventListener('click', async ()=>{
+      if (!cameraPermissionGranted) {
+        document.getElementById('permissionModal').classList.add('active');
+        return;
+      }
+      
+      if (!stream) {
+        await requestCameraAndLocation();
+      }
+    });
+
+    // VIN actions
+    sellerVinBtn.addEventListener('click', verifySellerVIN);
+    sellerVinInput.addEventListener('keydown', (e)=>{ if (e.key==='Enter') verifySellerVIN(); });
+
+    document.getElementById('captureBtn').addEventListener('click', ()=>{
+      if (!stream) {
+        alert('⚠️ Please start the camera first');
+        return;
+      }
+      const selected = checkSelect.value;
+      if (!selected) {
+        alert('⚠️ Please select the checklist item you are capturing');
+        return;
+      }
+      lastCheckItem = selected;
+      const w = video.videoWidth; const h = video.videoHeight;
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, w, h);
+      canvas.toBlob(blob=>{
+        lastBlob = blob;
+        const url = URL.createObjectURL(blob);
+        
+        // Create optimized thumbnail (performance optimization)
+        const thumbCanvas = document.createElement('canvas');
+        const thumbCtx = thumbCanvas.getContext('2d');
+        const thumbSize = 200; // Max thumbnail dimension
+        const scale = Math.min(thumbSize / w, thumbSize / h);
+        thumbCanvas.width = w * scale;
+        thumbCanvas.height = h * scale;
+        thumbCtx.drawImage(video, 0, 0, thumbCanvas.width, thumbCanvas.height);
+        const thumbUrl = thumbCanvas.toDataURL('image/jpeg', 0.7);
+        
+        const el = document.createElement('div'); 
+        el.className='thumb';
+        el.title = 'Click to view full size';
+        const img = document.createElement('img'); 
+        img.src = thumbUrl; // Use optimized thumbnail
+        img.dataset.fullSizeUrl = url; // Store full-size URL for later
+        const caption = document.createElement('div');
+        caption.textContent = selected.length > 25 ? selected.substring(0,22) + '...' : selected;
+        el.appendChild(img);
+        el.appendChild(caption);
+        el.onclick = () => window.open(url, '_blank');
+        thumbs.appendChild(el);
+        setStatus(`✓ Captured: ${selected}`);
+        
+        // Focus management for keyboard navigation
+        document.getElementById('uploadBtn').focus();
+        
+        // Attempt VIN OCR if relevant
+        if ((selected && /VIN Plate|VIN Sticker/i.test(selected)) && window.Tesseract) {
+          setStatus('🔍 Attempting VIN OCR...');
+          window.Tesseract.recognize(url, 'eng').then(({ data }) => {
+            const text = (data && data.text ? data.text : '').toUpperCase().replace(/[^A-Z0-9]/g,' ');
+            const match = text.match(/[A-HJ-NPR-Z0-9]{17}/);
+            if (match && match[0]) {
+              ocrDetectedVin = match[0];
+              sellerVinInput.value = match[0];
+              sellerVinResult.innerHTML = `
+                <div style="padding:1rem;background:#e0e7ff;border-left:4px solid #0553F0;border-radius:8px;">
+                  <strong style="color:#0553F0;">🔍 VIN Detected from Photo</strong><br>
+                  <span style="color:#1e40af;font-size:1rem;font-family:'Courier New',monospace;display:block;margin:.5rem 0;">${match[0]}</span>
+                  <span style="color:#475569;font-size:.85rem;">⚠️ Please verify this VIN matches the vehicle before clicking "Verify VIN"</span>
+                </div>
+              `;
+              setStatus('✓ VIN detected — please verify before submitting');
+            } else {
+              setStatus(`✓ Captured: ${selected}`);
+            }
+          }).catch(()=>{ setStatus(`✓ Captured: ${selected}`); });
+        }
+      }, 'image/jpeg', 0.9);
+    });
+
+    // Analyze tread coin detection with retry mechanism
+    let treadAnalysisAttempts = 0;
+    const MAX_TREAD_ATTEMPTS = 3;
+    
+    analyzeBtn.addEventListener('click', async () => {
+      // Lazy-load OpenCV if not loaded
+      if (!opencvLoaded) {
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = '⏳ Loading analysis tools...';
+        try {
+          await lazyLoadOpenCV();
+          analyzeBtn.disabled = false;
+          analyzeBtn.innerHTML = '<span role="img" aria-label="microscope">🔬</span> Analyze Tread';
+        } catch (err) {
+          analysisResult.innerHTML = `
+            <div style="color:#ef4444;">
+              <strong>⚠️ Analysis Tools Unavailable</strong><br>
+              <span class="muted">Please enter tread depths manually below.</span>
+            </div>
+          `;
+          treadForm.style.display = 'grid';
+          analyzeBtn.disabled = false;
+          analyzeBtn.innerHTML = '<span role="img" aria-label="microscope">🔬</span> Analyze Tread';
+          return;
+        }
+      }
+      
+      if (!window.cv || !window.cv.imread) {
+        analysisResult.innerHTML = `
+          <div style="color:#ef4444;">
+            <strong>⚠️ Analysis Tools Not Ready</strong><br>
+            <span class="muted">Please enter tread depths manually below.</span>
+          </div>
+        `;
+        treadForm.style.display = 'grid';
+        return;
+      }
+      
+      if (!stream) return alert('Start the camera first');
+      
+      treadAnalysisAttempts++;
+      // draw current frame into canvas
+      const w = video.videoWidth; const h = video.videoHeight;
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, w, h);
+      // perform simple circle detection
+      try {
+        const src = cv.imread(canvas);
+        let gray = new cv.Mat();
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+        cv.GaussianBlur(gray, gray, new cv.Size(9,9), 2, 2);
+        let circles = new cv.Mat();
+        cv.HoughCircles(gray, circles, cv.HOUGH_GRADIENT, 1, 50, 100, 30, 10, 200);
+        if (circles.cols > 0) {
+          // take first circle
+          const x = circles.data32F[0];
+          const y = circles.data32F[1];
+          const r = circles.data32F[2];
+          // annotate image
+          cv.circle(src, new cv.Point(x,y), r, [255,0,0,255], 4);
+          cv.circle(src, new cv.Point(x,y), 2, [0,255,0,255], 3);
+          cv.imshow(canvas, src);
+          const coinType = coinSelect.value || 'penny';
+          const coinMm = coinType === 'quarter' ? 24.26 : 19.05;
+          const pixelDiameter = r*2;
+          const mmPerPixel = coinMm / pixelDiameter;
+          treadScaleMmPerPixel = mmPerPixel;
+          analysisResult.textContent = `Coin detected. Approx scale: ${mmPerPixel.toFixed(3)} mm/pixel. You can enter tread depth values below.`;
+          treadForm.style.display = 'grid';
+        } else {
+          if (treadAnalysisAttempts >= MAX_TREAD_ATTEMPTS) {
+            analysisResult.innerHTML = `
+              <div style="color:#f59e0b;">
+                <strong>⚠️ Coin Detection Unsuccessful (${treadAnalysisAttempts} attempts)</strong><br>
+                <span class="muted">Tips for better detection:</span>
+                <ul style="margin:.5rem 0 .5rem 1.5rem;font-size:.85rem;">
+                  <li>Ensure good lighting (avoid shadows)</li>
+                  <li>Position coin flat on tread surface</li>
+                  <li>Hold camera directly above (minimize angle)</li>
+                  <li>Use a contrasting background</li>
+                </ul>
+                <span class="muted"><strong>Or enter measurements manually below:</strong></span>
+              </div>
+            `;
+            treadForm.style.display = 'grid';
+          } else {
+            analysisResult.innerHTML = `
+              <div style="color:#f59e0b;">
+                <strong>⚠️ No coin detected (Attempt ${treadAnalysisAttempts}/${MAX_TREAD_ATTEMPTS})</strong><br>
+                <span class="muted">Try adjusting lighting, angle, or coin position. Click "Analyze Tread" to retry.</span>
+              </div>
+            `;
+            treadForm.style.display = 'none';
+          }
+        }
+        src.delete(); gray.delete(); circles.delete();
+      } catch (err) {
+        console.error('analysis error', err);
+        analysisResult.innerHTML = `
+          <div style="color:#ef4444;">
+            <strong>⚠️ Analysis Error</strong><br>
+            <span class="muted">Please enter tread depths manually below.</span>
+          </div>
+        `;
+        treadForm.style.display = 'grid';
+      }
+    });
+
+    // Compress image before upload (performance optimization)
+    async function compressImage(blob, maxWidth = 1920, quality = 0.85) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((compressedBlob) => {
+            console.log(`Compressed: ${(blob.size / 1024).toFixed(0)}KB → ${(compressedBlob.size / 1024).toFixed(0)}KB`);
+            resolve(compressedBlob || blob);
+          }, 'image/jpeg', quality);
+        };
+        
+        img.src = URL.createObjectURL(blob);
+      });
+    }
+    
+    // Upload with progress tracking
+    function uploadWithProgress(url, blob, onProgress) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable) {
+            const percent = (e.loaded / e.total) * 100;
+            onProgress(percent);
+          }
+        });
+        
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(xhr.response);
+          } else {
+            reject(new Error(`Upload failed: ${xhr.status}`));
+          }
+        });
+        
+        xhr.addEventListener('error', () => reject(new Error('Network error')));
+        xhr.addEventListener('abort', () => reject(new Error('Upload aborted')));
+        
+        xhr.open('PUT', url);
+        xhr.setRequestHeader('Content-Type', blob.type);
+        xhr.send(blob);
+      });
+    }
+    
+    document.getElementById('uploadBtn').addEventListener('click', async ()=>{
+      if (!lastBlob) {
+        alert('⚠️ Please capture a photo first');
+        return;
+      }
+      if (!lastCheckItem) {
+        alert('⚠️ No checklist item selected for this capture');
+        return;
+      }
+      
+      const uploadBtn = document.getElementById('uploadBtn');
+      const uploadProgress = document.getElementById('uploadProgress');
+      const uploadProgressBar = document.getElementById('uploadProgressBar');
+      
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = '⏳ Uploading...';
+      setStatus('☁️ Compressing photo...');
+      
+      // Compress image before upload
+      const compressedBlob = await compressImage(lastBlob);
+      
+      const filename = `capture-${Date.now()}.jpg`;
+      const geo = await getGeo();
+      const lat = geo && geo.lat !== undefined ? geo.lat : null;
+      const lng = geo && geo.lng !== undefined ? geo.lng : null;
+      const accuracy = geo && geo.accuracy !== undefined ? geo.accuracy : null;
+      
+      // Show progress bar
+      uploadProgress.classList.add('active');
+      uploadProgressBar.style.width = '0%';
+      uploadProgress.setAttribute('aria-valuenow', '0');
+      setStatus('☁️ Uploading photo...');
+
+      // Try S3 presign -> PUT -> notify flow
+      try {
+        const presignRes = await fetch(`/api/inspections/${inspectionId}/presign?t=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename, contentType: compressedBlob.type })
+        });
+
+        if (presignRes.ok) {
+          const presign = await presignRes.json();
+          
+          // Upload with progress tracking
+          await uploadWithProgress(presign.url, compressedBlob, (percent) => {
+            uploadProgressBar.style.width = `${percent}%`;
+            uploadProgress.setAttribute('aria-valuenow', Math.round(percent));
+            setStatus(`☁️ Uploading... ${Math.round(percent)}%`);
+          });
+
+          const notifyRes = await fetch(`/api/inspections/${inspectionId}/notify?t=${encodeURIComponent(token)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: presign.key, filename, mimetype: compressedBlob.type, size: compressedBlob.size, checkItem: lastCheckItem, lat, lng, accuracy })
+          });
+          const j = await notifyRes.json();
+          if (!notifyRes.ok) { 
+            uploadProgress.classList.remove('active');
+            setStatus('❌ Upload notification failed', true); 
+            alert(j.error || 'Notify error'); 
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = '☁️ Upload Last';
+            return; 
+          }
+
+          // Success - auto-mark checklist and advance
+          uploadProgress.classList.remove('active');
+          uploadCount++;
+          setStatus(`✓ Photo uploaded (#${uploadCount})`);
+          checklistState[lastCheckItem] = true;
+          const cb = checklistEl.querySelector(`input[data-item="${CSS.escape(lastCheckItem)}"]`);
+          if (cb) cb.checked = true;
+          
+          // Auto-advance to next uncompleted item
+          const nextItem = checklistItems.find(item => !checklistState[item]);
+          if (nextItem) {
+            checkSelect.value = nextItem;
+            checkSelect.focus();
+          }
+          
+          lastBlob = null; 
+          lastCheckItem = '';
+          updateFinishState();
+          updateProgress();
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = '☁️ Upload Last';
+          return;
+        }
+      } catch (err) {
+        console.warn('Presign/upload failed, falling back to multipart:', err);
+        uploadProgress.classList.remove('active');
+      }
+
+      // Fallback: multipart upload to local server
+      const fd = new FormData();
+      fd.append('file', compressedBlob, filename);
+      fd.append('checkItem', lastCheckItem);
+      if (lat !== null && lng !== null) { fd.append('lat', lat); fd.append('lng', lng); }
+      if (accuracy !== null) { fd.append('accuracy', accuracy); }
+      try{
+        const res = await fetch(`/api/inspections/${inspectionId}/uploads?t=${encodeURIComponent(token)}`, { method: 'POST', body: fd });
+        const j = await res.json();
+        uploadProgress.classList.remove('active');
+        if (!res.ok) { 
+          setStatus('❌ Upload failed', true); 
+          alert(j.error || 'Upload error'); 
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = '☁️ Upload Last';
+          return; 
+        }
+        uploadCount++;
+        setStatus(`✓ Photo uploaded (#${uploadCount})`);
+        checklistState[lastCheckItem] = true;
+        const cb = checklistEl.querySelector(`input[data-item="${CSS.escape(lastCheckItem)}"]`);
+        if (cb) cb.checked = true;
+        
+        // Auto-advance to next uncompleted item
+        const nextItem = checklistItems.find(item => !checklistState[item]);
+        if (nextItem) {
+          checkSelect.value = nextItem;
+          checkSelect.focus();
+        }
+        
+        lastBlob = null; 
+        lastCheckItem = '';
+        updateFinishState();
+        updateProgress();
+      }catch(err){
+        console.error(err);
+        uploadProgress.classList.remove('active');
+        setStatus('❌ Network error', true);
+        alert('Upload failed - please check your connection');
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = '☁️ Upload Last';
+      }
+    });
+
+    finishBtn.addEventListener('click', async ()=>{
+      if (!confirm('Mark inspection as complete?')) return;
+      setStatus('Finishing...');
+      try{
+        const res = await fetch(`/api/inspections/${inspectionId}/mark-complete?t=${encodeURIComponent(token)}`, { method: 'POST' });
+        const j = await res.json();
+        if (!res.ok) { setStatus('Finish failed'); alert(j.error || 'Finish error'); return; }
+        setStatus('Inspection marked complete');
+        alert('Thank you — submission complete.');
+        // optionally redirect to a thank-you page
+      }catch(e){
+        console.error(e);
+        setStatus('Error');
+      }
+    });
+
+    // init
+    renderChecklist();
+    if (!token) {
+      disableForMissingToken();
+    } else {
+      validateToken().catch(()=>{});
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<style>
+    .admin-nav { background: #0553F0; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .admin-nav .logo { font-size: 1.4rem; font-weight: 700; }
+    .admin-nav nav { display: flex; gap: 1.5rem; }
+    .admin-nav nav a { color: white; text-decoration: none; font-weight: 500; padding: .5rem 1rem; border-radius: 6px; transition: background .2s; }
+    .admin-nav nav a:hover, .admin-nav nav a.active { background: rgba(255,255,255,0.15); }
+</style>
+<div class="admin-nav">
+    <div class="logo">TrustCar.io Admin</div>
+    <nav>
+        <a href="/admin.html">Dashboard</a>
+        <a href="/admin/queue.html">Review Queue</a>
+        <a href="/admin/view.html">Inspections</a>
+        <a href="/admin/vin-records.html">VIN Records</a>
+    </nav>
+</div>
+<script>
+    // Highlight active page
+    document.addEventListener('DOMContentLoaded', () => {
+        const path = window.location.pathname;
+        document.querySelectorAll('.admin-nav nav a').forEach(link => {
+            if (link.getAttribute('href') === path || (path.includes(link.getAttribute('href').replace('.html', '')) && link.getAttribute('href') !== '/admin.html')) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>

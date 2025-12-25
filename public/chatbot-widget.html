@@ -1,0 +1,688 @@
+<!-- TrustCar AI Chatbot Widget - Include on inspection-related pages -->
+<style>
+    #trustcar-chatbot-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Nunito', system-ui, sans-serif; }
+    #trustcar-chat-bubble { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #0553F0 0%, #0284c7 100%); box-shadow: 0 4px 12px rgba(5,83,240,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; }
+    #trustcar-chat-bubble:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(5,83,240,0.4); }
+    #trustcar-chat-bubble svg { width: 28px; height: 28px; fill: white; }
+    #trustcar-chat-panel { position: absolute; bottom: 80px; right: 0; width: 380px; height: 550px; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; }
+    #trustcar-chat-panel.open { display: flex; animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    #trustcar-chat-header { background: linear-gradient(135deg, #0553F0 0%, #0284c7 100%); color: white; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+    #trustcar-chat-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+    #trustcar-chat-close { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+    #trustcar-chat-close:hover { background: rgba(255,255,255,0.2); }
+    #trustcar-chat-messages { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; background: #f8fafc; }
+    .trustcar-chat-message { max-width: 80%; padding: 0.75rem 1rem; border-radius: 12px; line-height: 1.5; font-size: 0.95rem; }
+    .trustcar-chat-message.user { align-self: flex-end; background: #0553F0; color: white; border-bottom-right-radius: 4px; }
+    .trustcar-chat-message.bot { align-self: flex-start; background: white; color: #0b1724; border: 1px solid #e6eefc; border-bottom-left-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .trustcar-chat-message.bot strong { color: #0553F0; }
+    .trustcar-chat-typing { align-self: flex-start; background: white; padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid #e6eefc; display: flex; gap: 4px; align-items: center; }
+    .trustcar-chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: #64748b; animation: typingDot 1.4s infinite; }
+    .trustcar-chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .trustcar-chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+    #trustcar-chat-input-area { padding: 1rem 1.25rem; background: white; border-top: 1px solid #e6eefc; display: flex; gap: 0.75rem; }
+    #trustcar-chat-input { flex: 1; padding: 0.75rem; border: 2px solid #e6eefc; border-radius: 8px; font-size: 0.95rem; font-family: inherit; outline: none; resize: none; max-height: 100px; }
+    #trustcar-chat-input:focus { border-color: #0553F0; }
+    #trustcar-chat-send { background: #0553F0; color: white; border: none; border-radius: 8px; padding: 0.75rem 1.25rem; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    #trustcar-chat-send:hover { background: #0441c7; }
+    #trustcar-chat-send:disabled { background: #94a3b8; cursor: not-allowed; }
+    .trustcar-welcome-message { text-align: center; color: #64748b; font-size: 0.9rem; padding: 1rem; }
+    .trustcar-welcome-message strong { color: #0553F0; display: block; margin-bottom: 0.5rem; font-size: 1rem; }
+    
+    /* Accessibility: Focus indicators */
+    #trustcar-chat-bubble:focus { outline: 3px solid #0553F0; outline-offset: 2px; }
+    #trustcar-chat-close:focus, #trustcar-chat-send:focus, #trustcar-chat-input:focus { outline: 2px solid #0553F0; outline-offset: 1px; }
+    
+    /* File upload button */
+    #trustcar-chat-upload { background: none; border: 1px solid #e6eefc; border-radius: 8px; padding: 0.5rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+    #trustcar-chat-upload:hover { background: #f1f5f9; border-color: #0553F0; }
+    #trustcar-chat-upload svg { width: 20px; height: 20px; fill: #64748b; }
+    #trustcar-chat-upload:hover svg { fill: #0553F0; }
+    
+    /* Connection status indicator */
+    .trustcar-status-indicator { position: absolute; top: 10px; right: 50px; width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
+    .trustcar-status-indicator.offline { background: #ef4444; }
+    .trustcar-status-indicator.connecting { background: #f59e0b; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    
+    /* Image preview in messages */
+    .trustcar-chat-image { max-width: 100%; border-radius: 8px; margin-top: 0.5rem; cursor: pointer; }
+    
+    @media (max-width: 480px) {
+        #trustcar-chat-panel { width: calc(100vw - 40px); height: 500px; bottom: 70px; }
+        #trustcar-chatbot-container { bottom: 15px; right: 15px; }
+    }
+</style>
+
+<div id="trustcar-chatbot-container">
+    <div id="trustcar-chat-bubble">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+        </svg>
+    </div>
+    
+    <div id="trustcar-chat-panel">
+        <div id="trustcar-chat-header">
+            <h3>🚗 Ask About Your Inspection</h3>
+            <div class="trustcar-status-indicator" id="connection-status" role="status" aria-label="Connection status"></div>
+            <button id="trustcar-chat-close" aria-label="Close chat">&times;</button>
+        </div>
+        
+        <div id="trustcar-chat-messages" role="log" aria-live="polite" aria-atomic="false">
+            <div class="trustcar-welcome-message">
+                <strong>Hi! I'm your TrustCar AI assistant.</strong>
+                Ask me anything about your inspection report, damage findings, reconditioning costs, or vehicle concerns.
+            </div>
+        </div>
+        
+        <div id="trustcar-chat-input-area">
+            <button id="trustcar-chat-upload" aria-label="Upload image" title="Upload additional photo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+            </button>
+            <input type="file" id="trustcar-file-input" accept="image/*" style="display:none;" aria-label="Select image file">
+            <textarea id="trustcar-chat-input" placeholder="Ask a question..." rows="1" aria-label="Message input"></textarea>
+            <button id="trustcar-chat-send" aria-label="Send message">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // SECURITY: Use signed token instead of raw inspection ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatToken = urlParams.get('token') || document.getElementById('trustcar-chatbot-container')?.getAttribute('data-chat-token');
+    
+    if (!chatToken) {
+        console.warn('TrustCar Chatbot: No chat token found');
+        document.getElementById('trustcar-chatbot-container').style.display = 'none';
+        return;
+    }
+    
+    // Security metadata
+    let inspectionData = null;
+    let buyerZipCode = null;
+    let repairEstimatesOffered = false;
+    let messageCount = 0;
+    const MAX_MESSAGES_PER_SESSION = 50; // Rate limiting
+    let conversationHistory = []; // Threaded conversation persistence
+    let lastMessageTime = 0; // Debouncing
+    let connectionStatus = 'online'; // Connection monitoring
+
+    const bubble = document.getElementById('trustcar-chat-bubble');
+    const panel = document.getElementById('trustcar-chat-panel');
+    const closeBtn = document.getElementById('trustcar-chat-close');
+    const messagesDiv = document.getElementById('trustcar-chat-messages');
+    const input = document.getElementById('trustcar-chat-input');
+    const sendBtn = document.getElementById('trustcar-chat-send');
+    const uploadBtn = document.getElementById('trustcar-chat-upload');
+    const fileInput = document.getElementById('trustcar-file-input');
+    const statusIndicator = document.getElementById('connection-status');
+    
+    // XSS Protection Utility
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Sanitize user input (strip tags, limit length)
+    function sanitizeInput(text) {
+        return text.trim().substring(0, 500).replace(/<[^>]*>/g, '');
+    }
+    
+    // DOMPurify-like sanitization for bot replies with markdown support
+    function sanitizeAndFormatReply(text) {
+        // Escape HTML first
+        let safe = escapeHtml(text);
+        
+        // Allow safe markdown formatting
+        safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+        safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italic
+        safe = safe.replace(/\n/g, '<br>'); // Line breaks
+        
+        // Safe link formatting (only https URLs)
+        safe = safe.replace(
+            /(https:\/\/[\w\-\._~:\/?#\[\]@!$&'()*+,;=.]+)/g,
+            '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:#0553F0;text-decoration:underline;">$1</a>'
+        );
+        
+        return safe;
+    }
+    
+    // Update connection status indicator
+    function updateConnectionStatus(status) {
+        connectionStatus = status;
+        statusIndicator.className = 'trustcar-status-indicator ' + status;
+        statusIndicator.setAttribute('aria-label', `Connection: ${status}`);
+    }
+    
+    // Debounce rapid message sending (500ms)
+    function canSendMessage() {
+        const now = Date.now();
+        if (now - lastMessageTime < 500) {
+            return false;
+        }
+        lastMessageTime = now;
+        return true;
+    }
+    
+    // Fetch with timeout and retry
+    async function fetchWithTimeout(url, options = {}, timeout = 15000, retries = 2) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        
+        for (let i = 0; i <= retries; i++) {
+            try {
+                updateConnectionStatus(i > 0 ? 'connecting' : 'online');
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                updateConnectionStatus('online');
+                return response;
+            } catch (error) {
+                if (i === retries) {
+                    clearTimeout(timeoutId);
+                    updateConnectionStatus('offline');
+                    throw error;
+                }
+                // Wait before retry (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+            }
+        }
+    }
+    
+    // Save conversation to localStorage (persistence)
+    function saveConversation() {
+        try {
+            localStorage.setItem(
+                `trustcar-chat-${chatToken.substring(0, 20)}`,
+                JSON.stringify({
+                    history: conversationHistory,
+                    zipCode: buyerZipCode,
+                    timestamp: Date.now()
+                })
+            );
+        } catch (e) {
+            console.warn('Failed to save conversation:', e);
+        }
+    }
+    
+    // Load conversation from localStorage
+    function loadSavedConversation() {
+        try {
+            const saved = localStorage.getItem(`trustcar-chat-${chatToken.substring(0, 20)}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                // Only load if less than 24 hours old
+                if (Date.now() - data.timestamp < 24 * 60 * 60 * 1000) {
+                    conversationHistory = data.history || [];
+                    buyerZipCode = data.zipCode;
+                    // Restore messages
+                    conversationHistory.forEach(msg => {
+                        addMessage(msg.text, msg.sender, false); // Don't save again
+                    });
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to load conversation:', e);
+        }
+    }
+
+    // Load inspection context on widget init (fetch once, cache locally)
+    async function loadInspectionContext(forceReload = false) {
+        // Use cached data if available and not forcing reload
+        if (inspectionData && !forceReload) {
+            return inspectionData;
+        }
+        
+        try {
+            const response = await fetchWithTimeout(`/api/chat/context`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: chatToken })
+            }, 15000, 2); // 15s timeout, 2 retries
+            
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    throw new Error('Unauthorized access. This chat link may have expired.');
+                }
+                throw new Error('Unable to load inspection data');
+            }
+            
+            inspectionData = await response.json();
+            
+            // Cache in sessionStorage for page refresh
+            try {
+                sessionStorage.setItem(
+                    `trustcar-inspection-${chatToken.substring(0, 20)}`,
+                    JSON.stringify(inspectionData)
+                );
+            } catch (e) {
+                console.warn('Failed to cache inspection data:', e);
+            }
+            
+            // Post-inspection repair intelligence: offer ZIP-based estimates if complete
+            if (inspectionData.status === 'complete' && !buyerZipCode && !repairEstimatesOffered && conversationHistory.length === 0) {
+                setTimeout(() => {
+                    addMessage(
+                        "🎉 Your inspection is complete!\n\n" +
+                        "To provide an approximate cost guide for potential repairs (including parts and average local labor rates), may I have your ZIP code?\n\n" +
+                        "*Note: These figures represent general estimates only. Actual costs can vary significantly depending on the chosen repair facility, parts selection, vehicle specifications, and regional market conditions. " +
+                        "We strongly recommend obtaining multiple quotes from qualified local mechanics for accurate pricing.*",
+                        'bot'
+                    );
+                    repairEstimatesOffered = true;
+                }, 2000);
+            }
+            
+            return inspectionData;
+        } catch (error) {
+            console.error('Context load error:', error);
+            
+            // Try to load from cache as fallback
+            try {
+                const cached = sessionStorage.getItem(`trustcar-inspection-${chatToken.substring(0, 20)}`);
+                if (cached) {
+                    inspectionData = JSON.parse(cached);
+                    addMessage(
+                        "⚠️ Using cached inspection data (connection issue). Some information may be outdated.",
+                        'bot'
+                    );
+                    return inspectionData;
+                }
+            } catch (e) {
+                // Fallthrough to error message
+            }
+            
+            addMessage(
+                `⚠️ ${escapeHtml(error.message)} Please check your connection or contact support.`,
+                'bot'
+            );
+            throw error;
+        }
+    }
+    
+    // Toggle chat panel
+    bubble.addEventListener('click', () => {
+        panel.classList.toggle('open');
+        if (panel.classList.contains('open')) {
+            input.focus();
+            // Load context on first open
+            if (!inspectionData) {
+                loadInspectionContext();
+            }
+            // Load saved conversation
+            if (conversationHistory.length === 0) {
+                loadSavedConversation();
+            }
+        }
+    });
+    
+    // Keyboard accessibility: Space/Enter to open bubble
+    bubble.setAttribute('role', 'button');
+    bubble.setAttribute('tabindex', '0');
+    bubble.setAttribute('aria-label', 'Open chat assistant');
+    bubble.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            bubble.click();
+        }
+    });
+
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.remove('open');
+        bubble.focus(); // Return focus to bubble
+    });
+    
+    // Global keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Escape to close chat
+        if (e.key === 'Escape' && panel.classList.contains('open')) {
+            panel.classList.remove('open');
+            bubble.focus();
+        }
+    });
+
+    // Auto-resize textarea
+    input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+    });
+
+    // Send message
+    async function sendMessage() {
+        const rawMessage = input.value.trim();
+        if (!rawMessage) return;
+        
+        // Debounce rapid sending
+        if (!canSendMessage()) {
+            return;
+        }
+        
+        // Rate limiting
+        messageCount++;
+        if (messageCount > MAX_MESSAGES_PER_SESSION) {
+            addMessage('⚠️ Message limit reached for this session. Please refresh the page or contact support.', 'bot');
+            return;
+        }
+        
+        // Sanitize input
+        const message = sanitizeInput(rawMessage);
+
+        // Add user message (escaped)
+        addMessage(message, 'user');
+        input.value = '';
+        input.style.height = 'auto';
+        sendBtn.disabled = true;
+
+        // ZIP Code Detection (5 digits) - Trigger repair estimate workflow
+        const zipMatch = message.match(/\b\d{5}\b/);
+        if (zipMatch && repairEstimatesOffered && !buyerZipCode) {
+            buyerZipCode = zipMatch[0];
+            
+            // Show typing indicator
+            const typingEl = document.createElement('div');
+            typingEl.className = 'trustcar-chat-typing';
+            typingEl.innerHTML = '<span></span><span></span><span></span>';
+            messagesDiv.appendChild(typingEl);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Fetch repair estimates
+            try {
+                const response = await fetchWithTimeout(`/api/chat/repair-estimates`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        token: chatToken,
+                        zipCode: buyerZipCode
+                    })
+                }, 20000, 2); // 20s timeout for repair API
+                
+                typingEl.remove();
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.estimates && data.estimates.length > 0) {
+                        let estimateMsg = `📍 **Approximate Cost Guide for ${buyerZipCode}:**\n\n`;
+                        data.estimates.forEach((est, idx) => {
+                            estimateMsg += `**${idx + 1}. ${est.issue}**\n`;
+                            estimateMsg += `   Parts: $${est.partsCost}\n`;
+                            estimateMsg += `   Labor: $${est.laborCost} (${est.laborHours}hrs @ $${est.laborRate}/hr)\n`;
+                            estimateMsg += `   **Estimated Total: $${est.totalCost}**\n\n`;
+                        });
+                        estimateMsg += `*Figures based on ${data.source || 'local market data'} for ZIP code ${buyerZipCode}.*\n\n`;
+                        estimateMsg += `**Important:** These are indicative estimates only. Actual costs can vary significantly based on repair facility selection, parts availability, vehicle condition, and regional pricing. Please obtain formal quotes from multiple qualified mechanics for accurate pricing specific to your vehicle.`;
+                        addMessage(estimateMsg, 'bot');
+                    } else {
+                        addMessage(
+                            `Thank you! I've saved your location (${buyerZipCode}). Our repair cost analysis system is currently being enhanced. In the meantime, I can answer questions about your inspection findings and provide general guidance on prioritizing repairs.`,
+                            'bot'
+                        );
+                    }
+                } else {
+                    throw new Error('Unable to fetch estimates');
+                }
+            } catch (error) {
+                typingEl.remove();
+                addMessage(
+                    `Thank you for providing your ZIP code (${buyerZipCode}). I'm currently unable to retrieve cost estimates due to a temporary service interruption. However, I can still assist with questions about your inspection findings, safety concerns, and repair prioritization.`,
+                    'bot'
+                );
+            } finally {
+                sendBtn.disabled = false;
+            }
+            return;
+        }
+
+        // Standard chat message
+        const typingEl = document.createElement('div');
+        typingEl.className = 'trustcar-chat-typing';
+        typingEl.innerHTML = '<span></span><span></span><span></span>';
+        messagesDiv.appendChild(typingEl);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        try {
+            // LLM Integration: Send full conversation history for context
+            const response = await fetchWithTimeout(`/api/chat/message`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    token: chatToken,
+                    message: message,
+                    zipCode: buyerZipCode, // Include ZIP if available
+                    conversationHistory: conversationHistory.slice(-10) // Last 10 messages for context
+                })
+            }, 30000, 2); // 30s timeout for LLM response, 2 retries
+
+            const data = await response.json();
+            typingEl.remove();
+            
+            if (response.status === 429) {
+                addMessage('⚠️ Too many requests. Please wait a moment before sending another message.', 'bot');
+            } else if (response.status === 401 || response.status === 403) {
+                addMessage('⚠️ Unauthorized access. This chat link may have expired. Please request a new link.', 'bot');
+            } else if (data.reply) {
+                addMessage(data.reply, 'bot');
+            } else {
+                addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+            }
+        } catch (error) {
+            console.error('Chat error:', error);
+            typingEl.remove();
+            
+            if (error.name === 'AbortError') {
+                addMessage('⚠️ Request timed out. The AI service may be busy. Please try again.', 'bot');
+            } else if (!navigator.onLine) {
+                addMessage('⚠️ No internet connection. Please check your network and try again.', 'bot');
+            } else {
+                addMessage('Sorry, I\'m having trouble connecting. Please try again in a moment.', 'bot');
+            }
+        } finally {
+            sendBtn.disabled = false;
+        }
+    }
+
+    function addMessage(text, sender, persist = true, imageUrl = null) {
+        const msgEl = document.createElement('div');
+        msgEl.className = `trustcar-chat-message ${sender}`;
+        msgEl.setAttribute('role', sender === 'bot' ? 'status' : 'text');
+        
+        // Use safe rendering with markdown support
+        let formattedText = sender === 'bot' 
+            ? sanitizeAndFormatReply(text)
+            : escapeHtml(text);
+        
+        msgEl.innerHTML = formattedText;
+        
+        // Add image if provided (file upload)
+        if (imageUrl) {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.className = 'trustcar-chat-image';
+            img.alt = 'Uploaded image';
+            img.loading = 'lazy';
+            img.addEventListener('click', () => {
+                window.open(imageUrl, '_blank');
+            });
+            msgEl.appendChild(img);
+        }
+        
+        messagesDiv.appendChild(msgEl);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        
+        // Persist to conversation history
+        if (persist) {
+            conversationHistory.push({
+                text: text,
+                sender: sender,
+                imageUrl: imageUrl,
+                timestamp: Date.now()
+            });
+            saveConversation();
+        }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    // File upload handler (additional photos from buyer)
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Validate file type and size
+        if (!file.type.startsWith('image/')) {
+            addMessage('⚠️ Please select an image file (JPG, PNG, etc.)', 'bot');
+            return;
+        }
+        
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+            addMessage('⚠️ Image too large. Please select a file under 10MB.', 'bot');
+            return;
+        }
+        
+        // Create local preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            addMessage('📷 Additional photo uploaded', 'user', true, e.target.result);
+        };
+        reader.readAsDataURL(file);
+        
+        // Upload to server
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:20px;height:20px;fill:#64748b;"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6v6l4 2"/></svg>';
+        
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('token', chatToken);
+            
+            const response = await fetchWithTimeout('/api/chat/upload-image', {
+                method: 'POST',
+                body: formData
+            }, 30000, 1);
+            
+            if (response.ok) {
+                const data = await response.json();
+                addMessage(
+                    `✅ Image uploaded successfully! ${data.analysis ? 'Analysis: ' + data.analysis : 'I can now reference this in our conversation.'}`,
+                    'bot'
+                );
+            } else {
+                throw new Error('Upload failed');
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            addMessage(
+                '⚠️ Failed to upload image. Please try again or contact support.',
+                'bot'
+            );
+        } finally {
+            uploadBtn.disabled = false;
+            uploadBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>';
+            fileInput.value = ''; // Reset input
+        }
+    });
+
+    // Quick start suggestions
+    const suggestions = [
+        "What damage was found?",
+        "How much will reconditioning cost?",
+        "Is this car safe to buy?",
+        "What should I fix first?",
+        "Get cost estimates" // Triggers ZIP prompt
+    ];
+
+    // Add suggestion buttons after welcome message
+    setTimeout(() => {
+        if (messagesDiv.children.length === 1) {
+            const suggestionsDiv = document.createElement('div');
+            suggestionsDiv.id = 'suggestions-container';
+            suggestionsDiv.style.cssText = 'display:flex;flex-wrap:wrap;gap:0.5rem;padding:0 1rem;';
+            suggestions.forEach(s => {
+                const btn = document.createElement('button');
+                btn.textContent = s;
+                btn.style.cssText = 'padding:0.5rem 0.75rem;border:1px solid #e6eefc;background:white;border-radius:8px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;';
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.background = '#f1f5f9';
+                    btn.style.borderColor = '#0553F0';
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.background = 'white';
+                    btn.style.borderColor = '#e6eefc';
+                });
+                // Accessibility: keyboard support
+                btn.setAttribute('role', 'button');
+                btn.setAttribute('tabindex', '0');
+                btn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        btn.click();
+                    }
+                });
+                
+                btn.addEventListener('click', () => {
+                    // Special handling for repair estimates
+                    if (s === 'Get cost estimates') {
+                        if (!inspectionData) {
+                            addMessage('⏳ Loading inspection data...', 'bot');
+                            loadInspectionContext().then(() => {
+                                if (inspectionData?.status === 'complete') {
+                                    addMessage(
+                                        "I can provide an approximate cost guide for repairs based on your location. What's your ZIP code?",
+                                        'bot'
+                                    );
+                                    repairEstimatesOffered = true;
+                                } else {
+                                    addMessage(
+                                        "Cost estimates become available once your inspection is complete. I'm happy to answer questions about the inspection process, timeline, or what to expect.",
+                                        'bot'
+                                    );
+                                }
+                            }).catch(() => {
+                                addMessage(
+                                    "⚠️ Unable to load inspection data. Please verify your connection or contact support if this issue persists.",
+                                    'bot'
+                                );
+                            });
+                        } else if (inspectionData.status === 'complete') {
+                            addMessage(
+                                "I can provide an approximate cost guide for repairs based on your location. What's your ZIP code?",
+                                'bot'
+                            );
+                            repairEstimatesOffered = true;
+                        } else {
+                            addMessage(
+                                "Cost estimates become available once your inspection is complete. I'm happy to answer questions about the inspection process, timeline, or what to expect.",
+                                'bot'
+                            );
+                        }
+                    } else {
+                        input.value = s;
+                        sendMessage();
+                    }
+                    suggestionsDiv.remove();
+                });
+                suggestionsDiv.appendChild(btn);
+            });
+            messagesDiv.appendChild(suggestionsDiv);
+        }
+    }, 1000);
+})();
+</script>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIN Records — Admin — TrustCar.io</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #0b1724; }
+        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+        .logo { font-size: 1.8rem; font-weight: 800; }
+        nav a { color: white; text-decoration: none; margin-left: 1.5rem; padding: .5rem 1rem; border-radius: 8px; font-weight: 600; transition: .2s; }
+        nav a:hover { background: rgba(255,255,255,0.2); }
+        main { padding: 2rem 5%; max-width: 1400px; margin: 0 auto; }
+        h1 { margin: 0 0 1.5rem 0; font-size: 2.2rem; font-weight: 800; }
+        .card { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(2,6,23,0.08); margin-bottom: 1.5rem; border: 2px solid #e6eefc; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: .75rem; border-bottom: 1px solid #e6eefc; font-weight: 500; }
+        th { background: linear-gradient(135deg, #f8fafc 0%, #e6eefc 100%); font-weight: 700; color: #475569; text-transform: uppercase; font-size: .85rem; letter-spacing: .5px; }
+        tr:hover { background: #f8fafc; }
+        .btn { display: inline-block; padding: .5rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 700; cursor: pointer; border: none; font-size: .9rem; transition: all .2s; }
+        .btn-primary { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; box-shadow: 0 2px 6px rgba(5,83,240,0.2); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(5,83,240,0.3); }
+        .btn-ghost { background: white; color: #0553F0; border: 2px solid #0553F0; }
+        .btn-ghost:hover { background: #f8fafc; transform: translateY(-1px); }
+        .muted { color: #64748b; font-size: .9rem; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 5% auto; padding: 2rem; border-radius: 12px; max-width: 900px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-close { font-size: 2rem; font-weight: 300; cursor: pointer; color: #64748b; }
+        .modal-close:hover { color: #0b1724; }
+        pre { background: #f8fafc; padding: 1rem; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .result-item { background: #f8fafc; padding: .75rem 1rem; border-radius: 8px; border: 1px solid #e6eefc; }
+        .result-item strong { display: block; font-size: .85rem; color: #64748b; text-transform: uppercase; letter-spacing: .5px; margin-bottom: .25rem; }
+        .result-item span { display: block; font-size: 1rem; color: #0b1724; font-weight: 600; }
+        .recall-badge { display: inline-block; padding: .25rem .75rem; border-radius: 999px; font-weight: 600; font-size: .9rem; }
+        .recall-ok { background: #d1fae5; color: #065f46; }
+        .recall-warn { background: #fef3c7; color: #92400e; }
+    </style>
+    <script>
+        // Load shared admin nav
+        fetch('/admin/admin-nav.html').then(r=>r.text()).then(html=>{
+            document.body.insertAdjacentHTML('afterbegin', html);
+        });
+    </script>
+</head>
+<body>
+
+    <main>
+        <h1>VIN Decode Records</h1>
+        <div class="muted" style="margin-bottom: 1rem;">All VIN lookups performed on the site are saved here for auditing and support purposes.</div>
+        
+        <div class="card">
+            <div id="loadingMsg" class="muted">Loading records...</div>
+            <div id="recordsTable" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>VIN</th>
+                            <th>Timestamp</th>
+                            <th>Record ID</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsBody"></tbody>
+                </table>
+            </div>
+            <div id="errorMsg" class="muted" style="display: none; color: #dc2626;"></div>
+        </div>
+    </main>
+
+    <!-- Modal for viewing full record -->
+    <div id="recordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" style="margin: 0;">VIN Record</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        let allRecords = [];
+        const authHeader = 'Basic ' + btoa((prompt('Admin username:') || '') + ':' + (prompt('Admin password:') || ''));
+
+        async function loadRecords() {
+            try {
+                const res = await fetch('/api/vin-records', {
+                    headers: { 'Authorization': authHeader }
+                });
+                
+                if (res.status === 401) {
+                    document.getElementById('loadingMsg').style.display = 'none';
+                    document.getElementById('errorMsg').textContent = 'Authentication failed. Reload to try again.';
+                    document.getElementById('errorMsg').style.display = 'block';
+                    return;
+                }
+
+                if (!res.ok) throw new Error('Failed to load records');
+                
+                allRecords = await res.json();
+                
+                document.getElementById('loadingMsg').style.display = 'none';
+                
+                if (allRecords.length === 0) {
+                    document.getElementById('errorMsg').textContent = 'No VIN records found.';
+                    document.getElementById('errorMsg').style.display = 'block';
+                    return;
+                }
+
+                const tbody = document.getElementById('recordsBody');
+                tbody.innerHTML = allRecords.map(r => `
+                    <tr>
+                        <td><strong>${escapeHtml(r.vin)}</strong></td>
+                        <td>${new Date(r.timestamp || r.createdAt).toLocaleString()}</td>
+                        <td class="muted">${escapeHtml(r.id)}</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="viewRecord('${escapeHtml(r.id)}')">View Details</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('recordsTable').style.display = 'block';
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingMsg').style.display = 'none';
+                document.getElementById('errorMsg').textContent = 'Error loading records: ' + err.message;
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        async function viewRecord(recordId) {
+            try {
+                const res = await fetch(`/api/vin-records/${recordId}`, {
+                    headers: { 'Authorization': authHeader }
+                });
+                
+                if (!res.ok) throw new Error('Failed to load record details');
+                
+                const record = await res.json();
+                displayRecordModal(record);
+            } catch (err) {
+                alert('Error loading record: ' + err.message);
+            }
+        }
+
+        function displayRecordModal(record) {
+            const decodeData = record.decodeData;
+            const recallsData = record.recallsData;
+            
+            function findVar(name) {
+                if (!decodeData || !decodeData.Results) return null;
+                const v = decodeData.Results.find(r => r.Variable === name);
+                return v ? v.Value : null;
+            }
+
+            const make = findVar('Make') || 'N/A';
+            const model = findVar('Model') || 'N/A';
+            const modelYear = findVar('Model Year') || findVar('ModelYear') || 'N/A';
+            const bodyClass = findVar('Body Class') || 'N/A';
+            const fuel = findVar('Fuel Type - Primary') || 'N/A';
+            const trim = findVar('Trim') || 'N/A';
+            const drivetrain = findVar('Drive Type') || 'N/A';
+            const manufacturer = findVar('Manufacturer Name') || 'N/A';
+            const vehicleType = findVar('Vehicle Type') || 'N/A';
+            const plantCity = findVar('Plant City') || 'N/A';
+            const plantCountry = findVar('Plant Country') || 'N/A';
+            const engineCyl = findVar('Engine Number of Cylinders') || 'N/A';
+            const engineDisp = findVar('Displacement (L)') || findVar('Displacement (CC)') || 'N/A';
+            const transmission = findVar('Transmission Style') || 'N/A';
+            const doors = findVar('Doors') || 'N/A';
+            const series = findVar('Series') || 'N/A';
+
+            const recallsCount = Array.isArray(recallsData?.results) ? recallsData.results.length : (recallsData?.count || 0);
+            const recallBadge = recallsCount === 0 
+                ? '<span class="recall-badge recall-ok">✓ No Recalls</span>' 
+                : `<span class="recall-badge recall-warn">⚠ ${recallsCount} Recall${recallsCount > 1 ? 's' : ''}</span>`;
+
+            document.getElementById('modalTitle').textContent = `VIN: ${record.vin}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0 0 .5rem 0; font-size: 1.5rem;">${escapeHtml(modelYear)} ${escapeHtml(make)} ${escapeHtml(model)}</h3>
+                    <div style="margin-bottom: .5rem;">${recallBadge}</div>
+                    <div class="muted">Recorded: ${new Date(record.timestamp || record.createdAt).toLocaleString()}</div>
+                </div>
+                <div class="result-grid">
+                    <div class="result-item"><strong>Manufacturer</strong><span>${escapeHtml(manufacturer)}</span></div>
+                    <div class="result-item"><strong>Body Style</strong><span>${escapeHtml(bodyClass)}</span></div>
+                    <div class="result-item"><strong>Vehicle Type</strong><span>${escapeHtml(vehicleType)}</span></div>
+                    <div class="result-item"><strong>Trim</strong><span>${escapeHtml(trim)}</span></div>
+                    <div class="result-item"><strong>Series</strong><span>${escapeHtml(series)}</span></div>
+                    <div class="result-item"><strong>Drive Type</strong><span>${escapeHtml(drivetrain)}</span></div>
+                    <div class="result-item"><strong>Fuel Type</strong><span>${escapeHtml(fuel)}</span></div>
+                    <div class="result-item"><strong>Engine</strong><span>${escapeHtml(engineCyl)} cyl, ${escapeHtml(engineDisp)}</span></div>
+                    <div class="result-item"><strong>Transmission</strong><span>${escapeHtml(transmission)}</span></div>
+                    <div class="result-item"><strong>Doors</strong><span>${escapeHtml(doors)}</span></div>
+                    <div class="result-item"><strong>Plant Location</strong><span>${escapeHtml(plantCity)}, ${escapeHtml(plantCountry)}</span></div>
+                </div>
+                <hr style="margin: 1.5rem 0; border:none; border-top:1px solid #e6eefc;" />
+                <h4>Full NHTSA Decode Data</h4>
+                <pre>${escapeHtml(JSON.stringify(decodeData, null, 2))}</pre>
+                ${recallsData ? `<h4>Recalls Data</h4><pre>${escapeHtml(JSON.stringify(recallsData, null, 2))}</pre>` : ''}
+                <div style="margin-top: 1rem;">
+                    <button class="btn btn-ghost" onclick="downloadRecordJson('${escapeHtml(record.id)}')">Download Full JSON</button>
+                </div>
+            `;
+
+            document.getElementById('recordModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('recordModal').style.display = 'none';
+        }
+
+        function downloadRecordJson(recordId) {
+            const record = allRecords.find(r => r.id === recordId);
+            if (!record) return alert('Record not found');
+
+            fetch(`/api/vin-records/${recordId}`, {
+                headers: { 'Authorization': authHeader }
+            })
+            .then(res => res.json())
+            .then(fullRecord => {
+                const blob = new Blob([JSON.stringify(fullRecord, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `vin-${fullRecord.vin}-${fullRecord.id}.json`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            })
+            .catch(err => alert('Error downloading: ' + err.message));
+        }
+
+        function escapeHtml(s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('recordModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Load records on page load
+        document.addEventListener('DOMContentLoaded', loadRecords);
+    </script>
+</body>
+</html>
