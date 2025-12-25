@@ -1,1 +1,31 @@
-node_modules
+# Environment variables and secrets
+.env
+*.env
+.env.local
+.env.development
+.env.production
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+server.log
+
+# Runtime / user-generated data (never commit uploads)
+uploads/
+public/uploads/
+
+# Build outputs
+dist/
+build/
+
+# Editor and OS artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Vercel/Netlify config (optional — keep if you use them)
+.vercel
+.netlify
