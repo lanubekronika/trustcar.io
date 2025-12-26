@@ -637,6 +637,50 @@
             updateScanGuideCSS();
         }
 
+        // Auto barcode scan loop
+        let barcodeScanTimer = null;
+        function startBarcodeAutoScan() {
+            if (barcodeScanTimer) return;
+            // Run every ~900ms to balance CPU and responsiveness
+            barcodeScanTimer = setInterval(async () => {
+                try {
+                    if (!videoStream || !videoPreview.videoWidth) return;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = videoPreview.videoWidth;
+                    canvas.height = videoPreview.videoHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(videoPreview, 0, 0);
+                    const dataUrl = canvas.toDataURL('image/png');
+                    Quagga.decodeSingle({
+                        src: dataUrl,
+                        locate: true,
+                        decoder: { readers: ['code_39_reader','code_128_reader'] }
+                    }, (result) => {
+                        if (result && result.codeResult && result.codeResult.code) {
+                            const code = result.codeResult.code.toUpperCase();
+                            const cleaned = code.replace(/[^A-Z0-9]/g,'');
+                            const candidate = tryCorrectVin(cleaned) || cleaned;
+                            if (/^[A-HJ-NPR-Z0-9]{17}$/.test(candidate)) {
+                                document.getElementById('vinInput').value = candidate;
+                                // Stop scanning and close camera
+                                if (barcodeScanTimer) { clearInterval(barcodeScanTimer); barcodeScanTimer = null; }
+                                if (videoStream) { videoStream.getTracks().forEach(t=>t.stop()); videoStream=null; }
+                                if (screen.orientation && screen.orientation.unlock) { try{screen.orientation.unlock();}catch(e){} }
+                                cameraModal.classList.remove('active');
+                                scanStatus.textContent = '';
+                                setTimeout(()=>decodeVIN(), 300);
+                            } else {
+                                // keep scanning silently
+                            }
+                        }
+                    });
+                } catch(e) {
+                    // Ignore intermittent errors
+                }
+            }, 900);
+            scanStatus.textContent = '🔎 Scanning barcode... (hold steady)';
+        }
+
         scanVinBtn.addEventListener('click', async () => {
             try {
                 cameraModal.classList.add('active');
@@ -674,6 +718,8 @@
                 captureBtn.disabled = false;
                 if (flashBtn) flashBtn.disabled = false;
                 if (barcodeBtn) barcodeBtn.disabled = false;
+                // Start auto barcode scanning by default
+                startBarcodeAutoScan();
             } catch (err) {
                 scanStatus.textContent = 'Camera access denied or unavailable';
                 console.error('Camera error:', err);
@@ -788,6 +834,7 @@
                 videoStream.getTracks().forEach(track => track.stop());
                 videoStream = null;
             }
+            if (barcodeScanTimer) { clearInterval(barcodeScanTimer); barcodeScanTimer = null; }
             
             // Unlock screen orientation
             if (screen.orientation && screen.orientation.unlock) {
@@ -804,6 +851,7 @@
 
         captureBtn.addEventListener('click', async () => {
             if (!videoStream) return;
+            if (barcodeScanTimer) { clearInterval(barcodeScanTimer); barcodeScanTimer = null; }
 
             // Ensure video has dimensions
             if (!videoPreview.videoWidth || !videoPreview.videoHeight) {
