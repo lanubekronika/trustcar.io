@@ -7,6 +7,7 @@
     <meta name="description" content="Decode vehicle VIN numbers with TrustCar.io. Get instant safety ratings, recall information, and vehicle specifications from NHTSA data.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #0b1724; }
@@ -127,6 +128,8 @@
                     <canvas id="scanCanvas" style="display:none;"></canvas>
                     <div class="camera-controls">
                         <button id="captureBtn" class="btn btn-primary">Capture & Auto-Fill VIN</button>
+                        <button id="barcodeBtn" class="btn btn-ghost">Try Barcode Scan</button>
+                        <button id="flashBtn" class="btn btn-ghost">Toggle Flash</button>
                         <button id="closeCameraBtn" class="btn btn-ghost">Cancel</button>
                     </div>
                     <div id="scanStatus" class="muted" style="text-align:center;margin-top:1rem;"></div>
@@ -613,6 +616,8 @@
         const scanVinBtn = document.getElementById('scanVinBtn');
         const closeCameraBtn = document.getElementById('closeCameraBtn');
         const captureBtn = document.getElementById('captureBtn');
+        const barcodeBtn = document.getElementById('barcodeBtn');
+        const flashBtn = document.getElementById('flashBtn');
         const widthRange = document.getElementById('widthRange');
         const heightRange = document.getElementById('heightRange');
         const widthVal = document.getElementById('widthVal');
@@ -667,9 +672,114 @@
 
                 scanStatus.textContent = 'Position VIN in the green box. Hold steady for best results.';
                 captureBtn.disabled = false;
+                if (flashBtn) flashBtn.disabled = false;
+                if (barcodeBtn) barcodeBtn.disabled = false;
             } catch (err) {
                 scanStatus.textContent = 'Camera access denied or unavailable';
                 console.error('Camera error:', err);
+            }
+        });
+        // Toggle flashlight/torch if supported
+        flashBtn.addEventListener('click', async () => {
+            try {
+                if (!videoStream) return;
+                const track = videoStream.getVideoTracks()[0];
+                const caps = track.getCapabilities();
+                if (caps.torch) {
+                    const current = track.getSettings().torch || false;
+                    await track.applyConstraints({ advanced: [{ torch: !current }] });
+                    flashBtn.textContent = !current ? 'Flash On' : 'Flash Off';
+                } else {
+                    scanStatus.textContent = 'Flash not supported on this device.';
+                    setTimeout(() => scanStatus.textContent = '', 2000);
+                }
+            } catch (e) {
+                console.log('Torch toggle error:', e);
+            }
+        });
+
+        // VIN check-digit utilities (ISO 3779)
+        function transliterate(char) {
+            const map = {
+                A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,
+                J:1,K:2,L:3,M:4,N:5,P:7,R:9,
+                S:2,T:3,U:4,V:5,W:6,X:7,Y:8,Z:9
+            };
+            if (/^[0-9]$/.test(char)) return parseInt(char,10);
+            return map[char] || 0;
+        }
+        function computeVinCheckDigit(vin) {
+            // weights per position 1..17
+            const weights = [8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
+            let sum = 0;
+            for (let i=0;i<17;i++) {
+                const val = transliterate(vin[i]);
+                sum += val * weights[i];
+            }
+            const remainder = sum % 11;
+            return remainder === 10 ? 'X' : String(remainder);
+        }
+        function isValidVin(vin) {
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) return false;
+            return computeVinCheckDigit(vin) === vin[8];
+        }
+        function tryCorrectVin(text) {
+            // Normalize and apply common substitutions, then validate windows of 17 chars
+            const clean = text.toUpperCase().replace(/\s|-/g,'').replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');
+            // Try sliding window
+            for (let i=0;i<=clean.length-17;i++) {
+                let candidate = clean.slice(i,i+17);
+                // Additional ambiguous fixes
+                candidate = candidate.replace(/B/g,'8').replace(/S/g,'5').replace(/Z/g,'2');
+                if (/^[A-HJ-NPR-Z0-9]{17}$/.test(candidate) && isValidVin(candidate)) {
+                    return candidate;
+                }
+            }
+            return null;
+        }
+
+        // Barcode scanning from current frame (Code39/Code128)
+        barcodeBtn.addEventListener('click', async () => {
+            if (!videoStream) return;
+            scanStatus.textContent = '🔎 Scanning barcode...';
+            // capture full frame
+            const canvas = document.createElement('canvas');
+            canvas.width = videoPreview.videoWidth;
+            canvas.height = videoPreview.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoPreview, 0, 0);
+            const dataUrl = canvas.toDataURL('image/png');
+            try {
+                Quagga.decodeSingle({
+                    src: dataUrl,
+                    locate: true,
+                    decoder: { readers: ['code_39_reader','code_128_reader'] }
+                }, (result) => {
+                    if (result && result.codeResult && result.codeResult.code) {
+                        const code = result.codeResult.code.toUpperCase();
+                        const cleaned = code.replace(/[^A-Z0-9]/g,'');
+                        const candidate = tryCorrectVin(cleaned) || cleaned;
+                        if (/^[A-HJ-NPR-Z0-9]{17}$/.test(candidate)) {
+                            document.getElementById('vinInput').value = candidate;
+                            // close camera
+                            if (videoStream) { videoStream.getTracks().forEach(t=>t.stop()); videoStream=null; }
+                            if (screen.orientation && screen.orientation.unlock) { try{screen.orientation.unlock();}catch(e){} }
+                            cameraModal.classList.remove('active');
+                            scanStatus.textContent = '';
+                            setTimeout(()=>decodeVIN(), 300);
+                        } else {
+                            scanStatus.textContent = 'No VIN found in barcode. Try repositioning.';
+                            setTimeout(()=> scanStatus.textContent = '', 2000);
+                        }
+                    } else {
+                        scanStatus.textContent = 'Barcode not detected. Try the text scan or adjust box.';
+                        setTimeout(()=> scanStatus.textContent = '', 2000);
+                    }
+                });
+            } catch(e) {
+                console.log('Barcode scan error', e);
+                scanStatus.textContent = 'Barcode scan error.';
+                setTimeout(()=> scanStatus.textContent = '', 2000);
             }
         });
 
@@ -770,15 +880,10 @@
                 );
 
                 const rawText = result.data.text || '';
-                const pre = rawText.toUpperCase().replace(/\s|-/g, '');
-                // Map ambiguous characters before matching
-                const text = pre.replace(/O/g, '0').replace(/I/g, '1').replace(/Q/g, '0').replace(/[^A-Z0-9]/g, '');
-                // Extract VIN pattern: 17 alphanumeric characters (no I, O, Q)
-                const vinPattern = /[A-HJ-NPR-Z0-9]{17}/g;
-                const matches = text.match(vinPattern);
+                const corrected = tryCorrectVin(rawText);
 
-                if (matches && matches.length > 0) {
-                    const detectedVin = matches[0];
+                if (corrected) {
+                    const detectedVin = corrected;
                     document.getElementById('vinInput').value = detectedVin;
                     scanStatus.textContent = `✅ VIN detected: ${detectedVin}`;
 
