@@ -639,7 +639,8 @@ app.post('/api/checkout/session', async (req, res) => {
     return res.json({ id: session.id });
   } catch (err) {
     console.error('Stripe session error', err);
-    return res.status(500).json({ error: 'Error creating checkout session', detail: err.message });
+    // Don't expose Stripe API errors to client in production
+    return res.status(500).json({ error: 'Unable to create checkout session. Please try again.' });
   }
 });
 
