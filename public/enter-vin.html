@@ -311,24 +311,36 @@
                     }
                 } catch(_e) { /* comps unavailable */ }
 
+                const engineValParts = [];
+                if (engineCyl && engineCyl !== 'N/A' && engineCyl !== '—') engineValParts.push(`${engineCyl} cyl`);
+                if (engineDisp && engineDisp !== 'N/A' && engineDisp !== '—') engineValParts.push(engineDisp);
+                const engineVal = engineValParts.join(', ');
+
+                const details = [
+                    { label: 'Manufacturer', val: manufacturer },
+                    { label: 'Body Style', val: bodyClass },
+                    { label: 'Vehicle Type', val: vehicleType },
+                    { label: 'Trim', val: trim },
+                    { label: 'Series', val: series },
+                    { label: 'Drive Type', val: drivetrain },
+                    { label: 'Fuel Type', val: fuel },
+                    { label: 'Engine', val: engineVal },
+                    { label: 'Transmission', val: transmission },
+                    { label: 'Doors', val: doors },
+                    { label: 'Plant Location', val: (plantCity && plantCountry) ? `${plantCity}, ${plantCountry}` : (plantCity || plantCountry || '') }
+                ];
+
+                const gridHtml = details
+                    .filter(i => i.val && i.val !== 'N/A' && i.val !== '—')
+                    .map(i => `<div class="result-item"><strong>${escapeHtml(i.label)}</strong><span>${escapeHtml(i.val)}</span></div>`)
+                    .join('');
+
                 resultsEl.innerHTML = `
                     <div style="margin-bottom: 1.5rem;">
                         <h2 style="margin: 0 0 .5rem 0; font-size: 1.5rem;">${escapeHtml(modelYear)} ${escapeHtml(make)} ${escapeHtml(model)}</h2>
                         <div style="margin-bottom: .5rem; display:flex; gap:.5rem; flex-wrap:wrap;">${recallBadge}${overall ? ' ' + safetyBadge : ''}</div>
                     </div>
-                    <div class="result-grid">
-                        <div class="result-item"><strong>Manufacturer</strong><span>${escapeHtml(manufacturer)}</span></div>
-                        <div class="result-item"><strong>Body Style</strong><span>${escapeHtml(bodyClass)}</span></div>
-                        <div class="result-item"><strong>Vehicle Type</strong><span>${escapeHtml(vehicleType)}</span></div>
-                        <div class="result-item"><strong>Trim</strong><span>${escapeHtml(trim)}</span></div>
-                        <div class="result-item"><strong>Series</strong><span>${escapeHtml(series)}</span></div>
-                        <div class="result-item"><strong>Drive Type</strong><span>${escapeHtml(drivetrain)}</span></div>
-                        <div class="result-item"><strong>Fuel Type</strong><span>${escapeHtml(fuel)}</span></div>
-                        <div class="result-item"><strong>Engine</strong><span>${escapeHtml(engineCyl)} cyl, ${escapeHtml(engineDisp)}</span></div>
-                        <div class="result-item"><strong>Transmission</strong><span>${escapeHtml(transmission)}</span></div>
-                        <div class="result-item"><strong>Doors</strong><span>${escapeHtml(doors)}</span></div>
-                        <div class="result-item"><strong>Plant Location</strong><span>${escapeHtml(plantCity)}, ${escapeHtml(plantCountry)}</span></div>
-                    </div>
+                    <div class="result-grid">${gridHtml}</div>
                     ${safetySection}
                     ${compsSection}
                     <div style="margin-top:2rem;padding-top:1.5rem;border-top:2px solid #e6eefc;text-align:center;">
