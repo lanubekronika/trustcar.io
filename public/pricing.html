@@ -249,12 +249,8 @@
 
     <script>
         function selectTier(tier, price) {
-            // Store selected tier in session
-            sessionStorage.setItem('selectedTier', tier);
-            sessionStorage.setItem('selectedPrice', price);
-            
-            // Redirect to VIN entry with tier parameter
-            window.location.href = `/enter-vin.html?tier=${tier}&price=${price}`;
+            // Redirect to checkout page with tier and price
+            window.location.href = `/checkout.html?tier=${tier}&price=${price}`;
         }
 
         const menuToggle = document.getElementById('menuToggle');

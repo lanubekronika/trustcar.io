@@ -622,8 +622,8 @@ app.post('/api/checkout/session', async (req, res) => {
           quantity: 1
         }
       ],
-      success_url: `${origin}/enter-vin.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/index.html?canceled=true`,
+      success_url: `${origin}/enter-vin.html?session_id={CHECKOUT_SESSION_ID}&tier=${encodeURIComponent(plan || 'basic')}&purchased=true`,
+      cancel_url: `${origin}/pricing.html?canceled=true`,
       metadata: {
         plan: plan || 'basic',
         listingUrl: listingUrl || '',
