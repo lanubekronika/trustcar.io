@@ -1,3 +1,67 @@
 nohup: ignoring input
 OpenAI initialized
+Stripe initialized
 Server running on http://localhost:3000
+Stripe session error StripeAuthenticationError: Invalid API Key provided: sk_test_****************HERE
+    at res.toJSON.then.Error_js_1.StripeAPIError.message (/home/kronickloud/Desktop/Trustcar.io/node_modules/stripe/cjs/RequestSender.js:96:31)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  type: 'StripeAuthenticationError',
+  raw: {
+    message: 'Invalid API Key provided: sk_test_****************HERE',
+    type: 'invalid_request_error',
+    headers: {
+      server: 'nginx',
+      date: 'Fri, 26 Dec 2025 05:46:52 GMT',
+      'content-type': 'application/json',
+      'content-length': '130',
+      connection: 'keep-alive',
+      'access-control-allow-credentials': 'true',
+      'access-control-allow-methods': 'GET, HEAD, PUT, PATCH, POST, DELETE',
+      'access-control-allow-origin': '*',
+      'access-control-expose-headers': 'Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required',
+      'access-control-max-age': '300',
+      'cache-control': 'no-cache, no-store',
+      'content-security-policy': "base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none'; img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src 'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=L1o0-lISWaY63-seNIxXBffDktcor7Unrebh3IJx7CHkU0QmPg-ZbyfRoDNeO6N20cjiStnhiih17bNX",
+      vary: 'Origin',
+      'www-authenticate': 'Bearer realm="Stripe"',
+      'x-robots-tag': 'none',
+      'x-wc': 'ABHIJ',
+      'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'
+    },
+    statusCode: 401,
+    requestId: undefined
+  },
+  rawType: 'invalid_request_error',
+  code: undefined,
+  doc_url: undefined,
+  param: undefined,
+  detail: undefined,
+  headers: {
+    server: 'nginx',
+    date: 'Fri, 26 Dec 2025 05:46:52 GMT',
+    'content-type': 'application/json',
+    'content-length': '130',
+    connection: 'keep-alive',
+    'access-control-allow-credentials': 'true',
+    'access-control-allow-methods': 'GET, HEAD, PUT, PATCH, POST, DELETE',
+    'access-control-allow-origin': '*',
+    'access-control-expose-headers': 'Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-Required',
+    'access-control-max-age': '300',
+    'cache-control': 'no-cache, no-store',
+    'content-security-policy': "base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none'; img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src 'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=L1o0-lISWaY63-seNIxXBffDktcor7Unrebh3IJx7CHkU0QmPg-ZbyfRoDNeO6N20cjiStnhiih17bNX",
+    vary: 'Origin',
+    'www-authenticate': 'Bearer realm="Stripe"',
+    'x-robots-tag': 'none',
+    'x-wc': 'ABHIJ',
+    'strict-transport-security': 'max-age=63072000; includeSubDomains; preload'
+  },
+  requestId: undefined,
+  statusCode: 401,
+  charge: undefined,
+  decline_code: undefined,
+  payment_intent: undefined,
+  payment_method: undefined,
+  payment_method_type: undefined,
+  setup_intent: undefined,
+  source: undefined
+}
