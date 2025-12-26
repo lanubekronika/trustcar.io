@@ -112,6 +112,26 @@
     <script>
         // VIN decode + recall logic (adapted from index.html)
         let lastDecode = null;
+        // Helper to extract values from VPIC decode (supports both extended and variable/value formats)
+        function decodeGet(decodeData, keys) {
+            const results = decodeData && decodeData.Results ? decodeData.Results : null;
+            if (!Array.isArray(results)) return '';
+            const tryKeys = Array.isArray(keys) ? keys : [keys];
+            // If extended format with single result object
+            if (results.length === 1 && results[0] && typeof results[0] === 'object') {
+                for (const k of tryKeys) {
+                    if (Object.prototype.hasOwnProperty.call(results[0], k) && results[0][k]) {
+                        return results[0][k];
+                    }
+                }
+            }
+            // Fallback to Variable/Value list format
+            for (const k of tryKeys) {
+                const item = results.find(r => r && r.Variable === k);
+                if (item && item.Value) return item.Value;
+            }
+            return '';
+        }
         function showCheckoutMeta(){
             const metaEl = document.getElementById('checkoutMeta');
             const carried = localStorage.getItem('listingUrlOrVin') || '';
@@ -185,13 +205,9 @@
                 // Derive recalls by Year/Make/Model for broader compatibility
                 let recallsData = { results: [], count: 0 };
                 try {
-                    const findVarPre = (name) => {
-                        const item = decodeData.Results && decodeData.Results.find(r => r.Variable === name);
-                        return item && item.Value ? item.Value : '';
-                    };
-                    const recallsYear = findVarPre('Model Year') || findVarPre('ModelYear');
-                    const recallsMake = findVarPre('Make');
-                    const recallsModel = findVarPre('Model');
+                    const recallsYear = decodeGet(decodeData, ['Model Year','ModelYear']);
+                    const recallsMake = decodeGet(decodeData, ['Make']);
+                    const recallsModel = decodeGet(decodeData, ['Model']);
                     if (recallsYear && recallsMake && recallsModel) {
                         const recallsUrl = `https://api.nhtsa.gov/recalls/recallsByVehicle?modelYear=${encodeURIComponent(recallsYear)}&make=${encodeURIComponent(recallsMake)}&model=${encodeURIComponent(recallsModel)}`;
                         const recallsRes = await fetch(recallsUrl);
@@ -203,27 +219,22 @@
 
                 lastDecode = { decodeData, recallsData };
 
-                const findVar = (name) => {
-                    const item = decodeData.Results && decodeData.Results.find(r => r.Variable === name);
-                    return item && item.Value ? item.Value : 'N/A';
-                };
-
-                const make = findVar('Make');
-                const model = findVar('Model');
-                const modelYear = findVar('Model Year') || findVar('ModelYear') || 'N/A';
-                const bodyClass = findVar('Body Class') || 'N/A';
-                const fuel = findVar('Fuel Type - Primary') || 'N/A';
-                const trim = findVar('Trim') || 'N/A';
-                const drivetrain = findVar('Drive Type') || 'N/A';
-                const manufacturer = findVar('Manufacturer Name') || 'N/A';
-                const vehicleType = findVar('Vehicle Type') || 'N/A';
-                const plantCity = findVar('Plant City') || 'N/A';
-                const plantCountry = findVar('Plant Country') || 'N/A';
-                const engineCyl = findVar('Engine Number of Cylinders') || 'N/A';
-                const engineDisp = findVar('Displacement (L)') || findVar('Displacement (CC)') || 'N/A';
-                const transmission = findVar('Transmission Style') || 'N/A';
-                const doors = findVar('Doors') || 'N/A';
-                const series = findVar('Series') || 'N/A';
+                const make = decodeGet(decodeData, ['Make']) || 'N/A';
+                const model = decodeGet(decodeData, ['Model']) || 'N/A';
+                const modelYear = decodeGet(decodeData, ['Model Year','ModelYear']) || 'N/A';
+                const bodyClass = decodeGet(decodeData, ['Body Class','BodyClass']) || 'N/A';
+                const fuel = decodeGet(decodeData, ['Fuel Type - Primary','FuelTypePrimary']) || 'N/A';
+                const trim = decodeGet(decodeData, ['Trim']) || 'N/A';
+                const drivetrain = decodeGet(decodeData, ['Drive Type','DriveType']) || 'N/A';
+                const manufacturer = decodeGet(decodeData, ['Manufacturer Name','Manufacturer','ManufacturerName']) || 'N/A';
+                const vehicleType = decodeGet(decodeData, ['Vehicle Type','VehicleType']) || 'N/A';
+                const plantCity = decodeGet(decodeData, ['Plant City','PlantCity']) || 'N/A';
+                const plantCountry = decodeGet(decodeData, ['Plant Country','PlantCountry']) || 'N/A';
+                const engineCyl = decodeGet(decodeData, ['Engine Number of Cylinders','EngineCylinders']) || 'N/A';
+                const engineDisp = decodeGet(decodeData, ['Displacement (L)','Displacement (CI)','Displacement (CC)','EngineDisplacementL','EngineDisplacementCI','EngineDisplacementCC']) || 'N/A';
+                const transmission = decodeGet(decodeData, ['Transmission Style','TransmissionStyle']) || 'N/A';
+                const doors = decodeGet(decodeData, ['Doors','Number of Doors','NumberOfDoors']) || 'N/A';
+                const series = decodeGet(decodeData, ['Series']) || 'N/A';
 
                 const recallsCount = Array.isArray(recallsData.results) ? recallsData.results.length : (recallsData.count || 0);
                 const recallBadge = recallsCount === 0 
@@ -555,22 +566,22 @@
             const recalls = data.recallsData || {};
             
             // Helper to extract decode variables
-            const findVar = (name) => {
-                const item = decode.Results && decode.Results.find(r => r.Variable === name);
-                return item && item.Value ? item.Value : 'N/A';
+            const getVal = (keys) => {
+                const val = decodeGet(decode, keys);
+                return val ? val : 'N/A';
             };
             
-            const make = findVar('Make');
-            const model = findVar('Model');
-            const year = findVar('Model Year') || findVar('ModelYear');
-            const bodyClass = findVar('Body Class');
-            const fuel = findVar('Fuel Type - Primary');
-            const trim = findVar('Trim');
-            const drivetrain = findVar('Drive Type');
-            const engineCyl = findVar('Engine Number of Cylinders');
-            const engineDisp = findVar('Displacement (L)');
-            const transmission = findVar('Transmission Style');
-            const doors = findVar('Doors');
+            const make = getVal(['Make']);
+            const model = getVal(['Model']);
+            const year = getVal(['Model Year','ModelYear']);
+            const bodyClass = getVal(['Body Class','BodyClass']);
+            const fuel = getVal(['Fuel Type - Primary','FuelTypePrimary']);
+            const trim = getVal(['Trim']);
+            const drivetrain = getVal(['Drive Type','DriveType']);
+            const engineCyl = getVal(['Engine Number of Cylinders','EngineCylinders']);
+            const engineDisp = getVal(['Displacement (L)','Displacement (CI)','Displacement (CC)','EngineDisplacementL','EngineDisplacementCI','EngineDisplacementCC']);
+            const transmission = getVal(['Transmission Style','TransmissionStyle']);
+            const doors = getVal(['Doors','Number of Doors','NumberOfDoors']);
             
             const recallsCount = Array.isArray(recalls.results) ? recalls.results.length : (recalls.count || 0);
 
