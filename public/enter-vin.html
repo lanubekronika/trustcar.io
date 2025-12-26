@@ -7,8 +7,7 @@
         <meta name="description" content="Decode vehicle VIN numbers with TrustCar.io. Get instant safety ratings, recall information, and vehicle specifications from NHTSA data.">
         <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+    
     <style>
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #0b1724; }
         header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); gap: 1rem; }
@@ -29,8 +28,7 @@
         .btn { display:inline-block; padding:.85rem 1.5rem; border-radius: 10px; font-weight:700; cursor:pointer; border: none; transition: all .2s; font-size: .95rem; }
         .btn-primary { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; box-shadow: 0 4px 12px rgba(5,83,240,0.2); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(5,83,240,0.3); }
-        .btn-scan { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16,185,129,0.2); }
-        .btn-scan:hover { background: #059669; box-shadow: 0 6px 16px rgba(16,185,129,0.3); transform: translateY(-2px); }
+        
         .btn-ghost { background: white; color: #0553F0; border: 2px solid #e6eefc; }
         .btn-ghost:hover { background: #f8fafc; border-color: #0553F0; transform: translateY(-2px); }
         .spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.12); border-top-color: #0553F0; border-radius: 50%; display: inline-block; vertical-align: middle; margin-left: .6rem; animation: spin 1s linear infinite; }
@@ -50,17 +48,7 @@
         footer { text-align:center; padding: 2rem 0; color:#475569; }
         @media (max-width:720px){ .actions { flex-direction: column; align-items: stretch; } }
 
-        /* Camera Modal */
-        #cameraModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem 1rem; color: white; }
-        #cameraModal.open { display: flex; }
-        #previewWrap { position: relative; width: 100%; max-width: 400px; }
-        #cameraPreview { width: 100%; border-radius: 8px; background: black; aspect-ratio: 16/9; }
-        #vinGuide { position: absolute; top: 35%; left: 10%; width: 80%; height: 52px; border: 2px dashed #10b981; transform: translateY(-50%); border-radius: 4px; pointer-events: none; box-shadow: 0 0 0 2px rgba(16,185,129,0.2); }
-        #barcodeHint { margin-top: .75rem; color: #fef3c7; font-weight: 700; background: rgba(15, 23, 42, 0.35); padding: .5rem .75rem; border-radius: 8px; display: none; }
-        .slider { width: 100%; max-width: 400px; margin: 1rem 0; }
-        #captureBtn { background: #10b981; color: white; border: none; padding: 0.85rem 2rem; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 1rem; }
-        #captureBtn:hover { background: #059669; }
-        #closeCamera { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
+        
 
             /* Safety and Market Comps UI */
             .section { margin-top: 1rem; background: #fff; border: 1px solid #e6eefc; border-radius: 10px; padding: 0.75rem 1rem; }
@@ -99,20 +87,6 @@
     </header>
 
     <main>
-
-    <div id="cameraModal" role="dialog" aria-modal="true" aria-label="Scan VIN">
-        <button id="closeCamera" aria-label="Close camera">&times;</button>
-        <div id="previewWrap">
-            <video id="cameraPreview" autoplay muted playsinline></video>
-            <div id="vinGuide" aria-hidden="true"></div>
-        </div>
-        <div id="barcodeHint">Position barcode in guide for fastest results</div>
-        <label for="boxWidthSlider">Box Width (%)</label>
-        <input type="range" id="boxWidthSlider" min="40" max="90" value="60" class="slider" aria-label="Adjust VIN guide width">
-        <label for="boxHeightSlider">Box Height (px)</label>
-        <input type="range" id="boxHeightSlider" min="20" max="80" value="40" class="slider" aria-label="Adjust VIN guide height">
-        <button id="captureBtn">Capture & Auto-Fill VIN</button>
-    </div>
         <div class="card">
             <h1>Enter the Vehicle VIN</h1>
             <p class="lead">Enter the 17-character VIN of the vehicle you're considering. We'll instantly decode it, check for open recalls, safety ratings, and (when available) local market pricing.</p>
@@ -123,7 +97,6 @@
 
             <div class="actions">
                 <button id="vinDecodeBtn" class="btn btn-primary">Decode VIN</button>
-                <button id="scanVinBtn" class="btn btn-scan">🔍 Scan VIN</button>
                 <button id="copyReportBtn" class="btn btn-ghost">Copy Report</button>
                 <div id="statusMsg" class="muted" style="margin-left:auto"></div>
             </div>
@@ -139,9 +112,6 @@
     <script>
         // VIN decode + recall logic (adapted from index.html)
         let lastDecode = null;
-        let stream = null;
-        let boxWidth = 60;
-        let boxHeight = 40;
         function showCheckoutMeta(){
             const metaEl = document.getElementById('checkoutMeta');
             const carried = localStorage.getItem('listingUrlOrVin') || '';
@@ -556,157 +526,7 @@
                 }).catch(() => alert('Could not copy to clipboard.'));
             });
 
-            // Camera Scanner Setup
-            const scanBtn = document.getElementById('scanVinBtn');
-            const modal = document.getElementById('cameraModal');
-            const video = document.getElementById('cameraPreview');
-            const guide = document.getElementById('vinGuide');
-            const boxWidthSlider = document.getElementById('boxWidthSlider');
-            const boxHeightSlider = document.getElementById('boxHeightSlider');
-            const captureBtn = document.getElementById('captureBtn');
-            const closeBtn = document.getElementById('closeCamera');
-
-            const stopStream = () => {
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                    stream = null;
-                }
-            };
-
-            function updateGuide() {
-                if (!guide) return;
-                guide.style.width = `${boxWidth}%`;
-                guide.style.height = `${boxHeight}px`;
-            }
-
-            if (boxWidthSlider) boxWidthSlider.addEventListener('input', (e) => { boxWidth = Number(e.target.value); updateGuide(); });
-            if (boxHeightSlider) boxHeightSlider.addEventListener('input', (e) => { boxHeight = Number(e.target.value); updateGuide(); });
-
-            if (scanBtn && modal && video) {
-                scanBtn.addEventListener('click', async () => {
-                    try {
-                        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                        video.srcObject = stream;
-                        await video.play().catch(() => {});
-                        modal.classList.add('open');
-                        updateGuide();
-                    } catch (err) {
-                        alert('Camera access denied or unavailable. Please grant permission or use manual entry.');
-                        console.error(err);
-                    }
-                });
-            }
-
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    stopStream();
-                    modal?.classList.remove('open');
-                });
-            }
-
-            if (captureBtn && video) {
-                captureBtn.addEventListener('click', () => {
-                    if (!video.videoWidth || !video.videoHeight) {
-                        alert('Camera not ready. Please wait a moment and try again.');
-                        return;
-                    }
-
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(video, 0, 0);
-                    
-                    const cropX = (video.videoWidth - (video.videoWidth * (boxWidth / 100))) / 2;
-                    const cropY = (video.videoHeight - boxHeight) / 2;
-                    const cropCanvas = document.createElement('canvas');
-                    cropCanvas.width = video.videoWidth * (boxWidth / 100);
-                    cropCanvas.height = boxHeight;
-                    const cropCtx = cropCanvas.getContext('2d');
-                    cropCtx.drawImage(canvas, cropX, cropY, cropCanvas.width, cropCanvas.height, 0, 0, cropCanvas.width, cropCanvas.height);
-
-                    const imgData = cropCtx.getImageData(0, 0, cropCanvas.width, cropCanvas.height);
-                    const data = imgData.data;
-                    // Adaptive threshold: compute local mean
-                    let sum = 0; let count = 0;
-                    for (let i = 0; i < data.length; i += 4) {
-                        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3; sum += avg; count++;
-                    }
-                    const global = sum / count; const thresh = Math.max(90, Math.min(170, global));
-                    for (let i = 0; i < data.length; i += 4) {
-                        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                        const bin = avg > thresh ? 255 : 0;
-                        data[i] = data[i + 1] = data[i + 2] = bin;
-                    }
-                    cropCtx.putImageData(imgData, 0, 0);
-
-                    const barcodeHint = document.getElementById('barcodeHint');
-
-                    const tryTesseract = () => {
-                        // Upsample for OCR
-                        const upCanvas = document.createElement('canvas');
-                        upCanvas.width = cropCanvas.width * 2;
-                        upCanvas.height = cropCanvas.height * 2;
-                        const upCtx = upCanvas.getContext('2d');
-                        upCtx.imageSmoothingEnabled = false;
-                        upCtx.drawImage(cropCanvas, 0, 0, upCanvas.width, upCanvas.height);
-
-                        upCanvas.toBlob(async (blob) => {
-                            try {
-                                const { data } = await Tesseract.recognize(blob, 'eng', {
-                                    // Improve single-line OCR
-                                    tessedit_char_whitelist: 'ABCDEFGHJKMNPQRSTUVWXYZ0123456789',
-                                    preserve_interword_spaces: '1',
-                                    // Pass psm/oem via config string (supported by tesseract.js)
-                                    // eslint-disable-next-line camelcase
-                                    config: '--psm 7 --oem 1'
-                                });
-                                const raw = (data.text || '').toUpperCase();
-                                const cleaned = raw.replace(/[^A-HJ-NPR-Z0-9]/g, '').substring(0, 17);
-                                if (cleaned.length === 17) {
-                                    const candidate = tryCorrectVin(cleaned);
-                                    vinInput.value = candidate;
-                                    decodeVIN();
-                                } else {
-                                    alert('VIN not detected accurately. Try adjusting box or manual entry.');
-                                }
-                            } catch (err) {
-                                alert('OCR failed. Please try manual entry.');
-                                console.error(err);
-                            } finally {
-                                stopStream();
-                                modal?.classList.remove('open');
-                            }
-                        }, 'image/png');
-                    };
-
-                    if (window.Quagga) {
-                        Quagga.decodeSingle({
-                            decoder: { readers: ["code_39_reader", "code_128_reader"] },
-                            locate: true,
-                            src: cropCanvas.toDataURL()
-                        }, (result) => {
-                            if (result && result.codeResult) {
-                                const scannedVIN = (result.codeResult.code || '').toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
-                                if (scannedVIN.length === 17 && /^[A-HJ-NPR-Z0-9]{17}$/.test(scannedVIN)) {
-                                    vinInput.value = scannedVIN;
-                                    if (barcodeHint) barcodeHint.style.display = 'block';
-                                    decodeVIN();
-                                    stopStream();
-                                    modal?.classList.remove('open');
-                                    return;
-                                }
-                            }
-                            // fallback to OCR
-                            tryTesseract();
-                        });
-                    } else {
-                        tryTesseract();
-                    }
-                });
-            }
-
-            updateGuide();
+            
 
 
         });
