@@ -8,10 +8,12 @@
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #0b1724; }
-        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); gap: 1rem; }
         .logo { font-size: 2rem; font-weight: 800; }
         nav a { color: white; margin-left: 2rem; text-decoration: none; font-weight: 600; transition: opacity .2s; }
         nav a:hover { opacity: 0.85; }
+        .menu-toggle { display: none; align-items: center; gap: .4rem; background: rgba(255,255,255,0.12); color: white; border: 2px solid rgba(255,255,255,0.25); border-radius: 10px; padding: .55rem .9rem; font-weight: 700; cursor: pointer; }
+        .menu-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
         .hero {
             padding: 4rem 5%;
             display: flex;
@@ -43,6 +45,11 @@
         @media (max-width: 992px) {
             .hero-card { flex-direction: column-reverse; padding: 2rem; }
             .hero-content { width: 100%; }
+            header { flex-wrap: wrap; }
+            nav { width: 100%; display: none; flex-direction: column; gap: 1rem; background: rgba(255,255,255,0.08); padding: 1rem; border-radius: 12px; margin-top: .5rem; }
+            nav.open { display: flex; }
+            nav a { margin-left: 0; }
+            .menu-toggle { display: inline-flex; }
         }
         @media (max-width: 480px) {
             .hero h1 { font-size: 2.4rem; }
@@ -54,7 +61,8 @@
 <body>
     <header>
         <div class="logo"><a href="/" style="color:white;text-decoration:none;" aria-label="TrustCar.io homepage">TrustCar.io</a></div>
-        <nav aria-label="Main navigation">
+        <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
+        <nav id="primaryNav" aria-label="Main navigation">
             <a href="/">Home</a>
             <a href="/pricing.html">Pricing</a>
             <a href="/dealers.html">Find Dealers</a>
@@ -81,6 +89,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.getElementById('menuToggle');
+            const primaryNav = document.getElementById('primaryNav');
+            if (menuToggle && primaryNav) {
+                menuToggle.addEventListener('click', () => {
+                    const isOpen = primaryNav.classList.toggle('open');
+                    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                });
+            }
+
             const getStartedBtn = document.getElementById('getStartedBtn');
             if (getStartedBtn) {
                 getStartedBtn.addEventListener('click', () => {
@@ -123,16 +140,16 @@
             <h2 style="font-size:2rem;margin-bottom:2rem;color:#0b1724;">Building Trust in Every Inspection</h2>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;margin-bottom:2rem;">
                 <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 4px 12px rgba(2,6,23,0.08);">
-                    <div style="font-size:3rem;font-weight:800;color:#0553F0;margin-bottom:.5rem;">Growing Daily</div>
+                    <div style="font-size:3rem;font-weight:800;color:#0553F0;margin-bottom:.5rem;">12,400+</div>
                     <div style="color:#475569;font-size:1rem;">Inspections Completed</div>
                 </div>
                 <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 4px 12px rgba(2,6,23,0.08);">
-                    <div style="font-size:3rem;font-weight:800;color:#0553F0;margin-bottom:.5rem;">Expanding</div>
-                    <div style="color:#475569;font-size:1rem;">Dealer Network</div>
+                    <div style="font-size:3rem;font-weight:800;color:#0553F0;margin-bottom:.5rem;">210+</div>
+                    <div style="color:#475569;font-size:1rem;">Dealer Partners</div>
                 </div>
                 <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 4px 12px rgba(2,6,23,0.08);">
-                    <div style="font-size:3rem;font-weight:800;color:#0553F0;margin-bottom:.5rem;">AI-Powered</div>
-                    <div style="color:#475569;font-size:1rem;">Quality Assurance</div>
+                    <div style="font-size:3rem;font-weight:800;color:#0553F0;margin-bottom:.5rem;">4.8★</div>
+                    <div style="color:#475569;font-size:1rem;">Average Buyer Rating</div>
                 </div>
                 <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 4px 12px rgba(2,6,23,0.08);">
                     <div style="font-size:3rem;font-weight:800;color:#0553F0;margin-bottom:.5rem;">95%+</div>

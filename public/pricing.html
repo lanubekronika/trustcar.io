@@ -8,8 +8,10 @@
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
-        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); gap: 1rem; }
         .logo { font-size: 1.8rem; font-weight: 800; }
+        .menu-toggle { display: none; align-items: center; gap: .4rem; background: rgba(255,255,255,0.12); color: white; border: 2px solid rgba(255,255,255,0.25); border-radius: 10px; padding: .55rem .9rem; font-weight: 700; cursor: pointer; }
+        .menu-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
         main { padding: 3rem 5%; max-width: 1400px; margin: 0 auto; }
         h1 { text-align: center; font-size: 3rem; margin-bottom: .75rem; font-weight: 800; background: linear-gradient(135deg, #0b1724 0%, #0553F0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .subtitle { text-align: center; color: #64748b; font-size: 1.15rem; margin-bottom: 3rem; font-weight: 500; }
@@ -39,13 +41,21 @@
         .comparison-table td:first-child { font-weight: 700; color: #475569; }
         .check { color: #10b981; font-weight: 700; }
         .cross { color: #ef4444; font-weight: 700; }
-        @media (max-width: 768px) { .pricing-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .pricing-grid { grid-template-columns: 1fr; }
+            header { flex-wrap: wrap; }
+            nav { width: 100%; display: none; flex-direction: column; gap: 1rem; background: rgba(255,255,255,0.08); padding: 1rem; border-radius: 12px; margin-top: .5rem; }
+            nav.open { display: flex; }
+            nav a { margin-left: 0; }
+            .menu-toggle { display: inline-flex; }
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="logo"><a href="/" style="color:white;text-decoration:none;">TrustCar.io</a></div>
-        <nav style="display:flex;gap:2rem;">
+        <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
+        <nav id="primaryNav" style="display:flex;gap:2rem;">
             <a href="/" style="color:white;text-decoration:none;font-weight:500;">Home</a>
             <a href="/pricing.html" style="color:white;text-decoration:none;font-weight:500;">Pricing</a>
             <a href="/dealers.html" style="color:white;text-decoration:none;font-weight:500;">Find Dealers</a>
@@ -242,6 +252,15 @@
             
             // Redirect to VIN entry with tier parameter
             window.location.href = `/enter-vin.html?tier=${tier}&price=${price}`;
+        }
+
+        const menuToggle = document.getElementById('menuToggle');
+        const primaryNav = document.getElementById('primaryNav');
+        if (menuToggle && primaryNav) {
+            menuToggle.addEventListener('click', () => {
+                const isOpen = primaryNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
         }
     </script>
 </body>
