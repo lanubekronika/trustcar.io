@@ -79,6 +79,7 @@
         <div class="muted">© 2025 TrustCar.io — Instant VIN decoding with recalls, safety ratings, and market data</div>
     </footer>
 
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const tier = urlParams.get('tier') || 'basic';
@@ -137,76 +138,6 @@
                 checkoutBtn.textContent = 'Proceed to Secure Payment';
             }
         });
-    </script>
-
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        // Initialize Stripe.js when publishable key is available
-        (async () => {
-            try {
-                const configRes = await fetch('/api/stripe/config');
-                if (configRes.ok) {
-                    const config = await configRes.json();
-                    if (config.publishableKey) {
-                        const stripe = Stripe(config.publishableKey);
-                        // Store globally so checkout handler can use it
-                        window.stripeInstance = stripe;
-                    }
-                }
-            } catch (e) {
-                console.warn('Could not load Stripe config', e);
-            }
-        })();
-
-        // Update checkout button handler to use Stripe.js
-        checkoutBtn.addEventListener('click', async (e) => {
-            if (e.defaultPrevented) return; // already handled
-            e.preventDefault();
-
-            if (!window.stripeInstance) {
-                alert('Stripe is not configured. Please add STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY to your .env file.');
-                return;
-            }
-
-            checkoutBtn.disabled = true;
-            const spinner = document.createElement('span');
-            spinner.className = 'spinner';
-            checkoutBtn.textContent = 'Redirecting to Stripe';
-            checkoutBtn.appendChild(spinner);
-
-            const payload = {
-                plan: tier,
-                listingUrl: vinOrListingInput.value.trim() || '',
-                vin: vinOrListingInput.value.trim() || ''
-            };
-
-            try {
-                const res = await fetch('/api/checkout/session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({ error: 'Checkout failed' }));
-                    throw new Error(err.error || 'Failed to create checkout session');
-                }
-
-                const data = await res.json();
-                if (!data.id) throw new Error('No session ID returned');
-
-                // Use Stripe.js to redirect
-                const result = await window.stripeInstance.redirectToCheckout({ sessionId: data.id });
-                if (result.error) {
-                    throw new Error(result.error.message);
-                }
-            } catch (err) {
-                alert('Checkout error: ' + err.message);
-                console.error(err);
-                checkoutBtn.disabled = false;
-                checkoutBtn.innerHTML = 'Proceed to Secure Payment';
-            }
-        }, { once: false }); // allow duplicate listener since first was inline
     </script>
 </body>
 </html>

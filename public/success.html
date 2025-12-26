@@ -81,7 +81,7 @@
     // Checkout function for direct purchase buttons
     async function checkout(tier) {
       if (!stripe) {
-        alert('Stripe is not initialized. Please refresh the page.');
+        console.warn('Stripe not initialized');
         return;
       }
 
