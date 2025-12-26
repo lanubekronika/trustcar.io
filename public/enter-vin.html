@@ -132,6 +132,24 @@
             }
             return '';
         }
+        function parseRatingNumber(val){
+            if (!val || typeof val !== 'string') return null;
+            if (/not\s*rated/i.test(val)) return null;
+            const m = val.match(/([0-9](?:\.[0-9])?)/);
+            return m ? parseFloat(m[1]) : null;
+        }
+        function renderStars(val){
+            const num = typeof val === 'number' ? val : parseRatingNumber(String(val || ''));
+            if (num == null) return '<span class="muted">Not Rated</span>';
+            const full = Math.floor(num);
+            const half = (num - full) >= 0.5 ? 1 : 0;
+            const empty = 5 - full - half;
+            return '<span aria-label="Safety rating ' + num + ' out of 5">'
+                + '★'.repeat(full)
+                + (half ? '☆' : '')
+                + '☆'.repeat(empty)
+                + '</span>';
+        }
         async function fetchJsonOrNull(url, opts) {
             try {
                 const res = await fetch(url, opts);
@@ -269,7 +287,7 @@
                 } catch(_e) { /* ignore */ }
                 const overall = safetyData && safetyData.rated && safetyData.overallRating && safetyData.overallRating !== 'Not Rated' ? safetyData.overallRating : null;
                 const safetyBadge = overall 
-                    ? `<span class="recall-badge" style="background:#dbeafe;color:#1e40af">★ Overall Safety: ${escapeHtml(overall)}</span>`
+                    ? `<span class="recall-badge" style="background:#dbeafe;color:#1e40af;display:flex;gap:.5rem;align-items:center;"><span>Overall Safety:</span><span>${renderStars(overall)}</span></span>`
                     : '';
 
                 // Build safety breakdown mini-grid
@@ -283,7 +301,7 @@
                         <div class="section" id="safetySection">
                             <h4>Safety Ratings (NHTSA)</h4>
                             <div class="mini-grid">
-                                <div class="mini-item"><strong>Overall</strong><span>${f(safetyData.overallRating)}</span></div>
+                                <div class="mini-item"><strong>Overall</strong><span>${renderStars(safetyData.overallRating)}</span></div>
                                 <div class="mini-item"><strong>Front Crash</strong><span>${f(safetyData.overallFrontCrashRating)}</span></div>
                                 <div class="mini-item"><strong>Side Crash</strong><span>${f(safetyData.overallSideCrashRating)}</span></div>
                                 <div class="mini-item"><strong>Rollover</strong><span>${f(safetyData.rolloverRating)}</span></div>
