@@ -634,7 +634,7 @@
                             src: cropCanvas.toDataURL()
                         }, (result) => {
                             if (result && result.codeResult) {
-                                const scannedVIN = (result.codeResult.code || '').toUpperCase();
+                                const scannedVIN = (result.codeResult.code || '').toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
                                 if (scannedVIN.length === 17 && /^[A-HJ-NPR-Z0-9]{17}$/.test(scannedVIN)) {
                                     vinInput.value = scannedVIN;
                                     if (barcodeHint) barcodeHint.style.display = 'block';
