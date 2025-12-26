@@ -602,38 +602,44 @@ app.get('/api/stripe/config', (req, res) => {
 // Create Stripe Checkout Session (server-side)
 app.post('/api/checkout/session', async (req, res) => {
   if (!stripe) return res.status(501).json({ error: 'Stripe not configured on server' });
-  const origin = req.protocol + '://' + req.get('host');
-  const { plan, listingUrl, vin } = req.body || {};
-  const priceMap = {
-    basic: { amount: 14900, name: 'TrustCar Inspection — Basic' },
-    premium: { amount: 64900, name: 'TrustCar Inspection — Premium + Warranty' }
+  
+  const { tier } = req.body || {};
+  
+  const tierPrices = {
+    basic: 4900,    // $49.00 in cents
+    plus: 11900,    // $119.00
+    premium: 22900  // $229.00
   };
-  const sel = priceMap[plan || 'basic'] || priceMap.basic;
+  
+  if (!tierPrices[tier]) {
+    return res.status(400).json({ error: 'Invalid tier' });
+  }
+  
   try {
+    const origin = req.protocol + '://' + req.get('host');
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
+      payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
             currency: 'usd',
-            unit_amount: sel.amount,
-            product_data: { name: sel.name }
+            product_data: {
+              name: `TrustCar ${tier.charAt(0).toUpperCase() + tier.slice(1)} Inspection`,
+            },
+            unit_amount: tierPrices[tier],
           },
-          quantity: 1
+          quantity: 1,
         }
       ],
-      success_url: `${origin}/enter-vin.html?session_id={CHECKOUT_SESSION_ID}&tier=${encodeURIComponent(plan || 'basic')}&purchased=true`,
+      mode: 'payment',
+      success_url: `${origin}/enter-vin.html?tier=${tier}&paid=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/pricing.html?canceled=true`,
-      metadata: {
-        plan: plan || 'basic',
-        listingUrl: listingUrl || '',
-        vin: vin || ''
-      }
     });
+    
     return res.json({ id: session.id });
   } catch (err) {
     console.error('Stripe session error', err);
-    return res.status(500).json({ error: 'Failed to create checkout session', detail: err.message });
+    return res.status(500).json({ error: 'Error creating checkout session', detail: err.message });
   }
 });
 

@@ -82,10 +82,20 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const tier = urlParams.get('tier') || 'basic';
-        const priceParam = urlParams.get('price');
-        let price = priceParam ? parseInt(priceParam, 10) : 49;
 
-        const tierNames = { basic: 'Basic', standard: 'Standard', premium: 'Premium' };
+        const tierPrices = {
+            basic: 49,
+            plus: 119,
+            premium: 229
+        };
+
+        const tierNames = {
+            basic: 'Basic',
+            plus: 'Plus',
+            premium: 'Premium'
+        };
+
+        const price = tierPrices[tier] || 49;
         document.getElementById('tierName').textContent = tierNames[tier] || tier;
         document.getElementById('totalPrice').textContent = '$' + price;
 
@@ -97,14 +107,10 @@
             const spinner = document.createElement('span');
             spinner.className = 'spinner';
             checkoutBtn.appendChild(spinner);
-            checkoutBtn.textContent = 'Redirecting to Stripe';
+            checkoutBtn.textContent = 'Redirecting to Stripe...';
             checkoutBtn.appendChild(spinner);
 
-            const payload = {
-                plan: tier,
-                listingUrl: vinOrListingInput.value.trim() || '',
-                vin: vinOrListingInput.value.trim() || ''
-            };
+            const payload = { tier };
 
             try {
                 const res = await fetch('/api/checkout/session', {
@@ -122,20 +128,13 @@
                 if (!data.id) throw new Error('No session ID returned');
 
                 // Redirect to Stripe Checkout using the session ID
-                // In production, load Stripe.js and use stripe.redirectToCheckout({ sessionId: data.id })
-                // For now, construct the URL manually (requires Stripe publishable key on client)
-                // Best practice: Use Stripe.js SDK
                 const stripeCheckoutUrl = `https://checkout.stripe.com/pay/${data.id}`;
                 window.location.href = stripeCheckoutUrl;
-
-                // Alternative (recommended): Load Stripe.js
-                // const stripe = Stripe('YOUR_PUBLISHABLE_KEY');
-                // stripe.redirectToCheckout({ sessionId: data.id });
             } catch (err) {
                 alert('Checkout error: ' + err.message);
                 console.error(err);
                 checkoutBtn.disabled = false;
-                checkoutBtn.innerHTML = 'Proceed to Secure Payment';
+                checkoutBtn.textContent = 'Proceed to Secure Payment';
             }
         });
     </script>

@@ -114,14 +114,14 @@
                     <li>AI-generated summary report</li>
                     <li><strong>Instant results (30 seconds)</strong></li>
                 </ul>
-                <button class="btn btn-primary" onclick="selectTier('basic', 49)">Get Started</button>
+                <button class="btn btn-primary" onclick="selectTier('basic')">Get Started</button>
             </div>
 
-            <!-- Tier 2: Standard (Most Popular) -->
+            <!-- Tier 2: Plus (Most Popular) -->
             <div class="pricing-card featured">
                 <div class="badge">Most Popular</div>
-                <div class="tier-name">Standard</div>
-                <div class="tier-price">$149<span>/report</span></div>
+                <div class="tier-name">Plus</div>
+                <div class="tier-price">$119<span>/report</span></div>
                 <div class="tier-desc">Complete remote inspection with AI damage detection</div>
                 <div style="background:#fef3c7;color:#92400e;padding:.5rem;border-radius:6px;margin-bottom:1rem;font-size:.85rem;font-weight:600;">🏆 150+ Inspection Points • 95% AI Accuracy</div>
                 <ul class="features">
@@ -138,13 +138,13 @@
                     <li>Detailed AI report with repair estimates</li>
                     <li><strong>48-hour turnaround</strong> (awaiting seller photos)</li>
                 </ul>
-                <button class="btn btn-primary" onclick="selectTier('standard', 149)">Get Started</button>
+                <button class="btn btn-primary" onclick="selectTier('plus')">Get Started</button>
             </div>
 
             <!-- Tier 3: Premium -->
             <div class="pricing-card">
                 <div class="tier-name">Premium</div>
-                <div class="tier-price">$299<span>/report</span></div>
+                <div class="tier-price">$229<span>/report</span></div>
                 <div class="tier-desc">White-glove service with professional verification</div>
                 <div style="background:#e0e7ff;color:#3730a3;padding:.5rem;border-radius:6px;margin-bottom:1rem;font-size:.85rem;font-weight:600;">⭐ 500+ Inspection Points • Human + AI Verified</div>
                 <ul class="features">
@@ -159,7 +159,7 @@
                     <li>Repair shop network (trusted quotes)</li>
                     <li><strong>72-hour turnaround</strong> (includes 3rd-party inspection)</li>
                 </ul>
-                <button class="btn btn-primary" onclick="selectTier('premium', 299)">Get Started</button>
+                <button class="btn btn-primary" onclick="selectTier('premium')">Get Started</button>
             </div>
         </div>
 
@@ -248,9 +248,9 @@
     </main>
 
     <script>
-        function selectTier(tier, price) {
-            // Redirect to checkout page with tier and price
-            window.location.href = `/checkout.html?tier=${tier}&price=${price}`;
+        function selectTier(tier) {
+            // Redirect to checkout page with tier
+            window.location.href = `/checkout.html?tier=${tier}`;
         }
 
         const menuToggle = document.getElementById('menuToggle');

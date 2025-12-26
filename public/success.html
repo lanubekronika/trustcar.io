@@ -42,8 +42,32 @@
         <p style="margin-top:1rem;"><a href="/view-report.html" style="color:#10b981;font-weight:700;text-decoration:none;">→ View My Inspection Report</a></p>
       </div>
 
-      <a class="button" href="/">Back to Home</a>
+      <a class="button" href="/enter-vin.html?purchased=true">Start Your Inspection</a>
+      <p style="margin-top:1.5rem;"><a href="/" style="color:#0553F0;font-weight:700;text-decoration:none;">← Back to Home</a></p>
     </div>
   </main>
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    // Initialize Stripe on success page
+    (async () => {
+      try {
+        // Fetch publishable key from server
+        const configRes = await fetch('/api/stripe/config');
+        if (configRes.ok) {
+          const config = await configRes.json();
+          const publishableKey = config.publishableKey || 'pk_test_51234567890';
+          if (publishableKey && publishableKey.startsWith('pk_')) {
+            const stripe = Stripe(publishableKey);
+            console.log('Stripe initialized on success page');
+            // Store for any future usage
+            window.stripeInstance = stripe;
+          }
+        }
+      } catch (e) {
+        console.warn('Could not initialize Stripe on success page:', e);
+      }
+    })();
+  </script>
 </body>
 </html>
