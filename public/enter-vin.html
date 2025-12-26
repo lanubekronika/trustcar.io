@@ -378,6 +378,35 @@
             return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         }
 
+        // VIN check digit validation (ISO 3779)
+        function isValidVin(vin) {
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) return false;
+            const map = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,J:1,K:2,L:3,M:4,N:5,P:7,R:9,S:2,T:3,U:4,V:5,W:6,X:7,Y:8,Z:9};
+            const weights = [8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
+            let sum = 0;
+            for (let i = 0; i < 17; i++) {
+                const ch = vin[i];
+                const val = /[0-9]/.test(ch) ? parseInt(ch,10) : map[ch] || 0;
+                sum += val * weights[i];
+            }
+            const check = sum % 11;
+            const expected = check === 10 ? 'X' : String(check);
+            return vin[8] === expected;
+        }
+
+        function tryCorrectVin(vin) {
+            // Common misreads: S↔5, Z↔2, B↔8, G↔6
+            const pairs = [ ['S','5'], ['Z','2'], ['B','8'], ['G','6'] ];
+            if (isValidVin(vin)) return vin;
+            for (const [a,b] of pairs) {
+                const alt1 = vin.replace(new RegExp(a,'g'), b);
+                if (isValidVin(alt1)) return alt1;
+                const alt2 = vin.replace(new RegExp(b,'g'), a);
+                if (isValidVin(alt2)) return alt2;
+            }
+            return vin; // fallback, may still be invalid
+        }
+
         async function saveVinDecodeToServer(vin, decodeData, recallsData, safetyData) {
             try {
                 await fetch('/api/vin-records', {
@@ -598,24 +627,45 @@
 
                     const imgData = cropCtx.getImageData(0, 0, cropCanvas.width, cropCanvas.height);
                     const data = imgData.data;
+                    // Adaptive threshold: compute local mean
+                    let sum = 0; let count = 0;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3; sum += avg; count++;
+                    }
+                    const global = sum / count; const thresh = Math.max(90, Math.min(170, global));
                     for (let i = 0; i < data.length; i += 4) {
                         const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                        const bin = avg > 128 ? 255 : 0;
-                        data[i] = data[i + 1] = data[i + 2] = bin; // binary threshold for stronger OCR contrast
+                        const bin = avg > thresh ? 255 : 0;
+                        data[i] = data[i + 1] = data[i + 2] = bin;
                     }
                     cropCtx.putImageData(imgData, 0, 0);
 
                     const barcodeHint = document.getElementById('barcodeHint');
 
                     const tryTesseract = () => {
-                        cropCanvas.toBlob(async (blob) => {
+                        // Upsample for OCR
+                        const upCanvas = document.createElement('canvas');
+                        upCanvas.width = cropCanvas.width * 2;
+                        upCanvas.height = cropCanvas.height * 2;
+                        const upCtx = upCanvas.getContext('2d');
+                        upCtx.imageSmoothingEnabled = false;
+                        upCtx.drawImage(cropCanvas, 0, 0, upCanvas.width, upCanvas.height);
+
+                        upCanvas.toBlob(async (blob) => {
                             try {
-                                const { data: { text } } = await Tesseract.recognize(blob, 'eng', {
-                                    tessedit_char_whitelist: 'ABCDEFGHJKMNPQRSTUVWXYZ0123456789'
+                                const { data } = await Tesseract.recognize(blob, 'eng', {
+                                    // Improve single-line OCR
+                                    tessedit_char_whitelist: 'ABCDEFGHJKMNPQRSTUVWXYZ0123456789',
+                                    preserve_interword_spaces: '1',
+                                    // Pass psm/oem via config string (supported by tesseract.js)
+                                    // eslint-disable-next-line camelcase
+                                    config: '--psm 7 --oem 1'
                                 });
-                                const cleaned = text.trim().replace(/[^A-HJ-NPR-Z0-9]/g, '').substring(0, 17).toUpperCase();
+                                const raw = (data.text || '').toUpperCase();
+                                const cleaned = raw.replace(/[^A-HJ-NPR-Z0-9]/g, '').substring(0, 17);
                                 if (cleaned.length === 17) {
-                                    vinInput.value = cleaned;
+                                    const candidate = tryCorrectVin(cleaned);
+                                    vinInput.value = candidate;
                                     decodeVIN();
                                 } else {
                                     alert('VIN not detected accurately. Try adjusting box or manual entry.');
