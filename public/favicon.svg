@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#0553F0"/>
+  <path d="M16 8 L20 10 L20 14 L16 16 L12 14 L12 10 Z" fill="#10b981" stroke="white" stroke-width="1.5"/>
+  <path d="M10 16 L22 16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="9" cy="20" r="2.5" fill="white"/>
+  <circle cx="23" cy="20" r="2.5" fill="white"/>
+  <path d="M11.5 20 L20.5 20" stroke="white" stroke-width="2"/>
+  <text x="16" y="26" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="white" text-anchor="middle">TC</text>
+</svg>
