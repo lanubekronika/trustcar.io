@@ -40,57 +40,6 @@
         .card h3 { margin-bottom: 1.5rem; color: #0553F0; font-size: 1.8rem; font-weight: 800; }
         footer { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; text-align: center; padding: 2rem; box-shadow: 0 -2px 8px rgba(5,83,240,0.15); font-weight: 600; }
 
-        /* Simple client-side gate for admin-only viewing */
-        .auth-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(2,6,23,0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            z-index: 9999;
-        }
-        .auth-card {
-            background: #ffffff;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 12px 32px rgba(2,6,23,0.25);
-            border: 1px solid #e2e8f0;
-        }
-        .auth-card h2 {
-            margin: 0 0 0.5rem;
-            color: #0b1724;
-            font-size: 1.5rem;
-        }
-        .auth-card p { margin: 0 0 1.25rem; color: #475569; font-size: 0.95rem; }
-        .auth-input {
-            width: 100%;
-            padding: 0.85rem 1rem;
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
-            font-size: 1rem;
-            margin-bottom: 0.9rem;
-            background: #f8fafc;
-        }
-        .auth-button {
-            width: 100%;
-            padding: 0.9rem 1rem;
-            border-radius: 10px;
-            border: none;
-            background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%);
-            color: white;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(5,83,240,0.25);
-        }
-        .auth-button:hover { box-shadow: 0 10px 28px rgba(5,83,240,0.35); transform: translateY(-1px); }
-        .auth-note { margin-top: 1rem; color: #94a3b8; font-size: 0.85rem; text-align: center; }
-        .auth-error { color: #dc2626; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.75rem; display: none; }
-
         @media (max-width: 992px) {
             .hero-card { flex-direction: column-reverse; padding: 2rem; }
             .hero-content { width: 100%; }
@@ -103,21 +52,6 @@
     </style>
 </head>
 <body>
-    <div id="authOverlay" class="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-        <form id="authForm" class="auth-card">
-            <h2 id="authTitle">Admin Access</h2>
-            <p>Enter credentials to view this page. For demo use only.</p>
-            <div id="authError" class="auth-error" role="alert">Invalid credentials. Access denied.</div>
-            <label for="username" style="display:block;font-weight:700;color:#0b1724;margin-bottom:0.25rem;">Username</label>
-            <input id="username" name="username" class="auth-input" type="text" autocomplete="username" required>
-            <label for="password" style="display:block;font-weight:700;color:#0b1724;margin-bottom:0.25rem;">Password</label>
-            <input id="password" name="password" class="auth-input" type="password" autocomplete="current-password" required>
-            <button type="submit" class="auth-button">Unlock</button>
-            <div class="auth-note">Credentials: admin / trustcarkronic</div>
-        </form>
-    </div>
-
-    <div id="appContent" hidden>
     <header>
         <div class="logo"><a href="/" style="color:white;text-decoration:none;" aria-label="TrustCar.io homepage">TrustCar.io</a></div>
         <nav aria-label="Main navigation">
@@ -147,36 +81,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const AUTH_KEY = 'trustcar-auth';
-            const overlay = document.getElementById('authOverlay');
-            const appContent = document.getElementById('appContent');
-            const authForm = document.getElementById('authForm');
-            const authError = document.getElementById('authError');
-
-            const enableApp = () => {
-                overlay.style.display = 'none';
-                appContent.hidden = false;
-            };
-
-            if (localStorage.getItem(AUTH_KEY) === 'granted') {
-                enableApp();
-            } else {
-                overlay.style.display = 'flex';
-            }
-
-            authForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value;
-                if (username === 'admin' && password === 'trustcarkronic') {
-                    localStorage.setItem(AUTH_KEY, 'granted');
-                    authError.style.display = 'none';
-                    enableApp();
-                } else {
-                    authError.style.display = 'block';
-                }
-            });
-
             const getStartedBtn = document.getElementById('getStartedBtn');
             if (getStartedBtn) {
                 getStartedBtn.addEventListener('click', () => {
@@ -241,6 +145,5 @@
     <footer role="contentinfo">
         <p>© 2025 TrustCar.io — Building Trust in Every Journey</p>
     </footer>
-    </div>
 </body>
 </html>
