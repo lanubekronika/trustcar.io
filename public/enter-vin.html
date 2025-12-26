@@ -198,7 +198,7 @@
             btn.appendChild(spinner);
 
             try {
-                const decodeUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}?format=json`;
+                const decodeUrl = `/api/vpic/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}`;
                 const decodeRes = await fetch(decodeUrl);
                 const decodeData = await decodeRes.json();
 
