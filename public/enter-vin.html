@@ -36,9 +36,10 @@
         #cameraModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; padding: 1rem; }
         #cameraModal.active { display: flex; }
         .camera-container { max-width: 640px; width: 100%; background: white; border-radius: 16px; padding: 1.5rem; position: relative; }
+        :root { --scanWidthPercent: 70%; --scanHeightPx: 60px; }
         #videoPreview { width: 100%; border-radius: 12px; background: #000; }
         .camera-controls { display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: center; flex-wrap: wrap; }
-        .scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 3px dashed #10b981; width: 85%; height: 80px; pointer-events: none; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); }
+        .scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 3px dashed #10b981; width: var(--scanWidthPercent); height: var(--scanHeightPx); pointer-events: none; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); }
         .scan-guide::after { content: 'Align VIN here'; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); color: #10b981; font-weight: 700; font-size: 0.9rem; background: rgba(0,0,0,0.7); padding: 0.25rem 0.75rem; border-radius: 6px; }
         #vinResults { margin-top: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #e6eefc; display: none; }
         #vinResults pre { white-space: pre-wrap; word-break: break-word; margin: 0; }
@@ -114,6 +115,14 @@
                     <div style="position:relative;">
                         <video id="videoPreview" autoplay playsinline></video>
                         <div class="scan-guide"></div>
+                    </div>
+                    <div style="display:flex;gap:.75rem;align-items:center;justify-content:center;margin-top:.75rem;flex-wrap:wrap;">
+                        <label class="muted" for="widthRange">Box Width</label>
+                        <input id="widthRange" type="range" min="60" max="90" value="70" step="1" aria-label="Scan box width percent" />
+                        <span id="widthVal" class="muted">70%</span>
+                        <label class="muted" for="heightRange" style="margin-left:.5rem;">Box Height</label>
+                        <input id="heightRange" type="range" min="40" max="100" value="60" step="2" aria-label="Scan box height pixels" />
+                        <span id="heightVal" class="muted">60px</span>
                     </div>
                     <canvas id="scanCanvas" style="display:none;"></canvas>
                     <div class="camera-controls">
@@ -604,6 +613,24 @@
         const scanVinBtn = document.getElementById('scanVinBtn');
         const closeCameraBtn = document.getElementById('closeCameraBtn');
         const captureBtn = document.getElementById('captureBtn');
+        const widthRange = document.getElementById('widthRange');
+        const heightRange = document.getElementById('heightRange');
+        const widthVal = document.getElementById('widthVal');
+        const heightVal = document.getElementById('heightVal');
+
+        function updateScanGuideCSS() {
+            const w = (parseInt(widthRange.value, 10) || 70);
+            const h = (parseInt(heightRange.value, 10) || 60);
+            document.documentElement.style.setProperty('--scanWidthPercent', w + '%');
+            document.documentElement.style.setProperty('--scanHeightPx', h + 'px');
+            widthVal.textContent = w + '%';
+            heightVal.textContent = h + 'px';
+        }
+        if (widthRange && heightRange) {
+            widthRange.addEventListener('input', updateScanGuideCSS);
+            heightRange.addEventListener('input', updateScanGuideCSS);
+            updateScanGuideCSS();
+        }
 
         scanVinBtn.addEventListener('click', async () => {
             try {
@@ -685,8 +712,14 @@
             fullCtx.drawImage(videoPreview, 0, 0);
 
             // Compute ROI based on scan-guide (90% width, 100px height centered)
-            const roiWidth = Math.floor(fullCanvas.width * 0.85);
-            const roiHeight = 80; // pixels
+            // Read dynamic ROI from sliders
+            const scanWidthPercentStr = getComputedStyle(document.documentElement).getPropertyValue('--scanWidthPercent').trim();
+            const scanHeightPxStr = getComputedStyle(document.documentElement).getPropertyValue('--scanHeightPx').trim();
+            const scanWidthPercent = Math.max(0.6, Math.min(0.9, parseFloat(scanWidthPercentStr) / 100 || 0.7));
+            const scanHeightPx = Math.max(40, Math.min(100, parseInt(scanHeightPxStr, 10) || 60));
+
+            const roiWidth = Math.floor(fullCanvas.width * scanWidthPercent);
+            const roiHeight = scanHeightPx; // pixels
             const roiX = Math.floor((fullCanvas.width - roiWidth) / 2);
             const roiY = Math.floor((fullCanvas.height - roiHeight) / 2);
 
