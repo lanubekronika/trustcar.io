@@ -607,8 +607,8 @@ app.post('/api/checkout/session', async (req, res) => {
   
   const tierPrices = {
     basic: 4900,    // $49.00 in cents
-    plus: 11900,    // $119.00
-    premium: 22900  // $229.00
+    plus: 14900,    // $149.00
+    premium: 29900  // $299.00
   };
   
   if (!tierPrices[tier]) {

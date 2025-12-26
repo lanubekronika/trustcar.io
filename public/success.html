@@ -42,6 +42,15 @@
         <p style="margin-top:1rem;"><a href="/view-report.html" style="color:#10b981;font-weight:700;text-decoration:none;">→ View My Inspection Report</a></p>
       </div>
 
+      <div style="margin-top:2rem;text-align:center;">
+        <p style="color:#475569;font-weight:600;margin-bottom:1rem;">Need a different tier? Purchase now:</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+          <button onclick="checkout('basic')" class="btn btn-primary" style="flex:1;min-width:180px;">Purchase Basic — $49</button>
+          <button onclick="checkout('plus')" class="btn btn-primary" style="flex:1;min-width:180px;">Purchase Plus — $149</button>
+          <button onclick="checkout('premium')" class="btn btn-primary" style="flex:1;min-width:180px;">Purchase Premium — $299</button>
+        </div>
+      </div>
+
       <a class="button" href="/enter-vin.html?purchased=true">Start Your Inspection</a>
       <p style="margin-top:1.5rem;"><a href="/" style="color:#0553F0;font-weight:700;text-decoration:none;">← Back to Home</a></p>
     </div>
@@ -50,24 +59,54 @@
   <script src="https://js.stripe.com/v3/"></script>
   <script>
     // Initialize Stripe on success page
+    let stripe = null;
+    
     (async () => {
       try {
         // Fetch publishable key from server
         const configRes = await fetch('/api/stripe/config');
         if (configRes.ok) {
           const config = await configRes.json();
-          const publishableKey = config.publishableKey || 'pk_test_51234567890';
+          const publishableKey = config.publishableKey;
           if (publishableKey && publishableKey.startsWith('pk_')) {
-            const stripe = Stripe(publishableKey);
+            stripe = Stripe(publishableKey);
             console.log('Stripe initialized on success page');
-            // Store for any future usage
-            window.stripeInstance = stripe;
           }
         }
       } catch (e) {
         console.warn('Could not initialize Stripe on success page:', e);
       }
     })();
+
+    // Checkout function for direct purchase buttons
+    async function checkout(tier) {
+      if (!stripe) {
+        alert('Stripe is not initialized. Please refresh the page.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/checkout/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create checkout session');
+        }
+
+        const session = await response.json();
+        const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+        if (result.error) {
+          alert('Checkout error: ' + result.error.message);
+        }
+      } catch (err) {
+        alert('Checkout error: ' + err.message);
+        console.error(err);
+      }
+    }
   </script>
 </body>
 </html>
