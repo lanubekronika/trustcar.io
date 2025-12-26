@@ -38,7 +38,7 @@
         .camera-container { max-width: 640px; width: 100%; background: white; border-radius: 16px; padding: 1.5rem; position: relative; }
         #videoPreview { width: 100%; border-radius: 12px; background: #000; }
         .camera-controls { display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: center; flex-wrap: wrap; }
-        .scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 3px dashed #10b981; width: 90%; height: 100px; pointer-events: none; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); }
+        .scan-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 3px dashed #10b981; width: 85%; height: 80px; pointer-events: none; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); }
         .scan-guide::after { content: 'Align VIN here'; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); color: #10b981; font-weight: 700; font-size: 0.9rem; background: rgba(0,0,0,0.7); padding: 0.25rem 0.75rem; border-radius: 6px; }
         #vinResults { margin-top: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); padding: 1.5rem; border-radius: 12px; border: 2px solid #e6eefc; display: none; }
         #vinResults pre { white-space: pre-wrap; word-break: break-word; margin: 0; }
@@ -685,8 +685,8 @@
             fullCtx.drawImage(videoPreview, 0, 0);
 
             // Compute ROI based on scan-guide (90% width, 100px height centered)
-            const roiWidth = Math.floor(fullCanvas.width * 0.9);
-            const roiHeight = 100; // pixels
+            const roiWidth = Math.floor(fullCanvas.width * 0.85);
+            const roiHeight = 80; // pixels
             const roiX = Math.floor((fullCanvas.width - roiWidth) / 2);
             const roiY = Math.floor((fullCanvas.height - roiHeight) / 2);
 
@@ -697,24 +697,37 @@
             const cropCtx = cropCanvas.getContext('2d');
             cropCtx.drawImage(fullCanvas, roiX, roiY, roiWidth, roiHeight, 0, 0, roiWidth, roiHeight);
 
+            // Upscale ROI to improve OCR character size
+            const ocrCanvas = document.createElement('canvas');
+            ocrCanvas.width = roiWidth * 2;
+            ocrCanvas.height = roiHeight * 2;
+            const ocrCtx = ocrCanvas.getContext('2d');
+            ocrCtx.imageSmoothingEnabled = false;
+            ocrCtx.drawImage(cropCanvas, 0, 0, ocrCanvas.width, ocrCanvas.height);
+
             // Preprocess: grayscale + contrast boost
-            const imageData = cropCtx.getImageData(0, 0, cropCanvas.width, cropCanvas.height);
+            const imageData = ocrCtx.getImageData(0, 0, ocrCanvas.width, ocrCanvas.height);
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
                 const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-                const contrast = ((gray - 128) * 1.9) + 128;
-                data[i] = data[i + 1] = data[i + 2] = Math.max(0, Math.min(255, contrast));
+                const contrast = ((gray - 128) * 2.0) + 128;
+                const clamped = Math.max(0, Math.min(255, contrast));
+                // Binarize to reduce noise
+                const thresh = 160;
+                const bw = clamped >= thresh ? 255 : 0;
+                data[i] = data[i + 1] = data[i + 2] = bw;
             }
-            cropCtx.putImageData(imageData, 0, 0);
+            ocrCtx.putImageData(imageData, 0, 0);
 
             scanStatus.textContent = '🔍 Reading VIN with AI...';
 
             try {
                 const result = await Tesseract.recognize(
-                    cropCanvas,
+                    ocrCanvas,
                     'eng',
                     {
                         tessedit_char_whitelist: 'ABCDEFGHJKLMNPRSTUVWXYZ0123456789',
+                        tessedit_pageseg_mode: 7,
                         logger: (m) => {
                             if (m.status === 'recognizing text') {
                                 scanStatus.textContent = `🔍 Reading VIN... ${Math.round(m.progress * 100)}%`;
@@ -724,7 +737,9 @@
                 );
 
                 const rawText = result.data.text || '';
-                const text = rawText.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                const pre = rawText.toUpperCase().replace(/\s|-/g, '');
+                // Map ambiguous characters before matching
+                const text = pre.replace(/O/g, '0').replace(/I/g, '1').replace(/Q/g, '0').replace(/[^A-Z0-9]/g, '');
                 // Extract VIN pattern: 17 alphanumeric characters (no I, O, Q)
                 const vinPattern = /[A-HJ-NPR-Z0-9]{17}/g;
                 const matches = text.match(vinPattern);
