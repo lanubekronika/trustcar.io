@@ -179,15 +179,27 @@
 
             try {
                 const decodeUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`;
-                const recallsUrl = `https://api.nhtsa.gov/recalls/recallsByVehicle?vin=${encodeURIComponent(vin)}`;
-
-                const [decodeRes, recallsRes] = await Promise.all([
-                    fetch(decodeUrl),
-                    fetch(recallsUrl)
-                ]);
-
+                const decodeRes = await fetch(decodeUrl);
                 const decodeData = await decodeRes.json();
-                const recallsData = await recallsRes.json();
+
+                // Derive recalls by Year/Make/Model for broader compatibility
+                let recallsData = { results: [], count: 0 };
+                try {
+                    const findVarPre = (name) => {
+                        const item = decodeData.Results && decodeData.Results.find(r => r.Variable === name);
+                        return item && item.Value ? item.Value : '';
+                    };
+                    const recallsYear = findVarPre('Model Year') || findVarPre('ModelYear');
+                    const recallsMake = findVarPre('Make');
+                    const recallsModel = findVarPre('Model');
+                    if (recallsYear && recallsMake && recallsModel) {
+                        const recallsUrl = `https://api.nhtsa.gov/recalls/recallsByVehicle?modelYear=${encodeURIComponent(recallsYear)}&make=${encodeURIComponent(recallsMake)}&model=${encodeURIComponent(recallsModel)}`;
+                        const recallsRes = await fetch(recallsUrl);
+                        if (recallsRes.ok) {
+                            recallsData = await recallsRes.json();
+                        }
+                    }
+                } catch(_e) { /* ignore */ }
 
                 lastDecode = { decodeData, recallsData };
 
