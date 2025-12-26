@@ -430,8 +430,7 @@ app.get('/api/vin/safety', async (req, res) => {
 app.get('/api/config/features', (req, res) => {
   res.json({
     marketCompsEnabled: !!MARKETCHECK_API_KEY,
-    roboflowEnabled: !!(ROBOFLOW_API_KEY && ROBOFLOW_MODEL),
-    valuationEnabled: !!process.env.JDPOWER_API_KEY
+    roboflowEnabled: !!(ROBOFLOW_API_KEY && ROBOFLOW_MODEL)
   });
 });
 
@@ -458,15 +457,7 @@ app.get('/api/vpic/*', async (req, res) => {
   }
 });
 
-// JD Power Valuation (placeholder)
-// NOTE: JD Power APIs require a commercial license. This endpoint returns 501 unless configured.
-app.get('/api/value/jdpower', async (req, res) => {
-  if (!process.env.JDPOWER_API_KEY) {
-    return res.status(501).json({ error: 'JD Power not configured' });
-  }
-  // Implement once credentials and API spec are available.
-  return res.status(501).json({ error: 'JD Power integration pending' });
-});
+
 
 // Market comps (listings + price stats)
 app.get('/api/vin/market-comps', async (req, res) => {
