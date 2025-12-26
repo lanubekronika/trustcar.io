@@ -43,7 +43,6 @@
         .comparison-table td:first-child { font-weight: 700; color: #475569; }
         .check { color: #10b981; font-weight: 700; }
         .cross { color: #ef4444; font-weight: 700; }
-        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -1rem; padding: 0 1rem; }
         @media (max-width: 768px) {
             .pricing-grid { grid-template-columns: 1fr; }
             header { flex-wrap: wrap; }
@@ -52,10 +51,6 @@
             nav a { margin-left: 0; padding: 0.75rem 1rem; min-height: 44px; display: flex; align-items: center; border-radius: 8px; transition: background 0.2s; }
             nav a:hover, nav a:focus { background: rgba(255,255,255,0.15); }
             .menu-toggle { display: inline-flex; min-height: 44px; min-width: 44px; }
-            .comparison { padding: 1.5rem 1rem; }
-            .comparison-table { min-width: 600px; font-size: 0.9rem; }
-            .comparison-table th, .comparison-table td { padding: 0.75rem 0.5rem; }
-            .table-scroll { margin: 0 -1rem; padding: 0 1rem; }
         }
     </style>
 </head>
@@ -177,17 +172,16 @@
 
         <div class="comparison">
             <h2>Feature Comparison</h2>
-            <div class="table-scroll">
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th>Basic</th>
-                            <th>Standard</th>
-                            <th>Premium</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Basic</th>
+                        <th>Standard</th>
+                        <th>Premium</th>
+                    </tr>
+                </thead>
+                <tbody>
                     <tr>
                         <td>VIN decode + safety ratings</td>
                         <td class="check">✓</td>
@@ -250,7 +244,6 @@
                     </tr>
                 </tbody>
             </table>
-            </div>
         </div>
     </main>
 
