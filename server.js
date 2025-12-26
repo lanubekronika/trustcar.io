@@ -434,6 +434,29 @@ app.get('/api/config/features', (req, res) => {
   });
 });
 
+// Generic proxy for VPIC APIs (GET only)
+// Usage examples:
+//   /api/vpic/vehicles/DecodeVinValuesExtended/1HGCM82633A004352?format=json
+//   /api/vpic/vehicles/GetModelsForMakeYear/make/honda/modelyear/2003?format=json
+// The route appends format=json if not provided.
+app.get('/api/vpic/*', async (req, res) => {
+  try {
+    const suffix = req.params[0] || '';
+    // Preserve query string
+    const q = req.originalUrl.includes('?') ? req.originalUrl.split('?')[1] : '';
+    let target = `https://vpic.nhtsa.dot.gov/api/${suffix}`;
+    if (q) target += `?${q}`;
+    if (!/format=/.test(q)) {
+      target += (q ? '&' : '?') + 'format=json';
+    }
+    const data = await fetchJsonViaHttps(target);
+    res.json(data);
+  } catch (e) {
+    console.error('VPIC proxy error', e);
+    res.status(500).json({ error: 'vpic proxy failed', message: e.message });
+  }
+});
+
 // Market comps (listings + price stats)
 app.get('/api/vin/market-comps', async (req, res) => {
   try {
