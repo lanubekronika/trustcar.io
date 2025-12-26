@@ -7,8 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #0b1724; }
-        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15);; gap: 1rem; }
         .logo { font-size: 1.8rem; font-weight: 800; }
+        .menu-toggle { display: none; align-items: center; gap: .4rem; background: rgba(255,255,255,0.12); color: white; border: 2px solid rgba(255,255,255,0.25); border-radius: 10px; padding: .55rem .9rem; font-weight: 700; cursor: pointer; }
+        .menu-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
         a.nav-link { color: white; text-decoration: none; margin-left: 1.5rem; font-weight: 600; transition: opacity .2s; }
         a.nav-link:hover { opacity: 0.85; }
         main { padding: 3rem 5%; display: flex; justify-content: center; }
@@ -60,7 +62,8 @@
 <body>
     <header>
         <div class="logo"><a href="/" style="color:white;text-decoration:none;" aria-label="TrustCar.io homepage">TrustCar.io</a></div>
-        <nav aria-label="Main navigation">
+        <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
+        <nav aria-label="Main navigation" id="primaryNav">
             <a class="nav-link" href="/">Home</a>
             <a class="nav-link" href="/pricing.html">Pricing</a>
             <a class="nav-link" href="/how-it-works.html">How It Works</a>
@@ -142,9 +145,14 @@
             const statusEl = document.getElementById('statusMsg');
             const btn = document.getElementById('vinDecodeBtn');
 
-            resultsEl.style.display = 'block';
+                        resultsEl.style.display = 'block';
             resultsEl.setAttribute('aria-busy', 'true');
-            resultsEl.innerHTML = '<div class="muted">Looking up VIN…</div>';
+            resultsEl.innerHTML = `
+                <div style="text-align:center;padding:2rem;">
+                    <div style="font-size:2rem;margin-bottom:1rem;">🔍</div>
+                    <div style="font-weight:600;color:#0553F0;margin-bottom:.5rem;">Decoding VIN...</div>
+                    <div class="muted">Fetching vehicle data from NHTSA database</div>
+                </div>`;
             statusEl.textContent = '';
 
             // show spinner and disable button
@@ -295,10 +303,23 @@
                 // Save the full decode data to server for admin/auditing
                 saveVinDecodeToServer(vin, decodeData, recallsData, safetyData);
 
-            } catch (err) {
-                resultsEl.innerHTML = '<div class="muted">Error fetching VIN data — try again later.</div>';
+                        } catch (err) {
+                resultsEl.innerHTML = `
+                    <div style="background:#fef3c7;border:2px solid #f59e0b;padding:1.5rem;border-radius:12px;color:#78350f;">
+                        <strong style="display:block;margin-bottom:.75rem;font-size:1.1rem;">⚠ Unable to Fetch VIN Data</strong>
+                        <p style="margin:0 0 1rem;line-height:1.6;">The NHTSA VIN API may be temporarily unavailable. Please try again in a few moments.</p>
+                        <details style="margin-top:.75rem;">
+                            <summary style="cursor:pointer;font-weight:600;user-select:none;">Technical Details</summary>
+                            <pre style="margin:.5rem 0 0;font-size:.85rem;overflow-x:auto;background:#fff;padding:.75rem;border-radius:6px;">${escapeHtml(err.message || err.toString())}</pre>
+                        </details>
+                        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #f59e0b;">
+                            <a href="/" style="color:#0553F0;font-weight:600;text-decoration:none;">← Back to Home</a>
+                            <span style="margin:0 .75rem;color:#cbd5e1;">|</span>
+                            <a href="/how-it-works.html" style="color:#0553F0;font-weight:600;text-decoration:none;">Learn How It Works</a>
+                        </div>
+                    </div>`;
                 resultsEl.setAttribute('aria-busy', 'false');
-                console.error(err);
+                console.error('VIN decode error:', err);
             } finally {
                 if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
                 btn.disabled = false;
@@ -506,6 +527,17 @@
             report += `\n---\nFor full inspection and market analysis, visit TrustCar.io`;
             
             return report;
+        }
+    </script>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const primaryNav = document.getElementById('primaryNav');
+        if (menuToggle && primaryNav) {
+            menuToggle.addEventListener('click', () => {
+                const isOpen = primaryNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
         }
     </script>
 </body>

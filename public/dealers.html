@@ -8,8 +8,10 @@
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
-        header { background: #0553F0; color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; }
+        header { background: #0553F0; color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center;; gap: 1rem; }
         .logo { font-size: 1.8rem; font-weight: 700; }
+        .menu-toggle { display: none; align-items: center; gap: .4rem; background: rgba(255,255,255,0.12); color: white; border: 2px solid rgba(255,255,255,0.25); border-radius: 10px; padding: .55rem .9rem; font-weight: 700; cursor: pointer; }
+        .menu-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
         nav { display: flex; gap: 2rem; }
         nav a { color: white; text-decoration: none; font-weight: 500; }
         main { padding: 3rem 5%; max-width: 1400px; margin: 0 auto; }
@@ -42,13 +44,19 @@
         .info-box { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
         .info-box h3 { margin: 0 0 .5rem 0; color: #92400e; }
         .info-box p { margin: 0; color: #78350f; }
-        @media (max-width: 768px) { .dealer-grid { grid-template-columns: 1fr; } .search-row { flex-direction: column; } }
+        @media (max-width: 768px) {
+            header { flex-wrap: wrap; }
+            nav { width: 100%; display: none; flex-direction: column; gap: 1rem; background: rgba(255,255,255,0.08); padding: 1rem; border-radius: 12px; margin-top: .5rem; }
+            nav.open { display: flex; }
+            nav a, nav a.nav-link { margin-left: 0; }
+            .menu-toggle { display: inline-flex; } .dealer-grid { grid-template-columns: 1fr; } .search-row { flex-direction: column; } }
     </style>
 </head>
 <body>
     <header>
         <div class="logo"><a href="/" style="color:white;text-decoration:none;">TrustCar.io</a></div>
-        <nav>
+        <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
+        <nav id="primaryNav">
             <a href="/">Home</a>
             <a href="/pricing.html">Pricing</a>
             <a href="/dealers.html">Find Dealers</a>
@@ -65,6 +73,20 @@
             <p>Every vehicle comes with a pre-purchase TrustCar inspection report. No hidden damage, verified history, AI fraud detection included. You know exactly what you're buying before you commit.</p>
         </div>
 
+        
+        <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:16px;padding:3rem;text-align:center;margin-bottom:3rem;">
+            <div style="font-size:3rem;margin-bottom:1rem;">🚀</div>
+            <h2 style="margin:0 0 1rem;color:#78350f;">Dealer Network Launching Soon!</h2>
+            <p style="color:#92400e;margin-bottom:1.5rem;max-width:600px;margin-left:auto;margin-right:auto;">
+                We're currently onboarding certified dealers in your area. Check back in early 2026 for our nationwide dealer directory with transparent TrustCar-verified inventory.
+            </p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="/pricing.html" class="btn btn-primary">View Inspection Plans</a>
+                <a href="/how-it-works.html" class="btn btn-secondary">Learn How It Works</a>
+            </div>
+        </div>
+
+        <div style="display:none;">
         <div class="search-box">
             <div class="search-row">
                 <div class="search-field">
@@ -146,6 +168,7 @@
             }
         ];
 
+        // Dealer search temporarily disabled during network launch
         function searchDealers() {
             const zip = document.getElementById('zip').value;
             const radius = document.getElementById('radius').value;
@@ -163,7 +186,7 @@
             const container = document.getElementById('dealerResults');
             
             if (dealers.length === 0) {
-                container.innerHTML = '<div class="empty-state">No TrustCar Approved Dealers found in your area. Check back soon!</div>';
+                container.innerHTML = '<div class="empty-state">Dealer network launching early 2026. Stay tuned in your area. Check back soon!</div>';
                 return;
             }
 
@@ -213,6 +236,17 @@
                 searchDealers();
             }
         });
+    </script>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const primaryNav = document.getElementById('primaryNav');
+        if (menuToggle && primaryNav) {
+            menuToggle.addEventListener('click', () => {
+                const isOpen = primaryNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+        }
     </script>
 </body>
 </html>

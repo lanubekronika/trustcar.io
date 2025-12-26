@@ -13,8 +13,10 @@
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
-        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+        header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15);; gap: 1rem; }
         .logo { font-size: 1.8rem; font-weight: 800; }
+        .menu-toggle { display: none; align-items: center; gap: .4rem; background: rgba(255,255,255,0.12); color: white; border: 2px solid rgba(255,255,255,0.25); border-radius: 10px; padding: .55rem .9rem; font-weight: 700; cursor: pointer; }
+        .menu-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
         nav { display: flex; gap: 2rem; }
         nav a { color: white; text-decoration: none; font-weight: 600; transition: opacity .2s; }
         nav a:hover { opacity: 0.85; }
@@ -54,7 +56,12 @@
         /* Disclaimer */
         .disclaimer { font-size: 0.85rem; color: #64748b; text-align: center; margin-top: 3rem; line-height: 1.6; max-width: 800px; margin-left: auto; margin-right: auto; }
         
-        @media (max-width: 768px) { 
+        @media (max-width: 768px) {
+            header { flex-wrap: wrap; }
+            nav { width: 100%; display: none; flex-direction: column; gap: 1rem; background: rgba(255,255,255,0.08); padding: 1rem; border-radius: 12px; margin-top: .5rem; }
+            nav.open { display: flex; }
+            nav a, nav a.nav-link { margin-left: 0; }
+            .menu-toggle { display: inline-flex; } 
             main { padding: 2rem 4%; }
             h1 { font-size: 2.2rem; }
             .subtitle { font-size: 1rem; }
@@ -70,7 +77,8 @@
 <body>
     <header>
         <div class="logo"><a href="/" style="color:white;text-decoration:none;" aria-label="TrustCar.io home">TrustCar.io</a></div>
-        <nav role="navigation" aria-label="Main navigation">
+        <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
+        <nav role="navigation" aria-label="Main navigation" id="primaryNav">
             <a href="/" aria-label="Home page">Home</a>
             <a href="/pricing.html" aria-label="View pricing tiers">Pricing</a>
             <a href="/dealers.html" aria-label="Find certified dealers">Find Dealers</a>
@@ -266,6 +274,17 @@
                 title.id = `step-title-${index + 1}`;
             }
         });
+    </script>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const primaryNav = document.getElementById('primaryNav');
+        if (menuToggle && primaryNav) {
+            menuToggle.addEventListener('click', () => {
+                const isOpen = primaryNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+        }
     </script>
 </body>
 </html>
