@@ -178,7 +178,7 @@
             btn.appendChild(spinner);
 
             try {
-                const decodeUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`;
+                const decodeUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}?format=json`;
                 const decodeRes = await fetch(decodeUrl);
                 const decodeData = await decodeRes.json();
 
@@ -245,6 +245,9 @@
                 let safetySection = '';
                 if (safetyData && safetyData.rated) {
                     const f = (v) => (v && v !== 'Not Rated') ? escapeHtml(v) : '—';
+                    const complaints = (safetyData.complaintsCount != null) ? String(safetyData.complaintsCount) : '—';
+                    const recallsCnt = (safetyData.recallsCount != null) ? String(safetyData.recallsCount) : '—';
+                    const investigations = (safetyData.investigationsCount != null) ? String(safetyData.investigationsCount) : '—';
                     safetySection = `
                         <div class="section" id="safetySection">
                             <h4>Safety Ratings (NHTSA)</h4>
@@ -253,6 +256,9 @@
                                 <div class="mini-item"><strong>Front Crash</strong><span>${f(safetyData.overallFrontCrashRating)}</span></div>
                                 <div class="mini-item"><strong>Side Crash</strong><span>${f(safetyData.overallSideCrashRating)}</span></div>
                                 <div class="mini-item"><strong>Rollover</strong><span>${f(safetyData.rolloverRating)}</span></div>
+                                <div class="mini-item"><strong>Complaints</strong><span>${escapeHtml(complaints)}</span></div>
+                                <div class="mini-item"><strong>Recalls</strong><span>${escapeHtml(recallsCnt)}</span></div>
+                                <div class="mini-item"><strong>Investigations</strong><span>${escapeHtml(investigations)}</span></div>
                             </div>
                             ${safetyData.vehicleDescription ? `<div class="muted" style="margin-top:.4rem">${escapeHtml(safetyData.vehicleDescription)}</div>` : ''}
                         </div>`;
