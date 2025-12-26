@@ -609,7 +609,7 @@
             try {
                 cameraModal.classList.add('active');
                 scanStatus.textContent = 'Starting camera...';
-                
+
                 // Lock screen orientation to landscape if supported
                 if (screen.orientation && screen.orientation.lock) {
                     try {
@@ -620,17 +620,26 @@
                         console.log('Orientation lock failed:', e);
                     }
                 }
-                
-                videoStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
+
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
                         facingMode: 'environment',
                         width: { ideal: 1920 },
                         height: { ideal: 1080 }
-                    } 
+                    }
                 });
-                
+
                 videoPreview.srcObject = videoStream;
+
+                // Wait until video has metadata and is ready
+                await new Promise((resolve) => {
+                    if (videoPreview.readyState >= 1) return resolve();
+                    videoPreview.onloadedmetadata = () => resolve();
+                });
+                try { await videoPreview.play(); } catch(_e) {}
+
                 scanStatus.textContent = 'Position VIN in the green box. Hold steady for best results.';
+                captureBtn.disabled = false;
             } catch (err) {
                 scanStatus.textContent = 'Camera access denied or unavailable';
                 console.error('Camera error:', err);
@@ -658,35 +667,54 @@
 
         captureBtn.addEventListener('click', async () => {
             if (!videoStream) return;
-            
+
+            // Ensure video has dimensions
+            if (!videoPreview.videoWidth || !videoPreview.videoHeight) {
+                scanStatus.textContent = 'Camera not ready. Please wait a moment.';
+                return;
+            }
+
             scanStatus.textContent = '📸 Capturing image...';
             captureBtn.disabled = true;
-            
-            // Capture frame from video
-            const canvas = scanCanvas;
-            canvas.width = videoPreview.videoWidth;
-            canvas.height = videoPreview.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(videoPreview, 0, 0);
-            
-            // Convert to grayscale and increase contrast for better OCR
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            // Capture frame from video to a canvas
+            const fullCanvas = scanCanvas;
+            fullCanvas.width = videoPreview.videoWidth;
+            fullCanvas.height = videoPreview.videoHeight;
+            const fullCtx = fullCanvas.getContext('2d');
+            fullCtx.drawImage(videoPreview, 0, 0);
+
+            // Compute ROI based on scan-guide (90% width, 100px height centered)
+            const roiWidth = Math.floor(fullCanvas.width * 0.9);
+            const roiHeight = 100; // pixels
+            const roiX = Math.floor((fullCanvas.width - roiWidth) / 2);
+            const roiY = Math.floor((fullCanvas.height - roiHeight) / 2);
+
+            // Create cropped canvas for OCR
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = roiWidth;
+            cropCanvas.height = roiHeight;
+            const cropCtx = cropCanvas.getContext('2d');
+            cropCtx.drawImage(fullCanvas, roiX, roiY, roiWidth, roiHeight, 0, 0, roiWidth, roiHeight);
+
+            // Preprocess: grayscale + contrast boost
+            const imageData = cropCtx.getImageData(0, 0, cropCanvas.width, cropCanvas.height);
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
                 const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-                const contrast = ((gray - 128) * 1.8) + 128;
+                const contrast = ((gray - 128) * 1.9) + 128;
                 data[i] = data[i + 1] = data[i + 2] = Math.max(0, Math.min(255, contrast));
             }
-            ctx.putImageData(imageData, 0, 0);
-            
+            cropCtx.putImageData(imageData, 0, 0);
+
             scanStatus.textContent = '🔍 Reading VIN with AI...';
-            
+
             try {
-                // Use Tesseract.js to extract text from image
                 const result = await Tesseract.recognize(
-                    canvas,
+                    cropCanvas,
                     'eng',
                     {
+                        tessedit_char_whitelist: 'ABCDEFGHJKLMNPRSTUVWXYZ0123456789',
                         logger: (m) => {
                             if (m.status === 'recognizing text') {
                                 scanStatus.textContent = `🔍 Reading VIN... ${Math.round(m.progress * 100)}%`;
@@ -694,39 +722,33 @@
                         }
                     }
                 );
-                
-                const text = result.data.text.toUpperCase();
-                console.log('OCR Result:', text);
-                
+
+                const rawText = result.data.text || '';
+                const text = rawText.toUpperCase().replace(/[^A-Z0-9]/g, '');
                 // Extract VIN pattern: 17 alphanumeric characters (no I, O, Q)
                 const vinPattern = /[A-HJ-NPR-Z0-9]{17}/g;
                 const matches = text.match(vinPattern);
-                
+
                 if (matches && matches.length > 0) {
                     const detectedVin = matches[0];
                     document.getElementById('vinInput').value = detectedVin;
                     scanStatus.textContent = `✅ VIN detected: ${detectedVin}`;
-                    
-                    // Close camera after 2 seconds
-                    setTimeout(() => {
-                        if (videoStream) {
-                            videoStream.getTracks().forEach(track => track.stop());
-                            videoStream = null;
-                        }
-                        
-                        // Unlock orientation
-                        if (screen.orientation && screen.orientation.unlock) {
-                            try { screen.orientation.unlock(); } catch (e) {}
-                        }
-                        
-                        cameraModal.classList.remove('active');
-                        scanStatus.textContent = '';
-                        captureBtn.disabled = false;
-                        
-                        // Auto-trigger decode
-                        document.getElementById('vinInput').focus();
-                        setTimeout(() => decodeVIN(), 500);
-                    }, 2000);
+
+                    // Stop camera and close immediately
+                    if (videoStream) {
+                        videoStream.getTracks().forEach(track => track.stop());
+                        videoStream = null;
+                    }
+                    if (screen.orientation && screen.orientation.unlock) {
+                        try { screen.orientation.unlock(); } catch (e) {}
+                    }
+                    cameraModal.classList.remove('active');
+                    scanStatus.textContent = '';
+                    captureBtn.disabled = false;
+
+                    // Auto-trigger decode
+                    document.getElementById('vinInput').focus();
+                    setTimeout(() => decodeVIN(), 300);
                 } else {
                     scanStatus.textContent = '❌ No VIN detected. Try repositioning and capture again.';
                     captureBtn.disabled = false;
