@@ -101,11 +101,11 @@
         </div>
 
         <div class="view-selector" role="tablist" aria-label="Vehicle view selector">
-            <button class="view-btn active" role="tab" aria-selected="true" aria-controls="vehicleCanvas" onclick="switchView('front')">Front View</button>
-            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('rear')">Rear View</button>
-            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('driver')">Driver Side</button>
-            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('passenger')">Passenger Side</button>
-            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('top')">Top View</button>
+            <button class="view-btn active" role="tab" aria-selected="true" aria-controls="vehicleCanvas" onclick="switchView('front', event)">Front View</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('rear', event)">Rear View</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('driver', event)">Driver Side</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('passenger', event)">Passenger Side</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('top', event)">Top View</button>
         </div>
 
         <div class="viewer-container">
@@ -298,7 +298,7 @@
             document.getElementById('totalCost').textContent = `$${total.toLocaleString()}`;
         }
 
-        function switchView(view) {
+        function switchView(view, event) {
             currentView = view;
             
             // Update active button with ARIA attributes
