@@ -2,20 +2,18 @@
 <html>
 <head>
     <title>Queue Test</title>
-    <script defer src="/auth.js"></script>
 </head>
 <body>
     <h1>Testing Queue API</h1>
     <div id="output"></div>
     <script>
-        const auth = 'Basic ' + btoa('admin:admin');
         const output = document.getElementById('output');
         
         output.innerHTML = '<p>Fetching data...</p>';
         
         Promise.all([
-            fetch('/api/inspections', { headers: { Authorization: auth } }),
-            fetch('/api/inspections/all-uploads', { headers: { Authorization: auth } })
+            fetch('/api/inspections'),
+            fetch('/api/inspections/all-uploads')
         ])
         .then(([inspRes, uploadsRes]) => {
             output.innerHTML += `<p>Inspections status: ${inspRes.status}</p>`;

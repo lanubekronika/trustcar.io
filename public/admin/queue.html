@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Queue — TrustCar Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <script defer src="/auth.js"></script>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
@@ -82,19 +81,15 @@
 
         let inspections = [];
         let uploads = [];
-        let authHeader = 'Basic ' + btoa('admin:admin'); // Default auth
-        
-        console.log('🔵 Auth header set:', authHeader);
 
         async function loadQueue() {
             try {
                 console.log('=== LOADING QUEUE ===');
-                const auth = authHeader;
 
-                console.log('Fetching data with auth...');
+                console.log('Fetching data...');
                 const [inspRes, uploadsRes] = await Promise.all([
-                    fetch('/api/inspections', { headers: { Authorization: auth } }),
-                    fetch('/api/inspections/all-uploads', { headers: { Authorization: auth } })
+                    fetch('/api/inspections'),
+                    fetch('/api/inspections/all-uploads')
                 ]);
 
                 console.log('Response statuses:', inspRes.status, uploadsRes.status);
@@ -261,7 +256,7 @@
                 
                 const res = await fetch(`/api/inspections/${id}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', Authorization: authHeader },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: 'in-review' })
                 });
                 if (!res.ok) throw new Error('Failed to start review');
@@ -278,7 +273,7 @@
                 if (confirm('Generate AI report for this inspection? This will use OpenAI credits.')) {
                     const res = await fetch(`/api/inspections/${id}/generate-ai-report`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', Authorization: authHeader }
+                        headers: { 'Content-Type': 'application/json' }
                     });
                     const data = await res.json();
                     if (!res.ok) throw new Error(data.error || 'Failed');
@@ -336,7 +331,7 @@
                 
                 const res = await fetch(`/api/inspections/${id}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', Authorization: authHeader },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: 'completed' })
                 });
                 if (!res.ok) throw new Error('Failed to approve');
@@ -360,7 +355,7 @@
                 console.log(`Flagging inspection ${id} (${displayName})`);
                 const res = await fetch(`/api/inspections/${id}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', Authorization: authHeader },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: 'flagged', flagReason: reason })
                 });
                 if (!res.ok) throw new Error('Failed to flag');

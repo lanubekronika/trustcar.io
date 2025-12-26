@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIN Records — Admin — TrustCar.io</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <script defer src="/auth.js"></script>
     <style>
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #0b1724; }
         header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
@@ -84,13 +83,10 @@
 
     <script>
         let allRecords = [];
-        const authHeader = 'Basic ' + btoa((prompt('Admin username:') || '') + ':' + (prompt('Admin password:') || ''));
 
         async function loadRecords() {
             try {
-                const res = await fetch('/api/vin-records', {
-                    headers: { 'Authorization': authHeader }
-                });
+                const res = await fetch('/api/vin-records');
                 
                 if (res.status === 401) {
                     document.getElementById('loadingMsg').style.display = 'none';
@@ -134,9 +130,7 @@
 
         async function viewRecord(recordId) {
             try {
-                const res = await fetch(`/api/vin-records/${recordId}`, {
-                    headers: { 'Authorization': authHeader }
-                });
+                const res = await fetch(`/api/vin-records/${recordId}`);
                 
                 if (!res.ok) throw new Error('Failed to load record details');
                 
@@ -219,9 +213,7 @@
             const record = allRecords.find(r => r.id === recordId);
             if (!record) return alert('Record not found');
 
-            fetch(`/api/vin-records/${recordId}`, {
-                headers: { 'Authorization': authHeader }
-            })
+            fetch(`/api/vin-records/${recordId}`)
             .then(res => res.json())
             .then(fullRecord => {
                 const blob = new Blob([JSON.stringify(fullRecord, null, 2)], { type: 'application/json' });

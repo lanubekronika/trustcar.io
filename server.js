@@ -110,23 +110,6 @@ function fetchJsonViaHttps(url) {
   });
 }
 
-// Admin basic auth middleware
-function adminAuth(req, res, next) {
-  const adminUser = process.env.ADMIN_USER;
-  const adminPass = process.env.ADMIN_PASS;
-  if (!adminUser || !adminPass) return res.status(503).json({ error: 'Admin auth not configured' });
-  const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith('Basic ')) {
-    res.setHeader('WWW-Authenticate', 'Basic realm="Admin"');
-    return res.status(401).end('Unauthorized');
-  }
-  const creds = Buffer.from(auth.split(' ')[1], 'base64').toString('utf8').split(':');
-  const [user, pass] = creds;
-  if (user === adminUser && pass === adminPass) return next();
-  res.setHeader('WWW-Authenticate', 'Basic realm="Admin"');
-  return res.status(401).end('Unauthorized');
-}
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => {
@@ -169,10 +152,10 @@ app.post('/api/inspections', (req, res) => {
   return res.json({ inspectionId: id, sellerLink, token });
 });
 
-// List inspections (admin)
-app.get('/api/inspections', adminAuth, (req, res) => {
+// List inspections
+app.get('/api/inspections', (req, res) => {
   const data = readData();
-  // Return full inspection data for admin
+  // Return full inspection data
   res.json(data.inspections);
 });
 
@@ -338,7 +321,7 @@ app.post('/api/vin-records', (req, res) => {
 });
 
 // List all VIN records (admin)
-app.get('/api/vin-records', adminAuth, (req, res) => {
+app.get('/api/vin-records', (req, res) => {
   const data = readData();
   const records = (data.vinRecords || []).map(r => ({
     id: r.id,
@@ -350,13 +333,13 @@ app.get('/api/vin-records', adminAuth, (req, res) => {
 });
 
 // Get all uploads (admin) - for review queue
-app.get('/api/inspections/all-uploads', adminAuth, (req, res) => {
+app.get('/api/inspections/all-uploads', (req, res) => {
   const data = readData();
   res.json(data.uploads || []);
 });
 
 // Get specific VIN record with full data (admin)
-app.get('/api/vin-records/:id', adminAuth, (req, res) => {
+app.get('/api/vin-records/:id', (req, res) => {
   const data = readData();
   const record = (data.vinRecords || []).find(r => r.id === req.params.id);
   if (!record) return res.status(404).json({ error: 'Record not found' });
@@ -741,7 +724,7 @@ app.post('/api/inspections/:id', (req, res) => {
 });
 
 // Update inspection status (admin only) - PUT method for RESTful updates
-app.put('/api/inspections/:id', adminAuth, (req, res) => {
+app.put('/api/inspections/:id', (req, res) => {
   const id = req.params.id;
   const payload = req.body || {};
   const data = readData();
@@ -761,7 +744,7 @@ app.put('/api/inspections/:id', adminAuth, (req, res) => {
 });
 
 // Generate PDF report (admin only)
-app.post('/api/inspections/:id/generate-pdf', adminAuth, async (req, res) => {
+app.post('/api/inspections/:id/generate-pdf', async (req, res) => {
   const id = req.params.id;
   const data = readData();
   const insp = data.inspections.find(x => x.id === id);
@@ -803,7 +786,7 @@ app.post('/api/inspections/:id/generate-pdf', adminAuth, async (req, res) => {
 });
 
 // Generate PDF and optionally email it to buyer (admin only)
-app.post('/api/inspections/:id/email-report', adminAuth, async (req, res) => {
+app.post('/api/inspections/:id/email-report', async (req, res) => {
   const id = req.params.id;
   const data = readData();
   const insp = data.inspections.find(x => x.id === id);
@@ -1037,11 +1020,11 @@ app.get('/seller/:id', (req, res) => {
 });
 
 app.get('/admin', (req, res) => {
-  return adminAuth(req, res, () => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+  return res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 app.get('/admin/view.html', (req, res) => {
-  return adminAuth(req, res, () => res.sendFile(path.join(__dirname, 'public', 'admin/view.html')));
+  return res.sendFile(path.join(__dirname, 'public', 'admin/view.html'));
 });
 
 // VinAudit API: Title history lookup (paid API ~$5/lookup)
@@ -1101,7 +1084,7 @@ app.get('/api/vin/history', async (req, res) => {
 });
 
 // Fraud scoring engine (0-100 risk score)
-app.get('/api/inspections/:id/fraud-score', adminAuth, async (req, res) => {
+app.get('/api/inspections/:id/fraud-score', async (req, res) => {
   try {
     const data = readData();
     const insp = data.inspections.find(i => i.id === req.params.id);
@@ -1193,7 +1176,7 @@ app.get('/api/inspections/:id/fraud-score', adminAuth, async (req, res) => {
 });
 
 // AI Report Generation (admin only)
-app.post('/api/inspections/:id/generate-ai-report', adminAuth, async (req, res) => {
+app.post('/api/inspections/:id/generate-ai-report', async (req, res) => {
   try {
     const data = readData();
     const insp = data.inspections.find(i => i.id === req.params.id);
@@ -1282,7 +1265,7 @@ Format as markdown with clear sections. Be objective, data-driven, and include d
 });
 
 // Generate PDF report from markdown
-app.get('/api/inspections/:id/generate-pdf', adminAuth, async (req, res) => {
+app.get('/api/inspections/:id/generate-pdf', async (req, res) => {
   try {
     const data = readData();
     const insp = data.inspections.find(i => i.id === req.params.id);
@@ -1458,7 +1441,7 @@ app.get('/api/inspections/:id/generate-pdf', adminAuth, async (req, res) => {
 });
 
 // Approve AI report (admin review step)
-app.post('/api/inspections/:id/approve-report', adminAuth, async (req, res) => {
+app.post('/api/inspections/:id/approve-report', async (req, res) => {
   try {
     const data = readData();
     const insp = data.inspections.find(i => i.id === req.params.id);
