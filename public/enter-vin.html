@@ -132,6 +132,21 @@
             }
             return '';
         }
+        async function fetchJsonOrNull(url, opts) {
+            try {
+                const res = await fetch(url, opts);
+                if (!res.ok) return null;
+                const ct = res.headers.get('content-type') || '';
+                // Only attempt JSON parse if content-type indicates JSON
+                if (!/json/i.test(ct)) {
+                    // Fallback: try to parse anyway; if it fails, return null
+                    try { return await res.json(); } catch { return null; }
+                }
+                return await res.json();
+            } catch {
+                return null;
+            }
+        }
         function showCheckoutMeta(){
             const metaEl = document.getElementById('checkoutMeta');
             const carried = localStorage.getItem('listingUrlOrVin') || '';
@@ -198,9 +213,14 @@
             btn.appendChild(spinner);
 
             try {
-                const decodeUrl = `/api/vpic/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}`;
-                const decodeRes = await fetch(decodeUrl);
-                const decodeData = await decodeRes.json();
+                // Prefer server proxy; fallback to direct VPIC if proxy unavailable
+                const proxyUrl = `/api/vpic/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}`;
+                const directUrl = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}?format=json`;
+                let decodeData = await fetchJsonOrNull(proxyUrl);
+                if (!decodeData) decodeData = await fetchJsonOrNull(directUrl);
+                if (!decodeData || !Array.isArray(decodeData.Results)) {
+                    throw new Error('VPIC decode unavailable or returned invalid data');
+                }
 
                 // Derive recalls by Year/Make/Model for broader compatibility
                 let recallsData = { results: [], count: 0 };
@@ -210,9 +230,9 @@
                     const recallsModel = decodeGet(decodeData, ['Model']);
                     if (recallsYear && recallsMake && recallsModel) {
                         const recallsUrl = `https://api.nhtsa.gov/recalls/recallsByVehicle?modelYear=${encodeURIComponent(recallsYear)}&make=${encodeURIComponent(recallsMake)}&model=${encodeURIComponent(recallsModel)}`;
-                        const recallsRes = await fetch(recallsUrl);
-                        if (recallsRes.ok) {
-                            recallsData = await recallsRes.json();
+                        const rd = await fetchJsonOrNull(recallsUrl);
+                        if (rd && (Array.isArray(rd.results) || typeof rd.count === 'number')) {
+                            recallsData = rd;
                         }
                     }
                 } catch(_e) { /* ignore */ }
