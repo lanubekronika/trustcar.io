@@ -1,0 +1,10 @@
+# Redirect legacy admin.html requests to the new admin directory
+RewriteEngine On
+RewriteRule ^admin\.html$ /admin/ [R=301,L]
+
+# Ensure global.css is accessible
+<IfModule mod_headers.c>
+  <Files "global.css">
+    Header set Cache-Control "max-age=31536000, public"
+  </Files>
+</IfModule>
