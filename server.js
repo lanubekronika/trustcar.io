@@ -97,7 +97,8 @@ app.use('/uploads', express.static(UPLOAD_DIR));
 
 // protect /admin routes with session check; allow login page
 app.use('/admin', (req, res, next) => {
-  const publicPaths = ['/admin-login.html', '/login.html'];
+  // allow login/logout API and login page to bypass
+  const publicPaths = ['/admin-login.html', '/login.html', '/admin/login', '/admin/logout'];
   if (publicPaths.includes(req.path)) return next();
   if (req.session && req.session.isAdmin) return next();
   return res.redirect('/admin-login.html');
