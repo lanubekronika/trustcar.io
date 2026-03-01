@@ -19,6 +19,7 @@
         .view-btn:hover:not(.active) { border-color: #0553F0; }
         .viewer-container { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(2,6,23,0.06); margin-bottom: 2rem; }
         .vehicle-canvas { position: relative; max-width: 900px; margin: 0 auto; aspect-ratio: 16/9; background: #f8fafc; border-radius: 12px; overflow: hidden; }
+        .vehicle-canvas svg image { image-rendering: optimizeQuality; }
         .vehicle-image { width: 100%; height: 100%; object-fit: contain; }
         .damage-marker { position: absolute; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transform: translate(-50%, -50%); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: .7rem; transition: .2s; }
         .damage-marker:hover { transform: translate(-50%, -50%) scale(1.2); z-index: 10; }
@@ -313,8 +314,9 @@
                 activeBtn.setAttribute('aria-selected', 'true');
             }
 
-            // Generate SVG vehicle diagram for the selected view
             const canvas = document.getElementById('vehicleCanvas');
+
+            // Use a high-resolution photo as the base of the SVG for realism/sharpness
             canvas.innerHTML = generateVehicleSVG(view);
             canvas.setAttribute('aria-label', `${view.charAt(0).toUpperCase() + view.slice(1)} view of vehicle with damage markers`);
 
@@ -328,36 +330,12 @@
         function generateVehicleSVG(view) {
             const svgs = {
                 'front': `<svg viewBox="0 0 600 450" style="width:100%;height:100%;">
+                    <!-- High‑resolution photo background for realism -->
+                    <image href="https://images.unsplash.com/photo-1571607386013-254d19e5da4a?&auto=format&fit=crop&w=600&h=450" x="0" y="0" width="600" height="450" preserveAspectRatio="xMidYMid slice" />
+                    <!-- retained vector lines for shading/outlines (optional) -->
                     <!-- Main body -->
-                    <path d="M 140 200 L 120 240 L 110 280 L 110 300 L 490 300 L 490 280 L 480 240 L 460 200 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
-                    <!-- Hood curve -->
-                    <path d="M 140 200 Q 140 180 170 170 L 430 170 Q 460 180 460 200" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-                    <!-- Windshield -->
-                    <path d="M 170 170 L 190 120 Q 200 100 220 95 L 380 95 Q 400 100 410 120 L 430 170 Z" fill="#94a3b8" stroke="#64748b" stroke-width="2" opacity="0.7"/>
-                    <!-- Roof -->
-                    <path d="M 220 95 L 210 75 Q 220 65 240 65 L 360 65 Q 380 65 390 75 L 380 95 Z" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-                    <!-- Headlights with realistic shape -->
-                    <path d="M 135 235 Q 125 240 125 250 Q 125 260 135 265 Q 145 260 145 250 Q 145 240 135 235" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
-                    <path d="M 465 235 Q 455 240 455 250 Q 455 260 465 265 Q 475 260 475 250 Q 475 240 465 235" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
-                    <!-- Grille -->
-                    <rect x="240" y="270" width="120" height="25" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
-                    <!-- License plate area -->
-                    <rect x="265" y="298" width="70" height="18" rx="2" fill="#f1f5f9" stroke="#64748b" stroke-width="1"/>
-                    <!-- Fog lights -->
-                    <circle cx="170" cy="288" r="8" fill="#fef3c7" stroke="#64748b" stroke-width="1"/>
-                    <circle cx="430" cy="288" r="8" fill="#fef3c7" stroke="#64748b" stroke-width="1"/>
-                    <!-- Wheels with realistic rims -->
-                    <circle cx="160" cy="330" r="40" fill="#1e293b" stroke="#475569" stroke-width="4"/>
-                    <circle cx="160" cy="330" r="25" fill="#64748b"/>
-                    <circle cx="160" cy="330" r="15" fill="#334155"/>
-                    <circle cx="440" cy="330" r="40" fill="#1e293b" stroke="#475569" stroke-width="4"/>
-                    <circle cx="440" cy="330" r="25" fill="#64748b"/>
-                    <circle cx="440" cy="330" r="15" fill="#334155"/>
-                    <!-- Wheel wells -->
-                    <path d="M 120 300 Q 120 280 160 280 Q 200 280 200 300" fill="none" stroke="#475569" stroke-width="2"/>
-                    <path d="M 400 300 Q 400 280 440 280 Q 480 280 480 300" fill="none" stroke="#475569" stroke-width="2"/>
-                    <!-- Bumper detail -->
-                    <path d="M 110 300 L 115 310 Q 300 320 485 310 L 490 300" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
+                    <path d="M 140 200 L 120 240 L 110 280 L 110 300 L 490 300 L 490 280 L 480 240 L 460 200 Z" fill="none" stroke="#64748b" stroke-width="2"/>
+                    <!-- Additional detail paths can remain or be removed as needed -->
                     <text x="300" y="410" text-anchor="middle" fill="#64748b" font-size="18" font-weight="600">FRONT VIEW</text>
                 </svg>`,
                 'rear': `<svg viewBox="0 0 600 450" style="width:100%;height:100%;">
@@ -395,85 +373,19 @@
                     <text x="300" y="410" text-anchor="middle" fill="#64748b" font-size="18" font-weight="600">REAR VIEW</text>
                 </svg>`,
                 'driver': `<svg viewBox="0 0 600 350" style="width:100%;height:100%;">
-                    <!-- Body -->
-                    <path d="M 100 180 L 140 160 L 180 140 L 250 135 L 350 135 L 430 140 L 480 160 L 520 180 L 520 230 L 100 230 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
-                    <!-- Roof -->
-                    <path d="M 180 140 L 200 100 L 400 100 L 420 140" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-                    <!-- Windshield -->
-                    <path d="M 200 100 L 220 140 L 380 140 L 400 100 Z" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
-                    <!-- Side windows -->
-                    <rect x="230" y="142" width="60" height="35" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
-                    <rect x="300" y="142" width="70" height="35" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
-                    <!-- Door lines -->
-                    <line x1="290" y1="140" x2="290" y2="230" stroke="#64748b" stroke-width="2"/>
-                    <line x1="370" y1="140" x2="370" y2="230" stroke="#64748b" stroke-width="2"/>
-                    <!-- Door handles -->
-                    <rect x="260" y="185" width="20" height="6" rx="3" fill="#475569"/>
-                    <rect x="330" y="185" width="20" height="6" rx="3" fill="#475569"/>
-                    <!-- Side mirrors -->
-                    <ellipse cx="210" cy="155" rx="8" ry="12" fill="#64748b"/>
-                    <ellipse cx="420" cy="155" rx="8" ry="12" fill="#64748b"/>
-                    <!-- Wheels -->
-                    <circle cx="180" cy="240" r="35" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
-                    <circle cx="180" cy="240" r="18" fill="#475569"/>
-                    <circle cx="450" cy="240" r="35" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
-                    <circle cx="450" cy="240" r="18" fill="#475569"/>
-                    <!-- Wheel arches -->
-                    <path d="M 145 230 Q 145 200 180 200 Q 215 200 215 230" fill="none" stroke="#64748b" stroke-width="2"/>
-                    <path d="M 415 230 Q 415 200 450 200 Q 485 200 485 230" fill="none" stroke="#64748b" stroke-width="2"/>
+                    <image href="https://images.unsplash.com/photo-1597005504111-6e0eebd3ba74?&auto=format&fit=crop&w=600&h=350" x="0" y="0" width="600" height="350" preserveAspectRatio="xMidYMid slice" />
+                    <!-- outline paths retained for interaction coordinates -->
+                    <path d="M 100 180 L 140 160 L 180 140 L 250 135 L 350 135 L 430 140 L 480 160 L 520 180 L 520 230 L 100 230 Z" fill="none" stroke="#64748b" stroke-width="2"/>
                     <text x="310" y="320" text-anchor="middle" fill="#64748b" font-size="16" font-weight="600">DRIVER SIDE</text>
                 </svg>`,
                 'passenger': `<svg viewBox="0 0 600 350" style="width:100%;height:100%;">
-                    <!-- Body (mirrored) -->
-                    <path d="M 520 180 L 480 160 L 440 140 L 370 135 L 270 135 L 190 140 L 140 160 L 100 180 L 100 230 L 520 230 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
-                    <!-- Roof -->
-                    <path d="M 440 140 L 420 100 L 220 100 L 200 140" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-                    <!-- Windshield -->
-                    <path d="M 420 100 L 400 140 L 240 140 L 220 100 Z" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
-                    <!-- Side windows -->
-                    <rect x="330" y="142" width="60" height="35" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
-                    <rect x="250" y="142" width="70" height="35" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
-                    <!-- Door lines -->
-                    <line x1="330" y1="140" x2="330" y2="230" stroke="#64748b" stroke-width="2"/>
-                    <line x1="250" y1="140" x2="250" y2="230" stroke="#64748b" stroke-width="2"/>
-                    <!-- Door handles -->
-                    <rect x="340" y="185" width="20" height="6" rx="3" fill="#475569"/>
-                    <rect x="270" y="185" width="20" height="6" rx="3" fill="#475569"/>
-                    <!-- Side mirrors -->
-                    <ellipse cx="410" cy="155" rx="8" ry="12" fill="#64748b"/>
-                    <ellipse cx="200" cy="155" rx="8" ry="12" fill="#64748b"/>
-                    <!-- Wheels -->
-                    <circle cx="440" cy="240" r="35" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
-                    <circle cx="440" cy="240" r="18" fill="#475569"/>
-                    <circle cx="170" cy="240" r="35" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
-                    <circle cx="170" cy="240" r="18" fill="#475569"/>
-                    <!-- Wheel arches -->
-                    <path d="M 475 230 Q 475 200 440 200 Q 405 200 405 230" fill="none" stroke="#64748b" stroke-width="2"/>
-                    <path d="M 205 230 Q 205 200 170 200 Q 135 200 135 230" fill="none" stroke="#64748b" stroke-width="2"/>
+                    <image href="https://images.unsplash.com/photo-1611095787172-20e5f6cd8c74?&auto=format&fit=crop&w=600&h=350" x="0" y="0" width="600" height="350" preserveAspectRatio="xMidYMid slice" />
+                    <path d="M 520 180 L 480 160 L 440 140 L 370 135 L 270 135 L 190 140 L 140 160 L 100 180 L 100 230 L 520 230 Z" fill="none" stroke="#64748b" stroke-width="2"/>
                     <text x="310" y="320" text-anchor="middle" fill="#64748b" font-size="16" font-weight="600">PASSENGER SIDE</text>
                 </svg>`,
                 'top': `<svg viewBox="0 0 400 500" style="width:100%;height:100%;">
-                    <!-- Hood -->
-                    <path d="M 150 100 L 120 150 L 120 200 L 280 200 L 280 150 L 250 100 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
-                    <!-- Windshield -->
-                    <rect x="120" y="200" width="160" height="50" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
-                    <!-- Roof -->
-                    <rect x="120" y="250" width="160" height="100" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-                    <!-- Rear window -->
-                    <rect x="120" y="350" width="160" height="40" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
-                    <!-- Trunk -->
-                    <path d="M 120 390 L 120 420 L 280 420 L 280 390 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
-                    <!-- Side mirrors -->
-                    <rect x="95" y="240" width="20" height="15" rx="3" fill="#64748b"/>
-                    <rect x="285" y="240" width="20" height="15" rx="3" fill="#64748b"/>
-                    <!-- Door lines -->
-                    <line x1="120" y1="290" x2="280" y2="290" stroke="#64748b" stroke-width="2"/>
-                    <line x1="200" y1="250" x2="200" y2="350" stroke="#64748b" stroke-width="2"/>
-                    <!-- Wheels -->
-                    <ellipse cx="110" cy="150" rx="20" ry="30" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
-                    <ellipse cx="290" cy="150" rx="20" ry="30" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
-                    <ellipse cx="110" cy="370" rx="20" ry="30" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
-                    <ellipse cx="290" cy="370" rx="20" ry="30" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+                    <image href="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?&auto=format&fit=crop&w=400&h=500" x="0" y="0" width="400" height="500" preserveAspectRatio="xMidYMid slice" />
+                    <path d="M 150 100 L 120 150 L 120 200 L 280 200 L 280 150 L 250 100 Z" fill="none" stroke="#64748b" stroke-width="2"/>
                     <text x="200" y="470" text-anchor="middle" fill="#64748b" font-size="16" font-weight="600">TOP VIEW</text>
                 </svg>`
             };
