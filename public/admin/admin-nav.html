@@ -8,7 +8,7 @@
 <div class="admin-nav">
     <div class="logo">TrustCar.io Admin</div>
     <nav>
-        <a href="/admin.html">Dashboard</a>
+        <a href="/admin/">Dashboard</a>
         <a href="/admin/queue.html">Review Queue</a>
         <a href="/admin/view.html">Inspections</a>
         <a href="/admin/vin-records.html">VIN Records</a>
@@ -19,7 +19,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const path = window.location.pathname;
         document.querySelectorAll('.admin-nav nav a').forEach(link => {
-            if (link.getAttribute('href') === path || (path.includes(link.getAttribute('href').replace('.html', '')) && link.getAttribute('href') !== '/admin.html')) {
+            if (link.getAttribute('href') === path || (path.includes(link.getAttribute('href').replace('.html', '')) && link.getAttribute('href') !== '/admin/')) {
                 link.classList.add('active');
             }
         });

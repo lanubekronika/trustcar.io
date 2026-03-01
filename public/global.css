@@ -1,0 +1,12 @@
+/* Shared responsive adjustments */
+body { font-size: 100%; }
+@media (max-width:480px) {
+    body { font-size: 90%; }
+    header, main, footer { padding: 1rem !important; }
+    .card, .pricing-card, .dealer-card, .login-card { padding: 1.5rem !important; }
+    .btn, .actions, .search-row { width: 100% !important; }
+    .dealer-grid, .pricing-grid { grid-template-columns: 1fr !important; }
+    .search-row { flex-direction: column !important; }
+    /* ensure no fixed widths cause overflow */
+    img, video { max-width: 100%; height: auto; }
+}

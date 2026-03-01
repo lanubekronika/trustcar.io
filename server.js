@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const session = require('express-session');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
@@ -84,7 +85,24 @@ function hashToken(token) {
 const app = express();
 app.use(cors());
 app.use(express.json());
+// basic session middleware for admin UI
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false }
+}));
+
 app.use('/uploads', express.static(UPLOAD_DIR));
+
+// protect /admin routes with session check; allow login page
+app.use('/admin', (req, res, next) => {
+  const publicPaths = ['/admin-login.html', '/login.html'];
+  if (publicPaths.includes(req.path)) return next();
+  if (req.session && req.session.isAdmin) return next();
+  return res.redirect('/admin-login.html');
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Utility helpers
@@ -119,6 +137,20 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage, limits: { fileSize: 200 * 1024 * 1024 } });
+
+// authentication endpoints for admin
+app.post('/admin/login', (req, res) => {
+  const { username, password } = req.body || {};
+  if (username === process.env.ADMIN_USER && password === process.env.ADMIN_PASS) {
+    req.session.isAdmin = true;
+    return res.json({ ok: true });
+  }
+  res.status(401).json({ error: 'Invalid credentials' });
+});
+
+app.post('/admin/logout', (req, res) => {
+  req.session.destroy(() => res.json({ ok: true }));
+});
 
 // Create an inspection
 app.post('/api/inspections', (req, res) => {
