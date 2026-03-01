@@ -1,0 +1,172 @@
+/* Admin UI specific styles */
+.admin-nav {
+    background: #0553F0;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.admin-nav .logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.admin-nav nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.admin-nav nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: .5rem 1rem;
+    border-radius: 6px;
+    transition: background .2s;
+}
+
+.admin-nav nav a:hover,
+.admin-nav nav a.active {
+    background: rgba(255,255,255,0.15);
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.column {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(2,6,23,0.08);
+    border: 2px solid #e6eefc;
+}
+
+.column-header {
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 3px solid;
+}
+
+.column-pending .column-header {
+    border-color: #94a3b8;
+    color: #64748b;
+}
+
+.column-in-review .column-header {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.column-flagged .column-header {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.column-completed .column-header {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    min-height: 300px;
+}
+
+.inspection-card {
+    background: #f8fafc;
+    border: 2px solid #e6eefc;
+    border-radius: 10px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.inspection-card:hover {
+    border-color: #0553F0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5,83,240,0.15);
+}
+
+.inspection-card.flagged {
+    border-color: #fecaca;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee 100%);
+}
+
+.card-vin {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: .25rem;
+}
+
+.card-meta {
+    font-size: .85rem;
+    color: #64748b;
+    margin-bottom: .5rem;
+}
+
+.card-thumbnails {
+    display: flex;
+    gap: .5rem;
+    margin-bottom: .75rem;
+}
+
+.card-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.fraud-badge {
+    display: inline-block;
+    padding: .25rem .5rem;
+    border-radius: 4px;
+    font-size: .75rem;
+    font-weight: 700;
+    margin-left: .5rem;
+}
+
+.fraud-low {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.fraud-medium {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.fraud-high {
+    background: #fecaca;
+    color: #991b1b;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #94a3b8;
+    font-size: .9rem;
+}
+
+@media (max-width: 1200px) {
+    .board {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 720px) {
+    .board {
+        grid-template-columns: 1fr;
+    }
+}

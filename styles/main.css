@@ -1,0 +1,31 @@
+/* Base styles shared across all pages */
+body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; background: #f5f8fa; color: #0b1724; font-size: 100%; }
+.skip-link{position:absolute;top:0;left:0;background:#0553F0;color:#fff;padding:.5rem;z-index:1000;transform:translateY(-100%);transition:transform .3s;}
+.skip-link:focus{transform:translateY(0);}
+header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
+.logo { font-size: 1.8rem; font-weight: 800; }
+.menu-toggle { display: none; align-items: center; gap: .4rem; background: rgba(255,255,255,0.12); color: white; border: 2px solid rgba(255,255,255,0.25); border-radius: 10px; padding: .55rem .9rem; font-weight: 700; cursor: pointer; }
+nav { display: flex; gap: 1.5rem; }
+.nav-link, nav a { color: white; text-decoration: none; margin-left: 1.5rem; font-weight: 600; transition: opacity .2s; }
+.nav-link:hover, nav a:hover { opacity: 0.85; }
+.btn { display: inline-block; padding: .85rem 1.5rem; border-radius: 10px; font-weight:700; cursor:pointer; border: none; transition: all .2s; font-size: .95rem; text-align: center; }
+.btn-primary { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; box-shadow: 0 4px 12px rgba(5,83,240,0.25); }
+.btn-primary:hover { background: linear-gradient(135deg, #0441c7 0%, #033ba3 100%); }
+.btn-secondary { background: #e6eefc; color: #0553F0; border: 2px solid #d1e3fc; }
+.btn-secondary:hover { background: #d1e3fc; }
+.btn-ghost { background: white; color: #0553F0; border: 2px solid #e6eefc; }
+.btn-ghost:hover { background: #f8fafc; }
+.card { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 16px; padding: 2.5rem; box-shadow: 0 8px 24px rgba(2,6,23,0.08); border: 2px solid #e6eefc; max-width: 920px; margin: 0 auto; }
+
+/* Shared responsive adjustments */
+body { font-size: 100%; }
+@media (max-width:480px) {
+    body { font-size: 90%; }
+    header, main, footer { padding: 1rem !important; }
+    .card, .pricing-card, .dealer-card, .login-card { padding: 1.5rem !important; }
+    .btn, .actions, .search-row { width: 100% !important; }
+    .dealer-grid, .pricing-grid { grid-template-columns: 1fr !important; }
+    .search-row { flex-direction: column !important; }
+    /* ensure no fixed widths cause overflow */
+    img, video { max-width: 100%; height: auto; }
+}

@@ -104,14 +104,37 @@
             <input id="vinInput" class="vin-input" maxlength="17" placeholder="1HGCM82633A004352" aria-label="Vehicle VIN" autocomplete="off" inputmode="latin" />
 
             <div class="actions">
-                <button type="button" id="scanVinBtn" class="btn btn-secondary">Scan VIN</button>
+                <button type="button" id="scanVinBtn" class="btn btn-secondary">📷 Scan VIN</button>
                 <button type="button" id="vinDecodeBtn" class="btn btn-primary">Decode VIN</button>
                 <button type="button" id="copyReportBtn" class="btn btn-ghost">Copy Report</button>
                 <div id="statusMsg" class="muted" style="margin-left:auto"></div>
             </div>
-            <div id="scanner" style="display:none;position:relative;width:100%;max-width:480px;margin:1rem auto;">
-                <video id="scanner-video" style="width:100%;"></video>
-                <button id="stopScanBtn" class="btn btn-ghost" style="position:absolute;top:10px;right:10px;">✕</button>
+            <div id="scanner" style="display:none;position:relative;width:100%;max-width:480px;margin:1rem auto;background:#000;border-radius:12px;overflow:hidden;">
+                <video id="scanner-video" style="width:100%;display:block;"></video>
+                <!-- Scanner overlay guide -->
+                <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:3px dashed rgba(255,255,255,0.5);border-radius:12px;pointer-events:none;" aria-hidden="true"></div>
+                <!-- Corner guides -->
+                <div style="position:absolute;top:20%;left:10%;width:30px;height:30px;border-top:3px solid #0553F0;border-left:3px solid #0553F0;pointer-events:none;" aria-hidden="true"></div>
+                <div style="position:absolute;top:20%;right:10%;width:30px;height:30px;border-top:3px solid #0553F0;border-right:3px solid #0553F0;pointer-events:none;" aria-hidden="true"></div>
+                <div style="position:absolute;bottom:20%;left:10%;width:30px;height:30px;border-bottom:3px solid #0553F0;border-left:3px solid #0553F0;pointer-events:none;" aria-hidden="true"></div>
+                <div style="position:absolute;bottom:20%;right:10%;width:30px;height:30px;border-bottom:3px solid #0553F0;border-right:3px solid #0553F0;pointer-events:none;" aria-hidden="true"></div>
+                <!-- Scanning message -->
+                <div style="position:absolute;bottom:15px;left:50%;transform:translateX(-50%);background:rgba(5,83,240,0.9);color:white;padding:.5rem 1rem;border-radius:8px;font-weight:600;text-align:center;" aria-live="polite">📍 Position VIN code in view</div>
+                <!-- Scanner controls -->
+                <div style="position:absolute;top:10px;right:10px;display:flex;gap:.5rem;">
+                    <button id="captureSnapBtn" class="btn" style="background:rgba(5,83,240,0.8);color:white;padding:.5rem .75rem;font-size:.8rem;border-radius:6px;" title="Capture photo">📸 Snap</button>
+                    <button id="stopScanBtn" class="btn" style="background:rgba(255,0,0,0.7);color:white;padding:.5rem .75rem;font-size:.8rem;border-radius:6px;">✕</button>
+                </div>
+                <!-- Spinner -->
+                <div id="scanSpinner" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:none;width:50px;height:50px;border:4px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 1s linear infinite;" aria-hidden="true"></div>
+            </div>
+            <!-- OCR fallback section -->
+            <div id="ocrFallback" style="display:none;margin-top:1rem;">
+                <p class="muted" style="font-size:.9rem;margin:.5rem 0;">Barcode not detected. Try OCR or manual entry:</p>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                    <button type="button" id="tryOcrBtn" class="btn btn-secondary" style="font-size:.9rem;">🔍 Try OCR</button>
+                    <button type="button" id="dismissScanBtn" class="btn btn-ghost" style="font-size:.9rem;">✓ Done Scanning</button>
+                </div>
             </div>
             <div id="scanError" class="muted" style="margin-top:.5rem;"></div>
 
@@ -199,9 +222,21 @@
             if (txt) { metaEl.textContent = txt; metaEl.style.display = 'block'; }
         }
         // VIN scanner utilities
+        let scanTimeout = null;
+        let ocrCountdown = null;
+        const BARCODE_TIMEOUT = 15000; // 15 seconds for barcode detection
+        
         function startScanner() {
             const container = document.getElementById('scanner');
+            const errorEl = document.getElementById('scanError');
+            const fallbackEl = document.getElementById('ocrFallback');
+            const spinner = document.getElementById('scanSpinner');
+            
+            errorEl.textContent = '';
+            fallbackEl.style.display = 'none';
+            spinner.style.display = 'none';
             container.style.display = 'block';
+            
             Quagga.init({
                 inputStream: {
                     type: "LiveStream",
@@ -212,9 +247,19 @@
                     readers: ["code_128_reader","ean_reader","ean_8_reader","upc_reader","upc_e_reader"]
                 }
             }, function(err) {
-                if (err) { console.error('Quagga init error', err); return; }
+                if (err) {
+                    console.error('Quagga init error', err);
+                    errorEl.textContent = '📹 Camera access denied or unavailable. Try manual entry or OCR.';
+                    return;
+                }
                 Quagga.start();
+                
+                // Auto-fallback to OCR after timeout
+                scanTimeout = setTimeout(() => {
+                    showOcrFallback();
+                }, BARCODE_TIMEOUT);
             });
+            
             Quagga.onDetected(function(result) {
                 const code = result.codeResult.code;
                 if (/^[A-HJ-NPR-Z0-9]{17}$/.test(code)) {
@@ -224,10 +269,64 @@
                 }
             });
         }
+        
+        function captureSnapshot() {
+            const video = document.getElementById('scanner-video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            performOcrOnCanvas(canvas);
+        }
+        
+        function showOcrFallback() {
+            const errorEl = document.getElementById('scanError');
+            const fallbackEl = document.getElementById('ocrFallback');
+            const spinner = document.getElementById('scanSpinner');
+            spinner.style.display = 'none';
+            errorEl.textContent = '⏱️ No barcode detected. Use OCR or manual entry:';
+            fallbackEl.style.display = 'block';
+        }
+        
         function stopScanner() {
             Quagga.stop();
+            clearTimeout(scanTimeout);
+            clearTimeout(ocrCountdown);
             document.getElementById('scanner').style.display = 'none';
+            document.getElementById('ocrFallback').style.display = 'none';
+            document.getElementById('scanError').textContent = '';
         }
+        
+        async function performOcrOnCanvas(canvas) {
+            const errorEl = document.getElementById('scanError');
+            const spinner = document.getElementById('scanSpinner');
+            const fallbackEl = document.getElementById('ocrFallback');
+            spinner.style.display = 'block';
+            errorEl.textContent = '🔍 Reading text from image...';
+            
+            try {
+                const result = await Tesseract.recognize(canvas, 'eng');
+                spinner.style.display = 'none';
+                const text = result.data.text;
+                const match = text.match(/[A-HJ-NPR-Z0-9]{17}/);
+                
+                if (match) {
+                    const detectedVin = match[0];
+                    document.getElementById('vinInput').value = detectedVin;
+                    stopScanner();
+                    decodeVIN();
+                } else {
+                    errorEl.textContent = '❌ OCR could not find a valid VIN. Try again or type manually.';
+                    fallbackEl.style.display = 'block';
+                }
+            } catch (err) {
+                spinner.style.display = 'none';
+                errorEl.textContent = '❌ OCR processing failed: ' + (err.message || 'unknown error');
+                fallbackEl.style.display = 'block';
+            }
+        }
+        
         async function decodeVIN() {
             const vinEl = document.getElementById('vinInput');
             const vin = vinEl.value.trim();
@@ -632,6 +731,9 @@
             
             document.getElementById('scanVinBtn').addEventListener('click', startScanner);
             document.getElementById('stopScanBtn').addEventListener('click', stopScanner);
+            document.getElementById('captureSnapBtn').addEventListener('click', captureSnapshot);
+            document.getElementById('tryOcrBtn').addEventListener('click', captureSnapshot);
+            document.getElementById('dismissScanBtn').addEventListener('click', stopScanner);
 
             document.getElementById('vinDecodeBtn').addEventListener('click', (e) => {
                 decodeVIN();
