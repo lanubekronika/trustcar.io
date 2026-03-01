@@ -1,9 +1,12 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>.skip-link{position:absolute;top:0;left:0;background:#0553F0;color:#fff;padding:.5rem;z-index:1000;transform:translateY(-100%);transition:transform .3s;} .skip-link:focus{transform:translateY(0);}</style>
   <title>Admin — TrustCar</title>
+  <meta name="description" content="Administration dashboard for TrustCar inspections.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <style>
     body{font-family:Nunito,system-ui,Arial,sans-serif;background:#f5f8fa;color:#0b1724;margin:0}
     header{background:#0553F0;color:#fff;padding:1rem}
@@ -21,7 +24,8 @@
   </script>
 </head>
 <body>
-  <main>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <main role="main">
     <div class="card">
       <h2>Inspections</h2>
       <table id="list">

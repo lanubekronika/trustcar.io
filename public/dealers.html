@@ -3,10 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0553F0">
     <title>Find TrustCar Approved Dealers — TrustCar.io</title>
+    <meta name="description" content="Browse our upcoming network of TrustCar-approved dealers offering transparent, AI-verified vehicle inspections. Launching nationwide early 2026.">
+    <meta property="og:title" content="TrustCar Approved Dealers">
+    <meta property="og:description" content="Find transparent, TrustCar-approved dealers launching nationwide in 2026.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://trustcar.io/dealers.html">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
+        .skip-link{position:absolute;top:0;left:0;background:#0553F0;color:#fff;padding:.5rem;z-index:1000;transform:translateY(-100%);transition:transform .3s;}
+        .skip-link:focus{transform:translateY(0);}
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
         header { background: #0553F0; color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center;; gap: 1rem; }
         .logo { font-size: 1.8rem; font-weight: 700; }
@@ -53,18 +64,20 @@
     </style>
 </head>
 <body>
-    <header>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <noscript><div style="background:#ffdddd;color:#900;padding:.75rem;text-align:center;">JavaScript is disabled; dealer search will not function.</div></noscript>
+    <header role="banner">
         <div class="logo"><a href="/" style="color:white;text-decoration:none;">TrustCar.io</a></div>
-        <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
-        <nav id="primaryNav">
+        <button type="button" id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
+        <nav id="primaryNav" role="navigation" aria-label="Main navigation">
             <a href="/">Home</a>
             <a href="/pricing.html">Pricing</a>
-            <a href="/dealers.html">Find Dealers</a>
+            <a href="/dealers.html" aria-current="page">Find Dealers</a>
             <a href="/how-it-works.html">How It Works</a>
         </nav>
     </header>
 
-    <main>
+    <main role="main" id="main">
         <h1>TrustCar Approved Dealers</h1>
         <p class="subtitle">Find transparent, certified dealers who use TrustCar inspections for every vehicle.</p>
 
@@ -91,11 +104,11 @@
             <div class="search-row">
                 <div class="search-field">
                     <label for="zip">Your ZIP Code</label>
-                    <input type="text" id="zip" placeholder="Enter ZIP code" maxlength="5">
+                    <input type="text" id="zip" placeholder="Enter ZIP code" maxlength="5" autocomplete="postal-code">
                 </div>
                 <div class="search-field">
                     <label for="radius">Search Radius</label>
-                    <select id="radius">
+                    <select id="radius" autocomplete="off">
                         <option value="25">25 miles</option>
                         <option value="50" selected>50 miles</option>
                         <option value="100">100 miles</option>
@@ -114,7 +127,7 @@
                         <option value="Mercedes-Benz">Mercedes-Benz</option>
                     </select>
                 </div>
-                <button class="btn btn-primary" onclick="searchDealers()">Search Dealers</button>
+                <button type="button" class="btn btn-primary" onclick="searchDealers()">Search Dealers</button>
             </div>
         </div>
 
@@ -221,7 +234,7 @@
                     </div>
                     
                     <div class="dealer-actions">
-                        <a href="${dealer.website}" target="_blank" class="btn-secondary" style="flex:1;">View Inventory</a>
+                        <a href="${dealer.website}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="flex:1;">View Inventory</a>
                         <a href="tel:${dealer.phone}" class="btn-secondary">📞 Call</a>
                     </div>
                 </div>
@@ -242,9 +255,29 @@
         const menuToggle = document.getElementById('menuToggle');
         const primaryNav = document.getElementById('primaryNav');
         if (menuToggle && primaryNav) {
-            menuToggle.addEventListener('click', () => {
-                const isOpen = primaryNav.classList.toggle('open');
-                menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            const toggleNav = () => {
+                const open = primaryNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                if (open) {
+                    const firstLink = primaryNav.querySelector('a');
+                    if (firstLink) firstLink.focus();
+                }
+            };
+            menuToggle.addEventListener('click', toggleNav);
+            primaryNav.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => {
+                    if (primaryNav.classList.contains('open')) {
+                        primaryNav.classList.remove('open');
+                        menuToggle.setAttribute('aria-expanded','false');
+                    }
+                });
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && primaryNav.classList.contains('open')) {
+                    primaryNav.classList.remove('open');
+                    menuToggle.setAttribute('aria-expanded','false');
+                    menuToggle.focus();
+                }
             });
         }
     </script>

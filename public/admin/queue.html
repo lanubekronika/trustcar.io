@@ -196,7 +196,7 @@
             items.forEach((insp, idx) => {
                 console.log(`  Rendering card ${idx} for ${insp.orderId || insp.id?.slice(0,8)}`);
                 const inspUploads = uploads.filter(u => u.inspectionId === insp.id);
-                const thumbnails = inspUploads.slice(0, 4).map(u => `<img src="${u.path}" class="card-thumb" />`).join('');
+                const thumbnails = inspUploads.slice(0, 4).map(u => `<img src="${u.path}" class="card-thumb" alt="Inspection photo" />`).join('');
                 
                 const fraudBadge = insp.fraudScore 
                     ? `<span class="fraud-badge fraud-${insp.fraudScore.level}">Risk: ${insp.fraudScore.score}</span>` 

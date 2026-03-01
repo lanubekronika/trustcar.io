@@ -3,10 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0553F0">
     <title>Inspection Report — TrustCar.io</title>
+    <meta name="description" content="View your detailed TrustCar.io inspection report including photos, damage analysis, and AI insights.">
+    <meta property="og:title" content="TrustCar Inspection Report">
+    <meta property="og:description" content="Access your TrustCar vehicle inspection report with photos, damage breakdown, and AI recommendations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://trustcar.io/buyer-report.html">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
+        .skip-link{position:absolute;top:0;left:0;background:#0553F0;color:#fff;padding:.5rem;z-index:1000;transform:translateY(-100%);transition:transform .3s;}
+        .skip-link:focus{transform:translateY(0);}
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
         header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
         .logo { font-size: 1.8rem; font-weight: 800; }
@@ -73,7 +84,9 @@
     </style>
 </head>
 <body>
-    <header>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <noscript><div style="background:#ffdddd;color:#900;padding:.75rem;text-align:center;">JavaScript is required to load your report.</div></noscript>
+    <header role="banner">
         <div class="logo">TrustCar.io</div>
         <div class="header-actions">
             <button class="btn-header" onclick="window.print()">📄 Print Report</button>
@@ -81,7 +94,7 @@
         </div>
     </header>
 
-    <main>
+    <main role="main" id="main">
         <div id="loadingDiv" class="loading">
             <div class="loading-spinner"></div>
             <p>Loading your inspection report...</p>
@@ -215,7 +228,7 @@
                     return `
                         <div class="photo-card" onclick="window.open('${u.path}', '_blank')">
                             ${warningHTML}
-                            <img src="${u.path}" alt="${u.checkItem || 'Photo'}" />
+                            <img src="${u.path}" alt="${u.checkItem || 'Photo'}" loading="lazy" />
                             <div class="photo-label">${u.checkItem ? u.checkItem.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Photo ' + u.id.slice(0,8)}</div>
                         </div>
                     `;

@@ -3,13 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0553F0">
         <title>Enter VIN — TrustCar.io</title>
         <meta name="description" content="Decode vehicle VIN numbers with TrustCar.io. Get instant safety ratings, recall information, and vehicle specifications from NHTSA data.">
         <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f8fa; color: #0b1724; }
+        .skip-link{position:absolute;top:0;left:0;background:#0553F0;color:#fff;padding:.5rem;z-index:1000;transform:translateY(-100%);transition:transform .3s;}
+        .skip-link:focus{transform:translateY(0);}
         header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: white; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(5,83,240,0.15); gap: 1rem; }
         nav { display: flex; gap: 1.5rem; align-items: center; }
         .logo { font-size: 1.8rem; font-weight: 800; }
@@ -76,28 +81,30 @@
     </style>
 </head>
 <body>
-    <header>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <noscript><div style="background:#ffdddd;color:#900;padding:.75rem;text-align:center;">JavaScript is required for VIN decoding.</div></noscript>
+    <header role="banner">
         <div class="logo"><a href="/" style="color:white;text-decoration:none;" aria-label="TrustCar.io homepage">TrustCar.io</a></div>
-        <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
-        <nav aria-label="Main navigation" id="primaryNav">
+        <button type="button" id="menuToggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">Menu ☰</button>
+        <nav role="navigation" aria-label="Main navigation" id="primaryNav">
             <a class="nav-link" href="/">Home</a>
             <a class="nav-link" href="/pricing.html">Pricing</a>
             <a class="nav-link" href="/how-it-works.html">How It Works</a>
         </nav>
     </header>
 
-    <main>
+    <main role="main" id="main">
         <div class="card">
             <h1>Enter the Vehicle VIN</h1>
             <p class="lead">Enter the 17-character VIN of the vehicle you're considering. We'll instantly decode it, check for open recalls, safety ratings, and (when available) local market pricing.</p>
             <div id="checkoutMeta" class="muted" style="margin:.5rem 0 1rem 0; display:none"></div>
 
             <label for="vinInput">VIN</label>
-            <input id="vinInput" class="vin-input" maxlength="17" placeholder="1HGCM82633A004352" aria-label="Vehicle VIN" />
+            <input id="vinInput" class="vin-input" maxlength="17" placeholder="1HGCM82633A004352" aria-label="Vehicle VIN" autocomplete="off" inputmode="latin" />
 
             <div class="actions">
-                <button id="vinDecodeBtn" class="btn btn-primary">Decode VIN</button>
-                <button id="copyReportBtn" class="btn btn-ghost">Copy Report</button>
+                <button type="button" id="vinDecodeBtn" class="btn btn-primary">Decode VIN</button>
+                <button type="button" id="copyReportBtn" class="btn btn-ghost">Copy Report</button>
                 <div id="statusMsg" class="muted" style="margin-left:auto"></div>
             </div>
 
@@ -327,7 +334,7 @@
                                     <input id="zipInput" placeholder="e.g. 94107" maxlength="5" aria-label="ZIP code for market search" />
                                     <label for="radiusInput" class="muted" style="font-weight:600;">Radius (mi)</label>
                                     <input id="radiusInput" type="number" min="10" max="500" placeholder="100" value="100" aria-label="Search radius in miles" />
-                                    <button id="fetchCompsBtn" class="btn btn-ghost" aria-label="Fetch market comparables">Fetch Comps</button>
+                                    <button type="button" id="fetchCompsBtn" class="btn btn-ghost" aria-label="Fetch market comparables">Fetch Comps</button>
                                 </div>
                                 <div id="compsSummary" class="muted" role="status" aria-live="polite">No comps yet.</div>
                                 <div class="comps-scroll">
@@ -660,9 +667,29 @@
         const menuToggle = document.getElementById('menuToggle');
         const primaryNav = document.getElementById('primaryNav');
         if (menuToggle && primaryNav) {
-            menuToggle.addEventListener('click', () => {
-                const isOpen = primaryNav.classList.toggle('open');
-                menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            const toggleNav = () => {
+                const open = primaryNav.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                if (open) {
+                    const firstLink = primaryNav.querySelector('a');
+                    if (firstLink) firstLink.focus();
+                }
+            };
+            menuToggle.addEventListener('click', toggleNav);
+            primaryNav.querySelectorAll('a').forEach(a=>{
+                a.addEventListener('click',()=>{
+                    if(primaryNav.classList.contains('open')){
+                        primaryNav.classList.remove('open');
+                        menuToggle.setAttribute('aria-expanded','false');
+                    }
+                });
+            });
+            document.addEventListener('keydown', e=>{
+                if(e.key==='Escape' && primaryNav.classList.contains('open')){
+                    primaryNav.classList.remove('open');
+                    menuToggle.setAttribute('aria-expanded','false');
+                    menuToggle.focus();
+                }
             });
         }
     </script>

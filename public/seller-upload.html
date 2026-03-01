@@ -1,13 +1,17 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://docs.opencv.org; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' https://vpic.nhtsa.dot.gov https://api.nhtsa.gov; media-src 'self' blob:; frame-src 'none';" />
   <title>Seller Upload — TrustCar</title>
+  <meta name="description" content="Guided photo upload interface for sellers to submit vehicle inspection images to TrustCar.io.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Nunito', system-ui, Arial, sans-serif; background: #f5f8fa; color: #0b1724; margin: 0; padding: 0; }
+    .skip-link{position:absolute;top:0;left:0;background:#0553F0;color:#fff;padding:.5rem;z-index:1000;transform:translateY(-100%);transition:transform .3s;}
+    .skip-link:focus{transform:translateY(0);}
     header { background: linear-gradient(135deg, #0553F0 0%, #0441c7 100%); color: #fff; padding: 1.5rem 5%; box-shadow: 0 2px 8px rgba(5,83,240,0.15); }
     header strong { font-size: 1.5rem; font-weight: 800; }
     main { padding: 2rem 5%; max-width: 1200px; margin: 0 auto; }
@@ -120,7 +124,8 @@
   </style>
 </head>
 <body>
-  <header>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <header role="banner">
     <strong>🚗 TrustCar Seller Capture</strong>
     <p style="margin:.5rem 0 0; font-size:.9rem; opacity:0.9;">Professional Vehicle Inspection System</p>
   </header>
@@ -142,7 +147,7 @@
     </div>
   </div>
   
-  <main>
+  <main role="main" id="main">
     <div class="card">
       <h2>📸 Capture Photos & Video</h2>
       <p class="muted">Follow the checklist below to capture all required photos. Your upload link is valid for 48 hours. All photos are geotagged and timestamped for authenticity.</p>
