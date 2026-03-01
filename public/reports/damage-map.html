@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>360° Damage Map — TrustCar.io</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f5f8fa; color: #0b1724; }
@@ -22,7 +23,8 @@
         .vehicle-canvas svg image { image-rendering: optimizeQuality; }
         .vehicle-image { width: 100%; height: 100%; object-fit: contain; }
         .damage-marker { position: absolute; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transform: translate(-50%, -50%); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: .7rem; transition: .2s; }
-        .damage-marker:hover { transform: translate(-50%, -50%) scale(1.2); z-index: 10; }
+        /* hide markers when 3D view active (marker positions not accurate) */
+        .view-btn.active[onclick*="'3d'"] ~ .viewer-container .damage-marker { display: none; }        .damage-marker:hover { transform: translate(-50%, -50%) scale(1.2); z-index: 10; }
         .damage-marker:focus { outline: 3px solid #0553F0; outline-offset: 2px; transform: translate(-50%, -50%) scale(1.2); }
         .damage-marker.minor { background: #f59e0b; }
         .damage-marker.moderate { background: #f97316; }
@@ -107,6 +109,7 @@
             <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('driver', event)">Driver Side</button>
             <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('passenger', event)">Passenger Side</button>
             <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('top', event)">Top View</button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-controls="vehicleCanvas" onclick="switchView('3d', event)">360° View</button>
         </div>
 
         <div class="viewer-container">
@@ -329,8 +332,9 @@
 
         function generateVehicleSVG(view) {
             const svgs = {
+                '3d': `<model-viewer src="https://modelviewer.dev/shared-assets/models/car.glb" camera-controls auto-rotate style="width:100%;height:100%;"></model-viewer>`,
                 'front': `<svg viewBox="0 0 600 450" style="width:100%;height:100%;">
-                    <!-- High‑resolution photo background for realism -->
+`},{                    <!-- High‑resolution photo background for realism -->
                     <image href="https://images.unsplash.com/photo-1571607386013-254d19e5da4a?&auto=format&fit=crop&w=600&h=450" x="0" y="0" width="600" height="450" preserveAspectRatio="xMidYMid slice" />
                     <!-- retained vector lines for shading/outlines (optional) -->
                     <!-- Main body -->
