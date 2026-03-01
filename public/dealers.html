@@ -98,6 +98,12 @@
                 <a href="/pricing.html" class="btn btn-primary">View Inspection Plans</a>
                 <a href="/how-it-works.html" class="btn btn-secondary">Learn How It Works</a>
             </div>
+            <div style="margin-top:2rem;text-align:center;">
+                <label for="notifyEmail" style="font-weight:600;display:block;margin-bottom:.5rem;color:#78350f;">Notify me when the dealer directory launches:</label>
+                <input id="notifyEmail" type="email" placeholder="you@example.com" style="padding:.75rem 1rem;border:2px solid #e6eefc;border-radius:8px;max-width:320px;" />
+                <button id="notifyBtn" class="btn btn-primary" style="margin-left:.5rem;">Notify Me</button>
+                <div id="notifyMsg" class="muted" style="margin-top:.5rem;"></div>
+            </div>
         </div>
 
         <div style="display:none;">
@@ -249,6 +255,20 @@
                 document.getElementById('zip').value = savedZip;
                 searchDealers();
             }
+        });
+
+        // Notify me form handling
+        document.getElementById('notifyBtn').addEventListener('click', () => {
+            const emailEl = document.getElementById('notifyEmail');
+            const msgEl = document.getElementById('notifyMsg');
+            const email = emailEl.value.trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                msgEl.textContent = 'Please enter a valid email address';
+                return;
+            }
+            // attempt mailto fallback
+            window.location.href = `mailto:info@trustcar.io?subject=Dealer%20Network%20Notification&body=Please%20notify%20me%20when%20the%20dealer%20directory%20launches.%0AEmail:%20${encodeURIComponent(email)}`;
+            msgEl.textContent = 'Thanks! An email client should open.';
         });
     </script>
 
