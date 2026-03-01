@@ -113,6 +113,7 @@
                 <video id="scanner-video" style="width:100%;"></video>
                 <button id="stopScanBtn" class="btn btn-ghost" style="position:absolute;top:10px;right:10px;">✕</button>
             </div>
+            <div id="scanError" class="muted" style="margin-top:.5rem;"></div>
 
             <div id="vinResults" aria-live="polite" aria-busy="false" role="region" aria-label="VIN decode results"></div>
         </div>
@@ -123,6 +124,7 @@
     </footer>
 
     <script src="https://unpkg.com/quagga/dist/quagga.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
     <script>
         // VIN decode + recall logic (adapted from index.html)
         let lastDecode = null;
