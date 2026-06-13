@@ -4,20 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products — TrustCar.io</title>
-    <meta name="description" content="Choose the right tool for your used car purchase. Guides, reports, and expert reviews to avoid getting ripped off.">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
-        body {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        
-        .font-display {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-weight: 600;
-        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f8fafc; color: #0b1724; }
+        .header { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e6eefc; }
+        .logo { font-size: 1.9rem; font-weight: 800; color: #0553F0; }
+        nav a { margin-left: 2rem; text-decoration: none; color: #334155; font-weight: 600; }
+        .section { padding: 4.5rem 5%; max-width: 1100px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .card { background: white; padding: 2.3rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .price { font-size: 2.2rem; font-weight: 800; color: #0553F0; }
+        .btn { background: #0553F0; color: white; padding: 0.95rem 1.9rem; border-radius: 10px; font-weight: 700; text-decoration: none; display: inline-block; }
+        h2 { font-size: 2.4rem; margin-bottom: 1.2rem; }
+        .badge { background: #e0e7ff; color: #3730a3; padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">TrustCar.io</div>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products.html">Products</a>
+    </nav>
+</header>
+
+<section class="section">
+    <div style="text-align: center; max-width: 720px; margin: 0 auto 3rem;">
+        <h2>Choose the Right Tool for Your Situation</h2>
+        <p style="font-size: 1.2rem; color: #475569;">Pick what you need right now. Every product is designed to help you avoid expensive mistakes on used cars.</p>
+    </div>
+
+    <div class="grid">
+        <!-- Product 1 -->
+        <div class="card">
+            <div class="badge" style="margin-bottom: 1rem;">Best for Beginners</div>
+            <h3>Used Car Buyer’s Checklist</h3>
+            <p>A simple, step-by-step checklist to evaluate any car before you buy. Know exactly what to inspect.</p>
+            <div class="price">$19</div>
+            <p style="margin: 1.5rem 0 0.5rem; color: #475569;"><strong>What you get:</strong> Instant PDF download</p>
+            <a href="#" class="btn" style="width: 100%; text-align: center;">Get Instant Access</a>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="card">
+            <div class="badge" style="margin-bottom: 1rem;">Most Popular</div>
+            <h3>Red Flags Guide + Negotiation Scripts</h3>
+            <p>Learn the exact warning signs + word-for-word scripts to negotiate better prices with confidence.</p>
+            <div class="price">$29</div>
+            <p style="margin: 1.5rem 0 0.5rem; color: #475569;"><strong>What you get:</strong> PDF guide + negotiation scripts</p>
+            <a href="#" class="btn" style="width: 100%; text-align: center;">Get Instant Access</a>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="card">
+            <h3>VIN + Market Value Report</h3>
+            <p>Automated report with title history, market value in your area, and basic red flag detection.</p>
+            <div class="price">$49</div>
+            <p style="margin: 1.5rem 0 0.5rem; color: #475569;"><strong>What you get:</strong> Full report delivered by email</p>
+            <a href="#" class="btn" style="width: 100%; text-align: center;">Get Report</a>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="card">
+            <div class="badge" style="margin-bottom: 1rem;">Best Value</div>
+            <h3>Premium Human-Reviewed Report</h3>
+            <p>Full review of your car’s VIN + photos by someone who has seen thousands of deals. Includes written analysis and red flags.</p>
+            <div class="price">$89</div>
+            <p style="margin: 1.5rem 0 0.5rem; color: #475569;"><strong>What you get:</strong> Detailed written report + photo review</p>
+            <a href="#" class="btn" style="width: 100%; text-align: center;">Get Premium Report</a>
+        </div>
+    </div>
+</section>
+
+<footer style="background: #0b1724; color: #94a3b8; padding: 3rem 5%; text-align: center; font-size: 0.95rem;">
+    <p>© 2026 TrustCar.io — Built by someone who has seen how ugly used car deals can get.</p>
+</footer>
+
+</body>
+</html>
 
         .nav-link {
             transition: color 0.2s ease;
