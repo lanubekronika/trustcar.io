@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About — TrustCar.io</title>
-    <meta name="description" content="Built by Manny T, a former dealership manager in Tampa, Florida who knows exactly how buyers get taken advantage of. Learn why TrustCar.io exists.">
+    <title>Blog — TrustCar.io</title>
+    <meta name="description" content="Straight talk used car buying advice from a former dealership manager. No ads, no hype.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -14,11 +14,6 @@
             font-family: 'Inter', system_ui, sans-serif;
         }
         
-        .font-display {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-weight: 600;
-        }
-
         .nav-link {
             transition: color 0.2s ease;
         }
@@ -33,9 +28,19 @@
             font-weight: 700;
             letter-spacing: -0.025em;
         }
+
+        .article-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .article-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div class="max-w-screen-xl mx-auto">
             <div class="px-6 py-5 flex items-center justify-between">
@@ -54,9 +59,9 @@
                 <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
                     <a href="/" class="nav-link text-slate-700">Home</a>
                     <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
-                    <a href="/blog.html" class="nav-link text-slate-700">Blog</a>
+                    <a href="/blog.html" class="nav-link text-[#0A66C2] font-semibold">Blog</a>
                     <a href="/products.html" class="nav-link text-slate-700">Products</a>
-                    <a href="/about.html" class="nav-link text-[#0A66C2] font-semibold">About</a>
+                    <a href="/about.html" class="nav-link text-slate-700">About</a>
                     <a href="/contact.html" class="nav-link text-slate-700">Contact</a>
                 </nav>
 
@@ -67,6 +72,7 @@
             </div>
         </div>
 
+        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 px-6 py-4">
             <nav class="flex flex-col gap-y-1 text-sm font-medium">
                 <a href="/" class="py-2.5 px-1 text-slate-700">Home</a>
@@ -81,41 +87,51 @@
 
     <main class="max-w-screen-xl mx-auto px-6 py-16">
         <div class="max-w-3xl mx-auto">
-            <h1 class="section-header">Why Manny T built TrustCar.io</h1>
+            <h1 class="section-header">Used Car Buying Advice From Someone Who's Seen It All</h1>
+            <p class="mt-4 text-xl text-slate-600">No ads. No sponsored content. Just straight talk from a former dealership insider.</p>
+        </div>
+
+        <div class="mt-12 max-w-3xl mx-auto space-y-6">
             
-            <div class="mt-6">
-                <div class="flex gap-6 items-start">
-                    <div class="w-28 h-28 bg-slate-200 rounded-2xl flex items-center justify-center text-slate-500 text-xs text-center flex-shrink-0">Manny T<br>Photo</div>
-                    <div class="pt-1">
-                        <div class="font-semibold text-xl">Manny T — Former Dealership Manager, Tampa, Florida</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-8 prose prose-slate max-w-none">
-                <p class="text-lg">For over a decade, Manny T worked in dealership service departments and reviewed extended warranties. Manny T saw thousands of deals — the good, the bad, and the outright predatory.</p>
-                
-                <p>Manny T watched buyers walk in excited and walk out overpaying by thousands or worse, stuck with a car that was a money pit. Manny T saw the tricks sellers use on Facebook Marketplace and Craigslist. Manny T saw how title issues, odometer rollbacks, and flood damage get buried.</p>
-                
-                <p>Most buyers don't have a chance. They don't know what questions to ask. They don't know what data to pull. They trust their gut or the seller's word.</p>
-                
-                <p>That's why Manny T built TrustCar.io. To give regular people the same leverage and knowledge that insiders have — without the $300 mechanic bill or the days of waiting.</p>
-                
-                <h3 class="font-semibold text-xl mt-8">What this is</h3>
-                <p>Practical, no-hype tools based on real experience. Guides that teach you the red flags. Reports that surface the facts. Analysis that tells you what to do next.</p>
-                
-                <h3 class="font-semibold text-xl mt-8">What this isn't</h3>
-                <p>It's not a replacement for a good mechanic on a high-value or complex car. It's not magic. It's information — the kind that used to only be available to people in the business.</p>
+            <!-- Article 1 -->
+            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
+                <h3 class="font-semibold text-2xl tracking-tight">10 Things to Check Before Buying a Used Car on Facebook Marketplace</h3>
+                <p class="mt-3 text-slate-600">The exact checklist a former dealership manager uses to avoid curbstoners, flood cars, and overpriced lemons on Marketplace.</p>
+                <a href="/blog/facebook-marketplace-checklist.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
             </div>
 
-            <div class="mt-8">
-                <a href="/products.html" class="inline-flex items-center px-8 py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
-                    Browse the tools
-                </a>
+            <!-- Article 2 -->
+            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
+                <h3 class="font-semibold text-2xl tracking-tight">How Dealers Hide Flood Damage — And How to Spot It Before You Buy</h3>
+                <p class="mt-3 text-slate-600">Title washing, rust spots, and the 7 physical signs that a "clean" Carfax might be hiding flood damage.</p>
+                <a href="/blog/how-dealers-hide-flood-damage.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
             </div>
+
+            <!-- Article 3 -->
+            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
+                <h3 class="font-semibold text-2xl tracking-tight">Is a $5,000 Used Car Ever Worth It? The Honest Answer.</h3>
+                <p class="mt-3 text-slate-600">What $5,000 actually buys you in 2026, which models are gems, which are money pits, and the one thing that makes the difference.</p>
+                <a href="/blog/is-a-5000-dollar-used-car-worth-it.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
+            </div>
+
+            <!-- Article 4 -->
+            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
+                <h3 class="font-semibold text-2xl tracking-tight">What a Carfax Report Won't Tell You (And What Actually Will)</h3>
+                <p class="mt-3 text-slate-600">The gaps in Carfax data, why "Clean Carfax" is marketing speak, and what you should check instead.</p>
+                <a href="/blog/what-carfax-wont-tell-you.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
+            </div>
+
+            <!-- Article 5 -->
+            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
+                <h3 class="font-semibold text-2xl tracking-tight">Extended Warranty Red Flags Every Used Car Buyer Should Know</h3>
+                <p class="mt-3 text-slate-600">The fine print that turns a "peace of mind" purchase into an expensive lesson.</p>
+                <a href="/blog/extended-warranty-red-flags.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
+            </div>
+
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 text-sm">
         <div class="max-w-screen-xl mx-auto px-6 py-10">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-y-6">
@@ -132,6 +148,7 @@
                 <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
                     <a href="/" class="hover:text-white transition-colors">Home</a>
                     <a href="/how-it-works.html" class="hover:text-white transition-colors">How it works</a>
+                    <a href="/blog.html" class="hover:text-white transition-colors">Blog</a>
                     <a href="/products.html" class="hover:text-white transition-colors">Products</a>
                     <a href="/about.html" class="hover:text-white transition-colors">About</a>
                     <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>

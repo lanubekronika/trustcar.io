@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About — TrustCar.io</title>
-    <meta name="description" content="Built by Manny T, a former dealership manager in Tampa, Florida who knows exactly how buyers get taken advantage of. Learn why TrustCar.io exists.">
+    <title>Extended Warranty Red Flags Every Used Car Buyer Should Know — TrustCar.io</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -14,11 +13,6 @@
             font-family: 'Inter', system_ui, sans-serif;
         }
         
-        .font-display {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-weight: 600;
-        }
-
         .nav-link {
             transition: color 0.2s ease;
         }
@@ -27,15 +21,39 @@
             color: #0A66C2;
         }
 
-        .section-header {
-            font-size: 2.25rem;
-            line-height: 1.1;
-            font-weight: 700;
-            letter-spacing: -0.025em;
+        .prose {
+            max-width: 65ch;
+        }
+        
+        .prose p {
+            margin-bottom: 1.25em;
+            line-height: 1.7;
+        }
+        
+        .prose h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2em;
+            margin-bottom: 0.75em;
+        }
+        
+        .prose ul {
+            margin-bottom: 1.5em;
+            padding-left: 1.25em;
+        }
+        
+        .prose li {
+            margin-bottom: 0.5em;
+        }
+
+        .cta-box {
+            background: #f8fafc;
+            border: 1px solid #0A66C2;
         }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div class="max-w-screen-xl mx-auto">
             <div class="px-6 py-5 flex items-center justify-between">
@@ -54,13 +72,12 @@
                 <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
                     <a href="/" class="nav-link text-slate-700">Home</a>
                     <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
-                    <a href="/blog.html" class="nav-link text-slate-700">Blog</a>
+                    <a href="/blog.html" class="nav-link text-[#0A66C2] font-semibold">Blog</a>
                     <a href="/products.html" class="nav-link text-slate-700">Products</a>
-                    <a href="/about.html" class="nav-link text-[#0A66C2] font-semibold">About</a>
+                    <a href="/about.html" class="nav-link text-slate-700">About</a>
                     <a href="/contact.html" class="nav-link text-slate-700">Contact</a>
                 </nav>
 
-                <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
@@ -79,39 +96,61 @@
         </div>
     </header>
 
-    <main class="max-w-screen-xl mx-auto px-6 py-16">
+    <main class="max-w-screen-xl mx-auto px-6 py-12">
         <div class="max-w-3xl mx-auto">
-            <h1 class="section-header">Why Manny T built TrustCar.io</h1>
+            <a href="/blog.html" class="inline-flex items-center text-sm text-[#0A66C2] mb-6 hover:underline">← Back to Blog</a>
             
-            <div class="mt-6">
-                <div class="flex gap-6 items-start">
-                    <div class="w-28 h-28 bg-slate-200 rounded-2xl flex items-center justify-center text-slate-500 text-xs text-center flex-shrink-0">Manny T<br>Photo</div>
-                    <div class="pt-1">
-                        <div class="font-semibold text-xl">Manny T — Former Dealership Manager, Tampa, Florida</div>
-                    </div>
-                </div>
-            </div>
+            <h1 class="text-4xl md:text-5xl font-semibold tracking-tighter leading-tight">Extended Warranty Red Flags Every Used Car Buyer Should Know</h1>
             
-            <div class="mt-8 prose prose-slate max-w-none">
-                <p class="text-lg">For over a decade, Manny T worked in dealership service departments and reviewed extended warranties. Manny T saw thousands of deals — the good, the bad, and the outright predatory.</p>
-                
-                <p>Manny T watched buyers walk in excited and walk out overpaying by thousands or worse, stuck with a car that was a money pit. Manny T saw the tricks sellers use on Facebook Marketplace and Craigslist. Manny T saw how title issues, odometer rollbacks, and flood damage get buried.</p>
-                
-                <p>Most buyers don't have a chance. They don't know what questions to ask. They don't know what data to pull. They trust their gut or the seller's word.</p>
-                
-                <p>That's why Manny T built TrustCar.io. To give regular people the same leverage and knowledge that insiders have — without the $300 mechanic bill or the days of waiting.</p>
-                
-                <h3 class="font-semibold text-xl mt-8">What this is</h3>
-                <p>Practical, no-hype tools based on real experience. Guides that teach you the red flags. Reports that surface the facts. Analysis that tells you what to do next.</p>
-                
-                <h3 class="font-semibold text-xl mt-8">What this isn't</h3>
-                <p>It's not a replacement for a good mechanic on a high-value or complex car. It's not magic. It's information — the kind that used to only be available to people in the business.</p>
+            <div class="prose text-lg text-slate-700 mt-8">
+                <p>Extended warranties are one of the most profitable products a dealership sells. The profit margins are often higher than the profit on the car itself. That should tell you something about who the product is really designed to benefit.</p>
+
+                <h2>The three types of warranties buyers confuse</h2>
+                <p>Most people think "warranty" means one thing. In reality there are three very different products:</p>
+                <ul>
+                    <li><strong>Manufacturer warranty</strong> — Comes with the new car and is backed by the actual car company.</li>
+                    <li><strong>Dealer warranty</strong> — A short-term promise from the selling dealer (often 30-90 days on used cars).</li>
+                    <li><strong>Third-party extended warranty</strong> — The contract you buy at the finance desk. This is almost always administered by a separate company, not the dealer or the manufacturer.</li>
+                </ul>
+
+                <h2>The 8 biggest red flags</h2>
+
+                <p><strong>1. "Exclusionary" vs "inclusionary" coverage</strong><br>
+                Cheap warranties are almost always "inclusionary" — they only cover the specific parts listed in a long document. Everything else is excluded. The list is always shorter than buyers expect.</p>
+
+                <p><strong>2. High deductibles buried in the fine print</strong><br>
+                A $200 or $250 deductible per repair visit sounds reasonable until you realize you might have three or four issues in the first year. Those add up fast.</p>
+
+                <p><strong>3. "Consequential damage" exclusions</strong><br>
+                If a water pump fails and destroys the engine, many contracts will only pay for the water pump. The engine damage is considered "consequential" and is your problem.</p>
+
+                <p><strong>4. Requiring you to use specific repair shops</strong><br>
+                Some contracts force you to use their approved network. If you take it to your own trusted mechanic, the claim can be denied.</p>
+
+                <p><strong>5. Pre-existing condition clauses</strong><br>
+                If the car already has a problem when you buy the warranty (even if you don't know about it yet), it's not covered. Ever. Good luck proving it was fine at purchase time.</p>
+
+                <p><strong>6. Cancellation penalties</strong><br>
+                Many contracts charge significant fees if you cancel early, even though they're heavily marketed as "cancel anytime with full refund."</p>
+
+                <p><strong>7. The company behind the warranty</strong><br>
+                The dealer is just the salesman. The actual company that has to pay claims is often a small administrator. Check whether that company is AM Best rated and financially stable. Many have gone bankrupt.</p>
+
+                <p><strong>8. Pressure to decide today</strong><br>
+                Any time a dealer tells you the warranty price is only good if you sign right now at delivery, walk away from the warranty. Legitimate products don't require that kind of pressure.</p>
+
+                <h2>When a warranty actually makes sense</h2>
+                <p>A warranty can make sense on a car that is out of manufacturer warranty but still has expensive systems that are likely to fail (certain transmissions, electronics, turbos). It almost never makes sense on a car that is already having problems or on a brand known for reliability.</p>
+
+                <h2>The one question you should always ask</h2>
+                <p>"Who is the actual administrator of this contract and are they AM Best rated?"</p>
+                <p>If the finance manager can't or won't give you a clear answer, that's all the information you need.</p>
             </div>
 
-            <div class="mt-8">
-                <a href="/products.html" class="inline-flex items-center px-8 py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
-                    Browse the tools
-                </a>
+            <div class="cta-box mt-12 p-8 rounded-3xl">
+                <p class="text-lg font-semibold">Before you even think about a warranty, know what you're buying first.</p>
+                <p class="mt-2 text-slate-600">A clean history report tells you whether the car even needs one.</p>
+                <a href="/products.html" class="mt-4 inline-block px-6 py-3 bg-[#0A66C2] text-white font-semibold rounded-2xl hover:bg-[#084D96] transition-colors">Get a Report Before You Decide →</a>
             </div>
         </div>
     </main>
@@ -132,6 +171,7 @@
                 <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
                     <a href="/" class="hover:text-white transition-colors">Home</a>
                     <a href="/how-it-works.html" class="hover:text-white transition-colors">How it works</a>
+                    <a href="/blog.html" class="hover:text-white transition-colors">Blog</a>
                     <a href="/products.html" class="hover:text-white transition-colors">Products</a>
                     <a href="/about.html" class="hover:text-white transition-colors">About</a>
                     <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>

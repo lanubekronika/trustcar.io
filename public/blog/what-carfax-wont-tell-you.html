@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About — TrustCar.io</title>
-    <meta name="description" content="Built by Manny T, a former dealership manager in Tampa, Florida who knows exactly how buyers get taken advantage of. Learn why TrustCar.io exists.">
+    <title>What a Carfax Report Won't Tell You (And What Actually Will) — TrustCar.io</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -14,11 +13,6 @@
             font-family: 'Inter', system_ui, sans-serif;
         }
         
-        .font-display {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-weight: 600;
-        }
-
         .nav-link {
             transition: color 0.2s ease;
         }
@@ -27,15 +21,39 @@
             color: #0A66C2;
         }
 
-        .section-header {
-            font-size: 2.25rem;
-            line-height: 1.1;
-            font-weight: 700;
-            letter-spacing: -0.025em;
+        .prose {
+            max-width: 65ch;
+        }
+        
+        .prose p {
+            margin-bottom: 1.25em;
+            line-height: 1.7;
+        }
+        
+        .prose h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2em;
+            margin-bottom: 0.75em;
+        }
+        
+        .prose ul {
+            margin-bottom: 1.5em;
+            padding-left: 1.25em;
+        }
+        
+        .prose li {
+            margin-bottom: 0.5em;
+        }
+
+        .cta-box {
+            background: #f8fafc;
+            border: 1px solid #0A66C2;
         }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div class="max-w-screen-xl mx-auto">
             <div class="px-6 py-5 flex items-center justify-between">
@@ -54,13 +72,12 @@
                 <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
                     <a href="/" class="nav-link text-slate-700">Home</a>
                     <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
-                    <a href="/blog.html" class="nav-link text-slate-700">Blog</a>
+                    <a href="/blog.html" class="nav-link text-[#0A66C2] font-semibold">Blog</a>
                     <a href="/products.html" class="nav-link text-slate-700">Products</a>
-                    <a href="/about.html" class="nav-link text-[#0A66C2] font-semibold">About</a>
+                    <a href="/about.html" class="nav-link text-slate-700">About</a>
                     <a href="/contact.html" class="nav-link text-slate-700">Contact</a>
                 </nav>
 
-                <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
@@ -79,39 +96,60 @@
         </div>
     </header>
 
-    <main class="max-w-screen-xl mx-auto px-6 py-16">
+    <main class="max-w-screen-xl mx-auto px-6 py-12">
         <div class="max-w-3xl mx-auto">
-            <h1 class="section-header">Why Manny T built TrustCar.io</h1>
+            <a href="/blog.html" class="inline-flex items-center text-sm text-[#0A66C2] mb-6 hover:underline">← Back to Blog</a>
             
-            <div class="mt-6">
-                <div class="flex gap-6 items-start">
-                    <div class="w-28 h-28 bg-slate-200 rounded-2xl flex items-center justify-center text-slate-500 text-xs text-center flex-shrink-0">Manny T<br>Photo</div>
-                    <div class="pt-1">
-                        <div class="font-semibold text-xl">Manny T — Former Dealership Manager, Tampa, Florida</div>
-                    </div>
-                </div>
-            </div>
+            <h1 class="text-4xl md:text-5xl font-semibold tracking-tighter leading-tight">What a Carfax Report Won't Tell You (And What Actually Will)</h1>
             
-            <div class="mt-8 prose prose-slate max-w-none">
-                <p class="text-lg">For over a decade, Manny T worked in dealership service departments and reviewed extended warranties. Manny T saw thousands of deals — the good, the bad, and the outright predatory.</p>
+            <div class="prose text-lg text-slate-700 mt-8">
+                <p>Carfax has become the default thing most buyers ask for. "Does it have a clean Carfax?" is one of the first questions out of almost everyone's mouth.</p>
                 
-                <p>Manny T watched buyers walk in excited and walk out overpaying by thousands or worse, stuck with a car that was a money pit. Manny T saw the tricks sellers use on Facebook Marketplace and Craigslist. Manny T saw how title issues, odometer rollbacks, and flood damage get buried.</p>
-                
-                <p>Most buyers don't have a chance. They don't know what questions to ask. They don't know what data to pull. They trust their gut or the seller's word.</p>
-                
-                <p>That's why Manny T built TrustCar.io. To give regular people the same leverage and knowledge that insiders have — without the $300 mechanic bill or the days of waiting.</p>
-                
-                <h3 class="font-semibold text-xl mt-8">What this is</h3>
-                <p>Practical, no-hype tools based on real experience. Guides that teach you the red flags. Reports that surface the facts. Analysis that tells you what to do next.</p>
-                
-                <h3 class="font-semibold text-xl mt-8">What this isn't</h3>
-                <p>It's not a replacement for a good mechanic on a high-value or complex car. It's not magic. It's information — the kind that used to only be available to people in the business.</p>
+                <p>The problem is that "Clean Carfax" has turned into a marketing phrase that sounds more reassuring than it actually is.</p>
+
+                <h2>What Carfax actually is</h2>
+                <p>Carfax is a database that compiles information from insurance companies, auto auctions, some state DMVs, and a few other sources. It only knows what has been reported to it. If an incident wasn't reported through one of those channels, it simply doesn't exist in their system.</p>
+
+                <h2>The 6 things Carfax commonly misses</h2>
+
+                <p><strong>1. Accidents repaired without an insurance claim</strong><br>
+                Plenty of minor (and some not-so-minor) accidents get fixed with cash. No police report, no insurance claim, no record. The car looks clean on paper but has hidden damage.</p>
+
+                <p><strong>2. Flood damage if the title was washed</strong><br>
+                If a flood car gets retitled in a different state with a clean title, Carfax often has no record of the flood or salvage history.</p>
+
+                <p><strong>3. Odometer rollbacks done before digital records or done illegally</strong><br>
+                Older rollbacks or carefully done modern ones can slip through.</p>
+
+                <p><strong>4. Mechanical condition</strong><br>
+                Carfax has zero information about whether the transmission is about to fail, if the engine has been neglected, or if the car has been driven hard.</p>
+
+                <p><strong>5. Whether the price is fair</strong><br>
+                Carfax tells you history. It does not tell you local market value for that specific car with that specific mileage and options.</p>
+
+                <p><strong>6. Rental or rideshare history in states that don't report it</strong><br>
+                Many states don't require rental companies to report to Carfax. High-mileage cars that were used as Uber or Lyft vehicles can show up with surprisingly low reported mileage.</p>
+
+                <h2>Why "Clean Carfax" is marketing speak</h2>
+                <p>Dealers and flippers love to advertise "Clean Carfax" because it sounds official and reassuring. What it actually means is "nothing bad has been reported to Carfax." It does not mean the car has never been in an accident, never been flooded, or has been well maintained.</p>
+
+                <h2>What you should use instead (or in addition)</h2>
+                <ul>
+                    <li>NHTSA.gov for open recalls (free and essential)</li>
+                    <li>Local market comps to know if the price is actually fair for that specific car</li>
+                    <li>A thorough physical inspection by a mechanic you trust</li>
+                    <li>A report that doesn't just list data but actually interprets what the data means for this particular vehicle</li>
+                </ul>
+
+                <h2>The difference between data and a decision</h2>
+                <p>Carfax gives you raw data points. It does not tell you whether to buy the car, how much to offer, or what problems are likely to show up in the next 12 months.</p>
+                <p>That's the gap most buyers fall into. They see "Clean Carfax" and assume the car is fine. Data without interpretation is just numbers on a page.</p>
             </div>
 
-            <div class="mt-8">
-                <a href="/products.html" class="inline-flex items-center px-8 py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
-                    Browse the tools
-                </a>
+            <div class="cta-box mt-12 p-8 rounded-3xl">
+                <p class="text-lg font-semibold">We built our reports specifically to fill the gaps Carfax leaves.</p>
+                <p class="mt-2 text-slate-600">Title history, accident records, recall data, local market pricing — and a plain-English recommendation on whether to buy, negotiate, or walk away.</p>
+                <a href="/products.html" class="mt-4 inline-block px-6 py-3 bg-[#0A66C2] text-white font-semibold rounded-2xl hover:bg-[#084D96] transition-colors">See What's Included →</a>
             </div>
         </div>
     </main>
@@ -132,6 +170,7 @@
                 <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
                     <a href="/" class="hover:text-white transition-colors">Home</a>
                     <a href="/how-it-works.html" class="hover:text-white transition-colors">How it works</a>
+                    <a href="/blog.html" class="hover:text-white transition-colors">Blog</a>
                     <a href="/products.html" class="hover:text-white transition-colors">Products</a>
                     <a href="/about.html" class="hover:text-white transition-colors">About</a>
                     <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>
