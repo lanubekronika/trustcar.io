@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://www.trustcar.io/$1",
+      "statusCode": 301
+    }
+  ]
+}
