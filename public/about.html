@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — TrustCar.io</title>
+    <meta name="description" content="Built by a former dealership manager who knows exactly how buyers get taken advantage of. Learn why TrustCar.io exists.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
+        .nav-link { transition: color 0.2s ease; }
+        .nav-link:hover { color: #0A66C2; }
+        .section-header { font-size: 2.25rem; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-screen-xl mx-auto">
+            <div class="px-6 py-5 flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                    <div class="flex items-center gap-x-2">
+                        <div class="w-9 h-9 bg-[#0A66C2] rounded-xl flex items-center justify-center">
+                            <span class="text-white font-bold text-2xl tracking-tighter">T</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-2xl tracking-tighter">TrustCar</span>
+                            <span class="font-bold text-[#0A66C2] text-2xl tracking-tighter">.io</span>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                    <a href="/" class="nav-link text-slate-700">Home</a>
+                    <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
+                    <a href="/products.html" class="nav-link text-slate-700">Products</a>
+                    <a href="/about.html" class="nav-link text-[#0A66C2] font-semibold">About</a>
+                </nav>
+
+                <div class="flex items-center gap-x-3">
+                    <a href="/" class="hidden sm:block text-sm font-semibold px-4 py-2.5 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-colors text-slate-700">
+                        Get free guide
+                    </a>
+                    <a href="/products.html" class="px-5 py-2.5 bg-[#0A66C2] hover:bg-[#084D96] transition-colors text-white text-sm font-semibold rounded-2xl">
+                        Browse products
+                    </a>
+                    <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 px-6 py-4">
+            <nav class="flex flex-col gap-y-1 text-sm font-medium">
+                <a href="/" class="py-2.5 px-1 text-slate-700">Home</a>
+                <a href="/how-it-works.html" class="py-2.5 px-1 text-slate-700">How it works</a>
+                <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
+                <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-screen-xl mx-auto px-6 py-16">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="section-header">Why I built TrustCar.io</h1>
+            
+            <div class="mt-8 prose prose-slate max-w-none">
+                <p class="text-lg">For over a decade, I worked in dealership service departments and reviewed extended warranties. I saw thousands of deals — the good, the bad, and the outright predatory.</p>
+                
+                <p>I watched buyers walk in excited and walk out overpaying by thousands or worse, stuck with a car that was a money pit. I saw the tricks sellers use on Facebook Marketplace and Craigslist. I saw how title issues, odometer rollbacks, and flood damage get buried.</p>
+                
+                <p>Most buyers don't have a chance. They don't know what questions to ask. They don't know what data to pull. They trust their gut or the seller's word.</p>
+                
+                <p>That's why I built TrustCar.io. To give regular people the same leverage and knowledge that insiders have — without the $300 mechanic bill or the days of waiting.</p>
+                
+                <h3 class="font-semibold text-xl mt-8">What this is</h3>
+                <p>Practical, no-hype tools based on real experience. Guides that teach you the red flags. Reports that surface the facts. Analysis that tells you what to do next.</p>
+                
+                <h3 class="font-semibold text-xl mt-8">What this isn't</h3>
+                <p>It's not a replacement for a good mechanic on a high-value or complex car. It's not magic. It's information — the kind that used to only be available to people in the business.</p>
+            </div>
+
+            <div class="mt-10 p-6 bg-white border border-slate-100 rounded-3xl">
+                <p class="font-medium">My promise: Every product I create is something I would use myself when buying a car for my family. If it doesn't deliver real, actionable value, I won't sell it.</p>
+                <p class="mt-4 text-sm text-slate-600">— The founder, former dealership service &amp; warranty manager</p>
+            </div>
+
+            <div class="mt-8">
+                <a href="/products.html" class="inline-flex items-center px-8 py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
+                    Browse the tools
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-sm">
+        <div class="max-w-screen-xl mx-auto px-6 py-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-y-6">
+                <div>
+                    <div class="flex items-center gap-x-2 text-white">
+                        <div class="w-6 h-6 bg-white/10 rounded-lg flex items-center justify-center">
+                            <span class="font-bold text-sm">T</span>
+                        </div>
+                        <span class="font-semibold text-white">TrustCar.io</span>
+                    </div>
+                    <div class="mt-1 text-xs">Smart tools for used car buyers.</div>
+                </div>
+                
+                <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/how-it-works.html" class="hover:text-white transition-colors">How it works</a>
+                    <a href="/products.html" class="hover:text-white transition-colors">Products</a>
+                    <a href="/about.html" class="hover:text-white transition-colors">About</a>
+                    <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>
+                </div>
+            </div>
+            
+            <div class="mt-10 pt-6 border-t border-white/10 text-xs">
+                <div class="flex flex-col md:flex-row md:items-center gap-y-2 md:justify-between">
+                    <div>© 2025 TrustCar.io. All rights reserved.</div>
+                    <div class="text-[10px] opacity-70">
+                        Illustrative images only. TrustCar.io is an independent service and not affiliated with any vehicle manufacturers or dealerships.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
