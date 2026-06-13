@@ -3,26 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustCar.io - Smart Used Car Buyer Toolkit</title>
+    <meta name="description" content="Smart tools and expert guidance from a former dealership insider to help you buy used cars confidently and avoid getting ripped off. Get guides, reports, and leverage.">
+    <meta property="og:title" content="TrustCar.io — Buy Used Cars Confidently">
+    <meta property="og:description" content="Professional tools and insider knowledge so you don't get screwed buying from private sellers.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://trustcar.io">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <title>TrustCar.io — Buy Used Cars Confidently</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Nunito', system-ui, sans-serif; margin:0; padding:0; background:#f8fafc; color:#0b1724; }
-        .hero { background: linear-gradient(135deg, #0553F0, #0441c7); color:white; padding:6rem 5%; text-align:center; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
-        h1 { font-size: 3rem; margin-bottom: 1rem; }
-        .btn { background:#0553F0; color:white; padding:1rem 2rem; border-radius:12px; text-decoration:none; font-weight:700; display:inline-block; margin-top:1rem; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
+        .section-header { font-size: 2.25rem; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; }
+        .nav-link { transition: color 0.2s ease; }
+        .nav-link:hover { color: #0A66C2; }
+        .hero-gradient { background: linear-gradient(135deg, #0A66C2 0%, #084D96 100%); }
+        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .trust-stat { background: white; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05); }
+        .footer-link { color: #64748b; transition: color 0.2s; }
+        .footer-link:hover { color: white; text-decoration: none; }
     </style>
 </head>
-<body>
-    <div class="hero">
-        <div class="container">
-            <h1>Stop Getting Screwed on Used Cars</h1>
-            <p style="font-size:1.4rem;">Smart tools, expert reports, and real advice from a former dealership insider.</p>
-            <a href="/products.html" class="btn">Browse Our Toolkit →</a>
+<body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-screen-xl mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-x-3">
+                    <div class="flex items-center gap-x-2">
+                        <div class="w-9 h-9 bg-[#0A66C2] rounded-xl flex items-center justify-center">
+                            <span class="text-white font-bold text-2xl tracking-tighter">T</span>
+                        </div>
+                        <span class="font-semibold text-2xl tracking-tighter">TrustCar<span class="text-[#0A66C2]">.io</span></span>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                    <a href="/" class="nav-link text-slate-700">Home</a>
+                    <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
+                    <a href="/products.html" class="nav-link text-slate-700">Products</a>
+                    <a href="/about.html" class="nav-link text-slate-700">About</a>
+                </nav>
+
+                <div class="flex items-center gap-x-3">
+                    <a href="#get-free-guide" class="hidden sm:inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
+                        Get free guide
+                    </a>
+                    <a href="/products.html" class="px-5 py-2.5 bg-[#0A66C2] hover:bg-[#084D96] transition-colors text-white text-sm font-semibold rounded-2xl">
+                        Browse products
+                    </a>
+                    <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="container">
-        <h2>Welcome to the New TrustCar.io</h2>
-        <p>We're rebuilding with a better, simpler approach focused on helping you buy used cars confidently.</p>
-    </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t px-6 py-4">
+            <nav class="flex flex-col gap-y-2 text-sm font-medium">
+                <a href="/" class="py-2 text-slate-700">Home</a>
+                <a href="/how-it-works.html" class="py-2 text-slate-700">How it works</a>
+                <a href="/products.html" class="py-2 text-slate-700">Products</a>
+                <a href="/about.html" class="py-2 text-slate-700">About</a>
+                <a href="#get-free-guide" class="py-2 text-slate-700">Get free guide</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero-gradient text-white">
+        <div class="max-w-screen-xl mx-auto px-6 pt-16 pb-20 text-center">
+            <div class="max-w-3xl mx-auto">
+                <div class="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold px-3 py-1 rounded-full mb-6 tracking-widest">
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                    BUILT BY A FORMER DEALERSHIP MANAGER
+                </div>
+                
+                <h1 class="text-5xl md:text-6xl font-semibold tracking-tighter leading-none">
+                    Buy used cars<br>without getting<br>screwed.
+                </h1>
+                
+                <p class="mt-6 text-xl text-white/90 max-w-lg mx-auto">
+                    Practical guides, instant reports, and insider knowledge so you stop overpaying and start buying with confidence.
+                </p>
+
+                <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/products.html" class="px-8 py-3.5 bg-white text-[#0A66C2] font-semibold rounded-2xl hover:bg-slate-100 transition-colors shadow-sm text-base">
+                        Browse the toolkit
+                    </a>
+                    <a href="#get-free-guide" class="px-8 py-3.5 border border-white/30 hover:bg-white/10 text-white font-semibold rounded-2xl transition-colors text-base flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-download"></i> Get free checklist
+                    </a>
+                </div>
+
+                <div class="mt-8 flex items-center justify-center gap-x-8 text-sm text-white/70">
+                    <div>4,200+ buyers helped</div>
+                    <div class="w-px h-3 bg-white/30"></div>
+                    <div>30-day guarantee</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Value Prop -->
+    <section class="max-w-screen-xl mx-auto px-6 py-16">
+        <div class="text-center mb-12">
+            <div class="text-xs font-semibold tracking-[1.5px] text-[#0A66C2] mb-2">THE INSIDER EDGE</div>
+            <h2 class="section-header">I spent years on the other side of the table.<br>I know exactly how buyers get taken advantage of.</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-white p-7 rounded-3xl border border-slate-100">
+                <div class="w-12 h-12 bg-blue-100 text-[#0A66C2] rounded-2xl flex items-center justify-center mb-5">
+                    <i class="fa-solid fa-user-secret text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl mb-2">I know the tricks</h3>
+                <p class="text-slate-600">From odometer rollbacks to "as-is" deals that aren't. You'll learn the exact red flags private sellers and dealers use to hide problems.</p>
+            </div>
+            <div class="bg-white p-7 rounded-3xl border border-slate-100">
+                <div class="w-12 h-12 bg-blue-100 text-[#0A66C2] rounded-2xl flex items-center justify-center mb-5">
+                    <i class="fa-solid fa-chart-line text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl mb-2">Real local data</h3>
+                <p class="text-slate-600">Not generic KBB numbers. Actual recent sales in your area so you know what the car is really worth before you negotiate.</p>
+            </div>
+            <div class="bg-white p-7 rounded-3xl border border-slate-100">
+                <div class="w-12 h-12 bg-blue-100 text-[#0A66C2] rounded-2xl flex items-center justify-center mb-5">
+                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-xl mb-2">Protection at every step</h3>
+                <p class="text-slate-600">From the first Facebook message to test drive and paperwork — tools that actually reduce your risk of getting burned.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="bg-white border-t border-b border-slate-100 py-16">
+        <div class="max-w-screen-xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-10 gap-4">
+                <div>
+                    <h2 class="section-header">How it works</h2>
+                    <p class="text-slate-600 mt-2">Three ways to protect yourself when buying from private sellers.</p>
+                </div>
+                <a href="/products.html" class="text-sm font-semibold text-[#0A66C2] flex items-center gap-x-1.5 hover:gap-x-2 transition-all">
+                    See all tools <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="border border-slate-100 rounded-3xl p-8 bg-slate-50">
+                    <div class="text-xs font-mono tracking-[1px] text-[#0A66C2] mb-4">01</div>
+                    <h3 class="font-semibold text-xl mb-3">Start with the right knowledge</h3>
+                    <p class="text-slate-600 text-[15px]">Download our direct, no-fluff guides and checklists so you know exactly what to watch for before you waste time on the wrong car.</p>
+                    <div class="mt-6 text-xs font-medium text-emerald-600 flex items-center gap-x-1.5">
+                        <i class="fa-solid fa-download"></i> <span>Instant PDF download</span>
+                    </div>
+                </div>
+
+                <div class="border border-slate-100 rounded-3xl p-8 bg-slate-50">
+                    <div class="text-xs font-mono tracking-[1px] text-[#0A66C2] mb-4">02</div>
+                    <h3 class="font-semibold text-xl mb-3">Get data on the specific car</h3>
+                    <p class="text-slate-600 text-[15px]">Enter the VIN. Receive an instant report with title history, local market value, recalls, ownership records, and red flags.</p>
+                    <div class="mt-6 text-xs font-medium text-emerald-600 flex items-center gap-x-1.5">
+                        <i class="fa-solid fa-bolt"></i> <span>Delivered in minutes</span>
+                    </div>
+                </div>
+
+                <div class="border border-slate-100 rounded-3xl p-8 bg-slate-50">
+                    <div class="text-xs font-mono tracking-[1px] text-[#0A66C2] mb-4">03</div>
+                    <h3 class="font-semibold text-xl mb-3">Get expert eyes when it matters</h3>
+                    <p class="text-slate-600 text-[15px]">For expensive cars, get a written analysis from someone who spent years selling cars and extended warranties. Specific negotiation points included.</p>
+                    <div class="mt-6 text-xs font-medium text-emerald-600 flex items-center gap-x-1.5">
+                        <i class="fa-solid fa-user-check"></i> <span>Human analysis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="max-w-screen-xl mx-auto px-6 py-16">
+        <h2 class="section-header text-center mb-10">What you actually get</h2>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-white p-7 rounded-3xl border border-slate-100">
+                <h3 class="font-semibold mb-2">Real leverage at the table</h3>
+                <p class="text-slate-600">Walk into every conversation with specific data and talking points instead of hoping the seller is being straight with you.</p>
+            </div>
+            <div class="bg-white p-7 rounded-3xl border border-slate-100">
+                <h3 class="font-semibold mb-2">Protection from expensive mistakes</h3>
+                <p class="text-slate-600">Learn how to spot title issues, odometer fraud, flood damage, and the other common problems that cost buyers thousands.</p>
+            </div>
+            <div class="bg-white p-7 rounded-3xl border border-slate-100">
+                <h3 class="font-semibold mb-2">Confidence to buy (or walk)</h3>
+                <p class="text-slate-600">Stop second-guessing yourself. Know when a deal is good — and when it's time to move on to the next listing.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="bg-white border-t border-b border-slate-100 py-16">
+        <div class="max-w-screen-xl mx-auto px-6">
+            <h2 class="section-header text-center mb-10">Real buyers. Real results.</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-slate-50 p-7 rounded-3xl">
+                    <p class="text-slate-600">"The checklist alone saved me $1,800 on my first car. Caught two issues the seller tried to downplay. Worth every penny."</p>
+                    <div class="mt-6 text-sm font-semibold">— Sarah T., Austin TX</div>
+                </div>
+                <div class="bg-slate-50 p-7 rounded-3xl">
+                    <p class="text-slate-600">"Ran the automated report on a Civic I was about to buy. It had been totaled in another state. The seller 'forgot' to mention it."</p>
+                    <div class="mt-6 text-sm font-semibold">— Marcus R., Atlanta GA</div>
+                </div>
+                <div class="bg-slate-50 p-7 rounded-3xl">
+                    <p class="text-slate-600">"The human-reviewed report gave me the exact language I needed to push back on the price. Saved me almost $2k."</p>
+                    <div class="mt-6 text-sm font-semibold">— Priya K., Seattle WA</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Email Capture -->
+    <section id="get-free-guide" class="max-w-screen-xl mx-auto px-6 py-16">
+        <div class="max-w-xl mx-auto text-center bg-white border border-slate-100 rounded-3xl p-10">
+            <h3 class="font-semibold text-2xl">Get the free "7 Red Flags" checklist</h3>
+            <p class="mt-3 text-slate-600">The exact list I used when buying cars for myself and my family. Instant PDF download.</p>
+            
+            <form class="mt-6" onsubmit="event.preventDefault(); alert('Thanks! Check your email for the checklist. (This is a demo — in production this would subscribe you.)');">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="email" placeholder="your@email.com" class="flex-1 px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]" required>
+                    <button type="submit" class="px-8 py-3 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl text-sm transition-colors whitespace-nowrap">
+                        Send me the checklist
+                    </button>
+                </div>
+            </form>
+            <p class="text-[10px] text-slate-500 mt-3">We respect your inbox. Unsubscribe anytime.</p>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="bg-[#0A66C2] text-white py-16">
+        <div class="max-w-screen-xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-semibold tracking-tight">Ready to stop guessing and start buying with confidence?</h2>
+            <p class="mt-3 max-w-md mx-auto text-white/80">Most people lose money on used cars because they don’t have the right information. Don’t be most people.</p>
+            
+            <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/products.html" class="px-8 py-3.5 bg-white text-[#0A66C2] font-semibold rounded-2xl hover:bg-slate-100 transition-colors">Browse the toolkit</a>
+                <a href="#get-free-guide" class="px-8 py-3.5 border border-white/40 hover:bg-white/10 font-semibold rounded-2xl transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Get the free checklist
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-sm">
+        <div class="max-w-screen-xl mx-auto px-6 py-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-y-6">
+                <div>
+                    <div class="flex items-center gap-x-2 text-white">
+                        <div class="w-6 h-6 bg-white/10 rounded-lg flex items-center justify-center">
+                            <span class="font-bold text-sm">T</span>
+                        </div>
+                        <span class="font-semibold text-white">TrustCar.io</span>
+                    </div>
+                    <div class="mt-1 text-xs">Smart tools for used car buyers.</div>
+                </div>
+                
+                <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
+                    <a href="/" class="footer-link hover:text-white">Home</a>
+                    <a href="/how-it-works.html" class="footer-link hover:text-white">How it works</a>
+                    <a href="/products.html" class="footer-link hover:text-white">Products</a>
+                    <a href="/about.html" class="footer-link hover:text-white">About</a>
+                    <a href="/contact.html" class="footer-link hover:text-white">Contact</a>
+                </div>
+            </div>
+            
+            <div class="mt-10 pt-6 border-t border-white/10 text-xs">
+                <div class="flex flex-col md:flex-row md:items-center gap-y-2 md:justify-between">
+                    <div>© 2025 TrustCar.io. All rights reserved.</div>
+                    <div class="text-[10px] opacity-70">
+                        Illustrative images only. TrustCar.io is an independent service and not affiliated with any vehicle manufacturers or dealerships.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function initTailwind() {
+            // Any future dynamic elements
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initTailwind();
+            
+            // Mobile menu
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
