@@ -3,150 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Choose the right level of protection when buying a used car. Digital guides and reports from a former dealership insider.">
-    <meta property="og:title" content="Products & Pricing — TrustCar.io">
-    <meta property="og:description" content="Practical, no-hype tools to help you buy used cars without getting ripped off.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://trustcar.io/products.html">
-    <title>Products & Pricing — TrustCar.io</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/styles/main.css">
+    <title>Products &amp; Pricing — TrustCar.io</title>
+    <meta name="description" content="Choose the right protection level when buying a used car. Digital guides and reports from a former dealership insider.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .product-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .price {
+            font-size: 2.75rem;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .nav-link {
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            color: #0A66C2;
+        }
+
+        .section-header {
+            font-size: 2rem;
+            line-height: 1.1;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <div class="container">
-            <nav>
-                <a href="/" class="logo">TrustCar.io</a>
-                <button class="mobile-menu" aria-label="Toggle menu">☰</button>
-                <ul class="nav-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/how-it-works.html">How It Works</a></li>
-                    <li><a href="/products.html">Products</a></li>
-                    <li><a href="/about.html">About</a></li>
-                </ul>
+<body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-screen-xl mx-auto">
+            <div class="px-6 py-5 flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                    <div class="flex items-center gap-x-2">
+                        <div class="w-9 h-9 bg-[#0A66C2] rounded-xl flex items-center justify-center">
+                            <span class="text-white font-bold text-2xl tracking-tighter">T</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-2xl tracking-tighter">TrustCar</span>
+                            <span class="font-bold text-[#0A66C2] text-2xl tracking-tighter">.io</span>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                    <a href="/" class="nav-link text-slate-700">Home</a>
+                    <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
+                    <a href="/products.html" class="nav-link text-[#0A66C2] font-semibold">Products</a>
+                    <a href="/about.html" class="nav-link text-slate-700">About</a>
+                </nav>
+
+                <div class="flex items-center gap-x-3">
+                    <a href="/" class="hidden sm:block text-sm font-semibold px-4 py-2.5 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-colors text-slate-700">
+                        Get free guide
+                    </a>
+                    
+                    <a href="#contact" class="px-5 py-2.5 bg-[#0A66C2] hover:bg-[#084D96] transition-colors text-white text-sm font-semibold rounded-2xl">
+                        Contact us
+                    </a>
+
+                    <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 px-6 py-4">
+            <nav class="flex flex-col gap-y-1 text-sm font-medium">
+                <a href="/" class="py-2.5 px-1 text-slate-700">Home</a>
+                <a href="/how-it-works.html" class="py-2.5 px-1 text-slate-700">How it works</a>
+                <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
+                <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
+                <div class="pt-3 border-t border-slate-100 mt-2">
+                    <a href="/" class="block py-2.5 px-1 text-slate-700">Get free guide</a>
+                </div>
             </nav>
         </div>
     </header>
 
     <main>
-        <div class="container">
-            <h1 style="text-align: center; margin: 48px 0 12px;">Choose the right level of protection</h1>
-            <p class="section-subtitle">Honest tools built by someone who knows exactly how sellers and dealers try to take advantage of buyers.</p>
+        <!-- Header -->
+        <div class="max-w-screen-xl mx-auto px-6 pt-12 pb-8">
+            <div class="max-w-2xl">
+                <div class="text-sm font-semibold tracking-widest text-[#0A66C2]">PROTECTION THAT ACTUALLY HELPS</div>
+                <h1 class="mt-3 text-4xl md:text-5xl font-semibold tracking-tighter">Tools built by someone who used to sell the cars.</h1>
+                <p class="mt-4 text-xl text-slate-600">Choose the level of protection that matches how much the car (and the risk) is worth to you.</p>
+            </div>
+        </div>
 
-            <div class="pricing-grid">
-                <!-- Digital Guide -->
-                <div class="pricing-card">
-                    <h3>Used Car Buyer’s Guide + Checklist</h3>
-                    <div class="price">$19</div>
-                    <p style="color: var(--text-light); margin-bottom: 20px; font-size: 0.95rem;">Instant PDF download</p>
+        <!-- Pricing Tiers -->
+        <div class="max-w-screen-xl mx-auto px-6 pb-16">
+            <div class="grid md:grid-cols-3 gap-6">
+                
+                <!-- Tier 1: Digital Guide -->
+                <div class="product-card bg-white border border-slate-200 rounded-3xl p-8 flex flex-col">
+                    <div>
+                        <div class="font-semibold text-sm text-emerald-600 tracking-wider">DIGITAL DOWNLOAD</div>
+                        <h3 class="mt-2 text-2xl font-semibold tracking-tight">The Used Car Buyer's Survival Guide</h3>
+                        <div class="mt-1 text-slate-600 text-[15px]">Everything I wish I knew before buying my first 50 cars.</div>
+                        
+                        <div class="mt-7">
+                            <span class="text-5xl font-semibold tracking-tighter">$29</span>
+                        </div>
+                        
+                        <ul class="mt-8 space-y-3 text-sm">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>68-page no-BS guide</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Complete pre-purchase checklist</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>15 most common scams + how to spot them</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Negotiation scripts that actually work</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Red flag checklist (printable)</span>
+                            </li>
+                        </ul>
+                    </div>
                     
-                    <ul>
-                        <li>Comprehensive 60+ page guide written by a former dealer</li>
-                        <li>Complete pre-purchase inspection checklist</li>
-                        <li>How to spot title fraud, odometer tampering, and flood damage</li>
-                        <li>Negotiation scripts and exact questions to ask</li>
-                        <li>Common private-party scams on Marketplace & Craigslist</li>
-                        <li>Lifetime access to updates</li>
-                    </ul>
-                    
-                    <a href="/contact.html" class="btn btn-primary">Get Instant Access</a>
-                    <p style="font-size: 0.8rem; margin-top: 12px; color: var(--text-light);">30-day money-back guarantee</p>
+                    <div class="mt-auto pt-8">
+                        <a href="#contact" 
+                           class="block w-full text-center py-3.5 bg-white border border-[#0A66C2] text-[#0A66C2] font-semibold rounded-2xl hover:bg-[#F0F7FF] transition-colors">
+                            Get the Guide — $29
+                        </a>
+                        <p class="text-center text-xs text-slate-500 mt-3">Instant download. 30-day guarantee.</p>
+                    </div>
                 </div>
 
-                <!-- Automated Report -->
-                <div class="pricing-card featured">
-                    <div class="badge">Most Popular</div>
-                    <h3>Automated VIN + Market Value Report</h3>
-                    <div class="price">$49</div>
-                    <p style="color: var(--text-light); margin-bottom: 20px; font-size: 0.95rem;">Delivered by email in minutes</p>
+                <!-- Tier 2: Automated Report -->
+                <div class="product-card bg-white border border-slate-200 rounded-3xl p-8 flex flex-col relative">
+                    <div class="absolute -top-3 right-6 bg-white border border-slate-200 text-xs font-semibold px-3 py-1 rounded-2xl shadow-sm">BEST FOR MOST BUYERS</div>
                     
-                    <ul>
-                        <li>Complete vehicle history (accidents, title issues, service records)</li>
-                        <li>Accurate local market value for your area and ZIP code</li>
-                        <li>Open recalls and safety information</li>
-                        <li>Ownership history and title brand details</li>
-                        <li>Recommended fair purchase price range</li>
-                        <li>Clear summary of major red flags</li>
-                    </ul>
+                    <div>
+                        <div class="font-semibold text-sm text-emerald-600 tracking-wider">AUTOMATED REPORT</div>
+                        <h3 class="mt-2 text-2xl font-semibold tracking-tight">VIN + Market Value Report</h3>
+                        <div class="mt-1 text-slate-600 text-[15px]">See what the seller isn't telling you — in under 60 seconds.</div>
+                        
+                        <div class="mt-7">
+                            <span class="text-5xl font-semibold tracking-tighter">$49</span>
+                        </div>
+                        
+                        <ul class="mt-8 space-y-3 text-sm">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Full title &amp; accident history</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Real market value for your ZIP code</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Open recalls + safety data</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Ownership &amp; title brand history</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Recommended max offer price</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Red flag summary (printable)</span>
+                            </li>
+                        </ul>
+                    </div>
                     
-                    <a href="/contact.html" class="btn btn-primary">Buy This Report</a>
-                    <p style="font-size: 0.8rem; margin-top: 12px; color: var(--text-light);">Works on any VIN • 30-day guarantee</p>
+                    <div class="mt-auto pt-8">
+                        <a href="#contact" 
+                           class="block w-full text-center py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
+                            Get Report — $49
+                        </a>
+                        <p class="text-center text-xs text-slate-500 mt-3">Instant delivery • Works on any VIN • 30-day guarantee</p>
+                    </div>
                 </div>
 
-                <!-- Premium Human Review -->
-                <div class="pricing-card">
-                    <h3>Premium Human-Reviewed Report</h3>
-                    <div class="price">$149</div>
-                    <p style="color: var(--text-light); margin-bottom: 20px; font-size: 0.95rem;">Written analysis within 24 hours</p>
+                <!-- Tier 3: Premium Human Review -->
+                <div class="product-card bg-white border border-slate-200 rounded-3xl p-8 flex flex-col">
+                    <div>
+                        <div class="font-semibold text-sm text-emerald-600 tracking-wider">HUMAN EXPERT REVIEW</div>
+                        <h3 class="mt-2 text-2xl font-semibold tracking-tight">Premium Reviewed Report</h3>
+                        <div class="mt-1 text-slate-600 text-[15px]">I review the car’s history myself and give you a written analysis.</div>
+                        
+                        <div class="mt-7">
+                            <span class="text-5xl font-semibold tracking-tighter">$89</span>
+                        </div>
+                        
+                        <ul class="mt-8 space-y-3 text-sm">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Everything in the Automated Report</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Written analysis by a former dealership manager</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Specific negotiation points</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Estimated repair costs for issues found</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Recommended maximum offer price</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check text-emerald-500 mt-1 text-base"></i>
+                                <span>Direct email access for questions</span>
+                            </li>
+                        </ul>
+                    </div>
                     
-                    <ul>
-                        <li>Everything included in the Automated Report</li>
-                        <li>Detailed written analysis by a former dealership manager</li>
-                        <li>Specific negotiation points and talking points</li>
-                        <li>Estimated repair costs for any issues found</li>
-                        <li>Direct email access to the reviewer with questions</li>
-                        <li>Recommended maximum offer price with justification</li>
-                    </ul>
-                    
-                    <a href="/contact.html" class="btn btn-primary">Request Human Review</a>
-                    <p style="font-size: 0.8rem; margin-top: 12px; color: var(--text-light);">Best for cars $10,000 and up</p>
+                    <div class="mt-auto pt-8">
+                        <a href="#contact" 
+                           class="block w-full text-center py-3.5 bg-white border border-[#0A66C2] hover:bg-[#F0F7FF] text-[#0A66C2] font-semibold rounded-2xl transition-colors">
+                            Get Human Review — $89
+                        </a>
+                        <p class="text-center text-xs text-slate-500 mt-3">Delivered within 24 hours • Best for cars over $10k</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bundle / Upsell -->
+            <div class="mt-10 max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-8">
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                    <div class="flex-1">
+                        <div class="font-semibold">Bundle &amp; Save</div>
+                        <div class="text-sm text-slate-600 mt-1">Get the Survival Guide + Automated Report for $59 (save $19)</div>
+                    </div>
+                    <a href="#contact" class="px-6 py-3 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl whitespace-nowrap">
+                        Get the Bundle — $59
+                    </a>
                 </div>
             </div>
 
-            <div style="background: #ECFDF5; border: 1px solid #10B981; border-radius: 12px; padding: 24px; max-width: 720px; margin: 48px auto; text-align: center;">
-                <p style="margin-bottom: 8px;"><strong>Our Guarantee</strong></p>
-                <p style="color: #166534;">If any product doesn’t help you make a smarter decision, email us within 30 days and we’ll refund you immediately. No questions asked.</p>
-            </div>
-
-            <div style="text-align: center; margin-top: 24px;">
-                <h3 style="margin-bottom: 8px;">Need something more personal?</h3>
-                <p style="color: var(--text-light); margin-bottom: 16px;">1-on-1 consulting calls are available for complex or high-value situations.</p>
-                <a href="/contact.html" class="btn btn-secondary">Inquire About Consulting</a>
+            <div class="mt-8 text-center text-xs text-slate-500 max-w-md mx-auto">
+                All products include a 30-day money-back guarantee. If they don't help you make a better decision, I'll refund you.
             </div>
         </div>
     </main>
 
-    <!-- Better Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-sm">
+        <div class="max-w-screen-xl mx-auto px-6 py-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-y-6">
                 <div>
-                    <strong>TrustCar.io</strong><br>
-                    <span style="font-size:0.85rem; opacity:0.7;">Smart tools for used car buyers.</span>
+                    <div class="flex items-center gap-x-2 text-white">
+                        <div class="w-6 h-6 bg-white/10 rounded-lg flex items-center justify-center">
+                            <span class="font-bold text-sm">T</span>
+                        </div>
+                        <span class="font-semibold text-white">TrustCar.io</span>
+                    </div>
+                    <div class="mt-1 text-xs">Smart tools for used car buyers.</div>
                 </div>
-                <div class="footer-links">
-                    <a href="/">Home</a>
-                    <a href="/how-it-works.html">How It Works</a>
-                    <a href="/products.html">Products</a>
-                    <a href="/about.html">About</a>
-                    <a href="/contact.html">Contact</a>
+                
+                <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
+                    <a href="/" class="hover:text-white transition-colors">Home</a>
+                    <a href="/how-it-works.html" class="hover:text-white transition-colors">How it works</a>
+                    <a href="/products.html" class="hover:text-white transition-colors">Products</a>
+                    <a href="/about.html" class="hover:text-white transition-colors">About</a>
+                    <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>
                 </div>
             </div>
-            <div class="disclaimer">
-                Illustrative images only. TrustCar.io is an independent service and not affiliated with any vehicle manufacturers or dealerships. 
-                All reports and guidance are for informational purposes only and do not replace a professional pre-purchase inspection by a qualified mechanic.
+            
+            <div class="mt-10 pt-6 border-t border-white/10 text-xs">
+                <div class="flex flex-col md:flex-row md:items-center gap-y-2 md:justify-between">
+                    <div>© 2025 TrustCar.io. All rights reserved.</div>
+                    <div class="text-[10px] opacity-70">
+                        Illustrative images only. TrustCar.io is an independent service and not affiliated with any vehicle manufacturers or dealerships.
+                    </div>
+                </div>
             </div>
-            <p style="text-align: center; margin-top: 28px; font-size: 0.8rem; opacity: 0.6;">
-                © 2025 TrustCar.io. All rights reserved.
-            </p>
         </div>
     </footer>
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        const menuBtn = document.querySelector('.mobile-menu');
-        const navLinks = document.querySelector('.nav-links');
-        
-        if (menuBtn && navLinks) {
-            menuBtn.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
-            });
-            
-            navLinks.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    navLinks.classList.remove('active');
-                });
-            });
+        function initTailwind() {
+            // Tailwind already initialized via CDN
         }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initTailwind();
+            
+            // Mobile menu
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
     </script>
 </body>
 </html>
