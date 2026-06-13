@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products — TrustCar.io</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f8fafc; color: #0b1724; }
+        .header { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e6eefc; }
+        .logo { font-size: 1.9rem; font-weight: 800; color: #0553F0; }
+        nav a { margin-left: 2rem; text-decoration: none; color: #334155; font-weight: 600; }
+        .section { padding: 4rem 5%; max-width: 1100px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .card { background: white; padding: 2.2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .price { font-size: 2.1rem; font-weight: 800; color: #0553F0; }
+        .btn { background: #0553F0; color: white; padding: 0.9rem 1.8rem; border-radius: 10px; font-weight: 700; text-decoration: none; display: inline-block; }
+        h2 { font-size: 2.3rem; margin-bottom: 1.2rem; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">TrustCar.io</div>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products.html">Products</a>
+    </nav>
+</header>
+
+<section class="section">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto 3rem;">
+        <h2>Choose the Right Tool for Your Situation</h2>
+        <p style="font-size: 1.2rem; color: #475569;">Pick what you need right now. All products are designed to help you avoid expensive mistakes.</p>
+    </div>
+
+    <div class="grid">
+        <!-- Product 1 -->
+        <div class="card">
+            <h3>Used Car Buyer’s Checklist</h3>
+            <p style="color: #475569;">A simple, step-by-step checklist to evaluate any car before you buy.</p>
+            <div class="price">$19</div>
+            <p style="margin: 1.5rem 0 0.5rem;"><strong>Best for:</strong> First-time buyers or quick checks</p>
+            <a href="#" class="btn" style="width: 100%; text-align: center;">Get Instant Access</a>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="card">
+            <h3>Red Flags Guide + Negotiation Scripts</h3>
+            <p style="color: #475569;">Learn the exact warning signs + word-for-word scripts to negotiate better prices.</p>
+            <div class="price">$29</div>
+            <p style="margin: 1.5rem 0 0.5rem;"><strong>Best for:</strong> People who want to negotiate confidently</p>
+            <a href="#" class="btn" style="width: 100%; text-align: center;">Get Instant Access</a>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="card">
+            <h3>VIN + Market Value Report</h3>
+            <p style="color: #475569;">Automated report with title history, market value in your area, and basic red flag check.</p>
+            <div class="price">$49</div>
+            <p style="margin: 1.5rem 0 0.5rem;"><strong>Best for:</strong> Most buyers who want quick, reliable data</p>
+            <a href="#" class="btn" style="width: 100%; text-align: center;">Get Report</a>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="card">
+            <h3>Premium Human-Reviewed Report</h3>
+            <p style="color: #475569;">Full review of your car’s VIN + photos by someone who has seen thousands of deals. Includes written analysis and red flags.</p>
+            <div class="price">$89</div>
+            <p style="margin: 1.5rem 0 0.5rem;"><strong>Best for:</strong> High-value purchases or when you want real expertise</p>
+            <a href="#" class="btn" style="width: 100%; text-align: center;">Get Premium Report</a>
+        </div>
+    </div>
+</section>
+
+<footer style="background: #0b1724; color: #94a3b8; padding: 3rem 5%; text-align: center; font-size: 0.95rem;">
+    <p>© 2026 TrustCar.io — Built by someone who has seen how ugly used car deals can get.</p>
+</footer>
+
+</body>
+</html>
