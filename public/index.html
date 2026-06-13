@@ -4,108 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrustCar.io — Buy Used Cars Without Getting Screwed</title>
+    <meta name="description" content="Smart tools and expert guidance from a former dealership insider to help you buy used cars confidently and avoid getting ripped off.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f8fafc; color: #0b1724; line-height: 1.6; }
-        .header { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e6eefc; }
-        .logo { font-size: 1.9rem; font-weight: 800; color: #0553F0; }
-        nav a { margin-left: 2rem; text-decoration: none; color: #334155; font-weight: 600; }
-        .hero { background: linear-gradient(135deg, #0553F0, #0441c7); color: white; padding: 7.5rem 5%; text-align: center; }
-        .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; }
-        .hero p { font-size: 1.35rem; max-width: 620px; margin: 0 auto 2.3rem; opacity: 0.95; }
-        .btn { background: white; color: #0553F0; padding: 1rem 2.5rem; border-radius: 12px; font-weight: 700; text-decoration: none; display: inline-block; font-size: 1.05rem; }
-        .btn-dark { background: #0b1724; color: white; }
-        .section { padding: 5rem 5%; max-width: 1100px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-        .card { background: white; padding: 2.3rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
-        h2 { font-size: 2.4rem; margin-bottom: 1.2rem; }
-        .trust-bar { background: #f1f5f9; padding: 1.4rem; text-align: center; font-weight: 600; color: #475569; }
-    </style>
-</head>
-<body>
-
-<header class="header">
-    <div class="logo">TrustCar.io</div>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/products.html">Products</a>
-        <a href="#how">How It Works</a>
-    </nav>
-</header>
-
-<!-- HERO -->
-<section class="hero">
-    <div style="max-width: 780px; margin: 0 auto;">
-        <h1>Stop Getting Screwed<br>on Used Cars</h1>
-        <p>I worked in dealership service departments and reviewed thousands of extended warranties. I’ve seen every trick, every hidden problem, and every overpriced car. Now I’m giving you the exact tools I wish I had.</p>
-        <a href="/products.html" class="btn">See the Toolkit →</a>
-    </div>
-</section>
-
-<!-- TRUST BAR -->
-<div class="trust-bar">
-    Built by someone who has seen how ugly used car deals can get from the inside.
-</div>
-
-<!-- PROBLEM -->
-<section class="section">
-    <div style="max-width: 720px; margin: 0 auto; text-align: center;">
-        <h2>Most people lose money on used cars because they don’t know what they’re really buying.</h2>
-        <p style="font-size: 1.25rem; color: #475569;">Facebook Marketplace and private sellers are full of good deals… and complete disasters. The difference is knowing what to look for before you hand over your money.</p>
-    </div>
-</section>
-
-<!-- VALUE PROPOSITION -->
-<section class="section" style="background: white;">
-    <div class="grid">
-        <div class="card">
-            <h3>Know the Real Market Value</h3>
-            <p>Get accurate pricing data for your specific area so you never overpay again.</p>
-        </div>
-        <div class="card">
-            <h3>Spot Red Flags Fast</h3>
-            <p>Learn the exact warning signs that flippers, shady sellers, and even some dealers hope you miss.</p>
-        </div>
-        <div class="card">
-            <h3>Buy With Confidence</h3>
-            <p>Walk away from bad deals and confidently pull the trigger on good ones. No more buyer’s remorse.</p>
-        </div>
-    </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section id="how" class="section">
-    <h2 style="text-align: center;">How TrustCar Works</h2>
-    <div class="grid" style="margin-top: 2.5rem;">
-        <div class="card">
-            <strong style="color: #0553F0;">1. Choose Your Tool</strong>
-            <p style="margin-top: 0.8rem;">Pick a guide, checklist, or report that fits what you need right now.</p>
-        </div>
-        <div class="card">
-            <strong style="color: #0553F0;">2. Get It Fast</strong>
-            <p style="margin-top: 0.8rem;">Digital products are delivered instantly. Reports are usually ready within a few hours.</p>
-        </div>
-        <div class="card">
-            <strong style="color: #0553F0;">3. Buy Smarter</strong>
-            <p style="margin-top: 0.8rem;">Use the information to negotiate better or walk away from cars that will cost you later.</p>
-        </div>
-    </div>
-</section>
-
-<!-- FINAL CTA -->
-<section class="section" style="background: #f1f5f9; text-align: center;">
-    <h2>Ready to stop guessing and start buying with confidence?</h2>
-    <p style="max-width: 520px; margin: 1rem auto 2rem; font-size: 1.15rem;">Join smart buyers who are using these tools to protect their money and avoid expensive mistakes.</p>
-    <a href="/products.html" class="btn btn-dark" style="padding: 1.2rem 2.8rem; font-size: 1.1rem;">Browse the Full Toolkit</a>
-</section>
-
-<footer style="background: #0b1724; color: #94a3b8; padding: 3.5rem 5%; text-align: center; font-size: 0.95rem;">
-    <p>© 2026 TrustCar.io — Built by someone who has seen how ugly used car deals can get.</p>
-    <p style="margin-top: 0.6rem;">Not affiliated with any car manufacturer. Just here to help you win.</p>
-</footer>
-
-</body>
-</html>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+        }
 
         .hero-gradient {
             background: linear-gradient(135deg, #0A66C2 0%, #084D96 100%);
