@@ -1,9 +1,16 @@
 {
+  "outputDirectory": "public",
   "redirects": [
     {
-      "source": "/(.*)",
-      "destination": "https://www.trustcar.io/$1",
-      "statusCode": 301
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "trustcar.io"
+        }
+      ],
+      "destination": "https://www.trustcar.io",
+      "permanent": true
     }
   ]
 }
