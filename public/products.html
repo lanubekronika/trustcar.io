@@ -48,6 +48,23 @@
             font-weight: 700;
             letter-spacing: -0.025em;
         }
+
+        .product-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .modal {
+            animation: fadeInScale 0.2s ease-out forwards;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -72,6 +89,7 @@
                     <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
                     <a href="/products.html" class="nav-link text-[#0A66C2] font-semibold">Products</a>
                     <a href="/about.html" class="nav-link text-slate-700">About</a>
+                    <a href="/contact.html" class="nav-link text-slate-700">Contact</a>
                 </nav>
 
                 <div class="flex items-center gap-x-3">
@@ -97,6 +115,7 @@
                 <a href="/how-it-works.html" class="py-2.5 px-1 text-slate-700">How it works</a>
                 <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
                 <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
+                <a href="/contact.html" class="py-2.5 px-1 text-slate-700">Contact</a>
                 <div class="pt-3 border-t border-slate-100 mt-2">
                     <a href="/" class="block py-2.5 px-1 text-slate-700">Get free guide</a>
                 </div>
@@ -154,9 +173,9 @@
                     </div>
                     
                     <div class="mt-auto pt-8">
-                        <a href="#contact" class="block w-full text-center py-3.5 bg-white border border-[#0A66C2] text-[#0A66C2] font-semibold rounded-2xl hover:bg-[#F0F7FF] transition-colors">
+                        <button onclick="openPurchaseModal('guide')" class="w-full text-center py-3.5 bg-white border border-[#0A66C2] text-[#0A66C2] font-semibold rounded-2xl hover:bg-[#F0F7FF] transition-colors">
                             Get the Guide — $29
-                        </a>
+                        </button>
                         <p class="text-center text-xs text-slate-500 mt-3">Instant download. 30-day guarantee.</p>
                     </div>
                 </div>
@@ -203,9 +222,9 @@
                     </div>
                     
                     <div class="mt-auto pt-8">
-                        <a href="#contact" class="block w-full text-center py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
+                        <button onclick="openPurchaseModal('report')" class="w-full text-center py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
                             Get Report — $49
-                        </a>
+                        </button>
                         <p class="text-center text-xs text-slate-500 mt-3">Instant delivery • Works on any VIN • 30-day guarantee</p>
                     </div>
                 </div>
@@ -250,9 +269,9 @@
                     </div>
                     
                     <div class="mt-auto pt-8">
-                        <a href="#contact" class="block w-full text-center py-3.5 bg-white border border-[#0A66C2] hover:bg-[#F0F7FF] text-[#0A66C2] font-semibold rounded-2xl transition-colors">
+                        <button onclick="openPurchaseModal('premium')" class="w-full text-center py-3.5 bg-white border border-[#0A66C2] hover:bg-[#F0F7FF] text-[#0A66C2] font-semibold rounded-2xl transition-colors">
                             Get Human Review — $89
-                        </a>
+                        </button>
                         <p class="text-center text-xs text-slate-500 mt-3">Delivered within 24 hours • Best for cars over $10k</p>
                     </div>
                 </div>
@@ -266,9 +285,9 @@
                         <div class="font-semibold">Bundle &amp; Save</div>
                         <div class="text-sm text-slate-600 mt-1">Get the Survival Guide + Automated Report for $59 (save $19)</div>
                     </div>
-                    <a href="#contact" class="px-6 py-3 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl whitespace-nowrap">
+                    <button onclick="openPurchaseModal('bundle')" class="px-6 py-3 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl whitespace-nowrap">
                         Get the Bundle — $59
-                    </a>
+                    </button>
                 </div>
             </div>
 
@@ -277,6 +296,61 @@
             </div>
         </div>
     </main>
+
+    <!-- Purchase Modal (Modern demo checkout) -->
+    <div id="purchase-modal" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4" onclick="if (event.target.id === 'purchase-modal') closePurchaseModal()">
+        <div class="modal bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100" onclick="event.stopImmediatePropagation()">
+            <div class="px-8 pt-8 pb-6">
+                <div class="flex items-start justify-between mb-6">
+                    <div>
+                        <div id="modal-product-type" class="text-xs font-semibold tracking-widest text-[#0A66C2] uppercase"></div>
+                        <div id="modal-product-name" class="text-2xl font-semibold tracking-tighter mt-1"></div>
+                    </div>
+                    <button onclick="closePurchaseModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+                </div>
+
+                <div class="mb-6">
+                    <div class="flex items-baseline gap-1">
+                        <span id="modal-price" class="text-4xl font-semibold tracking-tighter"></span>
+                    </div>
+                    <p id="modal-desc" class="text-sm text-slate-600 mt-1"></p>
+                </div>
+
+                <form id="purchase-form" onsubmit="submitPurchase(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5">YOUR EMAIL</label>
+                            <input type="email" id="purchase-email" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]" placeholder="you@email.com" required>
+                        </div>
+                        <div id="vin-field" class="hidden">
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5">VIN (for report)</label>
+                            <input type="text" id="purchase-vin" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2] font-mono uppercase" placeholder="1HGCM82633A123456" maxlength="17">
+                            <p class="text-[10px] text-slate-500 mt-1">17 characters • We'll pull the data instantly in demo</p>
+                        </div>
+                        <div id="name-field">
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5">FULL NAME (OPTIONAL)</label>
+                            <input type="text" id="purchase-name" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]" placeholder="Alex Rivera">
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <button type="submit" class="w-full py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
+                            Complete purchase (demo)
+                        </button>
+                        <p class="text-center text-[10px] text-slate-500 mt-3">30-day money-back guarantee • No card charged in demo</p>
+                    </div>
+                </form>
+            </div>
+            <div id="purchase-success" class="hidden px-8 py-8 text-center border-t">
+                <div class="mx-auto w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-check text-emerald-600 text-2xl"></i>
+                </div>
+                <div class="font-semibold text-xl tracking-tight">Thank you!</div>
+                <p id="success-msg" class="mt-2 text-slate-600 text-sm"></p>
+                <button onclick="closePurchaseModal(true)" class="mt-6 px-6 py-2 text-sm font-semibold border border-slate-200 hover:bg-slate-50 rounded-2xl">Close</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 text-sm">
@@ -298,12 +372,14 @@
                     <a href="/products.html" class="hover:text-white transition-colors">Products</a>
                     <a href="/about.html" class="hover:text-white transition-colors">About</a>
                     <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>
+                    <a href="/privacy.html" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="/terms.html" class="hover:text-white transition-colors">Terms</a>
                 </div>
             </div>
             
             <div class="mt-10 pt-6 border-t border-white/10 text-xs">
                 <div class="flex flex-col md:flex-row md:items-center gap-y-2 md:justify-between">
-                    <div>© 2025 TrustCar.io. All rights reserved.</div>
+                    <div>© 2026 TrustCar.io. All rights reserved.</div>
                     <div class="text-[10px] opacity-70">
                         Illustrative images only. TrustCar.io is an independent service and not affiliated with any vehicle manufacturers or dealerships.
                     </div>
@@ -312,24 +388,88 @@
         </div>
     </footer>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        function initTailwind() {
-            // Placeholder
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            initTailwind();
-            
-            // Mobile menu
+        let currentProduct = null;
+
+        const products = {
+            guide: { name: "The Used Car Buyer's Survival Guide", price: "$29", type: "DIGITAL DOWNLOAD", desc: "68-page no-BS guide with checklists and scripts. Instant access." },
+            report: { name: "VIN + Market Value Report", price: "$49", type: "AUTOMATED REPORT", desc: "Title history, value, recalls, red flags. Ready in ~60s." },
+            premium: { name: "Premium Reviewed Report", price: "$89", type: "HUMAN EXPERT REVIEW", desc: "Full analysis + negotiation points from a former dealership manager." },
+            bundle: { name: "Survival Guide + VIN Report Bundle", price: "$59", type: "BUNDLE", desc: "Best value — get both the guide and automated report." }
+        };
+
+        function initMobileMenu() {
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
-            
             if (mobileBtn && mobileMenu) {
                 mobileBtn.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
                 });
             }
+        }
+
+        function openPurchaseModal(productKey) {
+            currentProduct = productKey;
+            const p = products[productKey];
+            if (!p) return;
+
+            document.getElementById('modal-product-type').textContent = p.type;
+            document.getElementById('modal-product-name').textContent = p.name;
+            document.getElementById('modal-price').textContent = p.price;
+            document.getElementById('modal-desc').textContent = p.desc;
+
+            const vinField = document.getElementById('vin-field');
+            if (productKey === 'report' || productKey === 'premium' || productKey === 'bundle') {
+                vinField.classList.remove('hidden');
+            } else {
+                vinField.classList.add('hidden');
+            }
+
+            // reset states
+            document.getElementById('purchase-form').style.display = '';
+            document.getElementById('purchase-success').classList.add('hidden');
+            document.getElementById('purchase-form').reset();
+
+            document.getElementById('purchase-modal').classList.remove('hidden');
+            document.getElementById('purchase-modal').classList.add('flex');
+        }
+
+        function closePurchaseModal(resetOnly) {
+            const modal = document.getElementById('purchase-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            if (resetOnly) {
+                // keep form clean for next time
+            }
+        }
+
+        function submitPurchase(e) {
+            e.preventDefault();
+            const email = document.getElementById('purchase-email').value;
+            const vin = document.getElementById('purchase-vin') ? document.getElementById('purchase-vin').value : '';
+            const name = document.getElementById('purchase-name').value || 'Valued customer';
+            const p = products[currentProduct];
+
+            const form = document.getElementById('purchase-form');
+            const success = document.getElementById('purchase-success');
+            const msg = document.getElementById('success-msg');
+
+            let successText = `We've emailed your purchase details and access link to ${email}. (This is a demo — no payment was processed.)`;
+
+            if (currentProduct === 'guide') {
+                successText = `Thanks ${name.split(' ')[0]}! Your Survival Guide PDF link has been sent to ${email}. Check your inbox (demo).`;
+            } else if (currentProduct === 'report' || currentProduct === 'premium' || currentProduct === 'bundle') {
+                const vinNote = vin ? ` for VIN ${vin.toUpperCase()}` : '';
+                successText = `Thanks ${name.split(' ')[0]}! Your report${vinNote} will be emailed to ${email} shortly. (Demo — real delivery coming soon.)`;
+            }
+
+            form.style.display = 'none';
+            success.classList.remove('hidden');
+            msg.textContent = successText;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMobileMenu();
         });
     </script>
 </body>

@@ -85,6 +85,7 @@
                     <a href="/how-it-works.html" class="nav-link text-slate-700 hover:text-slate-900">How it works</a>
                     <a href="/products.html" class="nav-link text-slate-700 hover:text-slate-900">Products</a>
                     <a href="/about.html" class="nav-link text-slate-700 hover:text-slate-900">About</a>
+                    <a href="/contact.html" class="nav-link text-slate-700 hover:text-slate-900">Contact</a>
                 </nav>
 
                 <div class="flex items-center gap-x-3">
@@ -111,6 +112,7 @@
                 <a href="/how-it-works.html" class="py-2.5 px-1 text-slate-700">How it works</a>
                 <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
                 <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
+                <a href="/contact.html" class="py-2.5 px-1 text-slate-700">Contact</a>
                 <a href="#get-free-guide" class="py-2.5 px-1 text-slate-700">Get free guide</a>
             </nav>
         </div>
@@ -120,11 +122,6 @@
     <section class="hero-gradient text-white">
         <div class="max-w-screen-xl mx-auto px-6 pt-16 pb-20 text-center">
             <div class="max-w-3xl mx-auto">
-                <div class="inline-flex items-center gap-x-2 bg-white/10 text-white text-xs font-semibold px-3 py-1 rounded-2xl mb-6 tracking-widest">
-                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                    BUILT BY A FORMER DEALERSHIP MANAGER
-                </div>
-                
                 <h1 class="text-5xl md:text-6xl font-semibold tracking-tighter leading-none">
                     Buy used cars<br>without getting<br>screwed.
                 </h1>
@@ -152,8 +149,13 @@
     </section>
 
     <!-- Trust Bar -->
-    <section class="trust-bar">
-        Built by someone who has seen thousands of bad used car deals from the inside.
+    <section class="bg-white border-b border-slate-100 py-3">
+        <div class="max-w-screen-xl mx-auto px-6">
+            <div class="flex items-center justify-center gap-x-3 text-sm text-slate-600">
+                <i class="fa-solid fa-shield-halved text-[#0A66C2]"></i>
+                <span class="font-medium">Built by someone who has seen thousands of bad used car deals from the inside.</span>
+            </div>
+        </div>
     </section>
 
     <!-- Problem + Value -->
@@ -244,14 +246,18 @@
             <h3 class="font-semibold text-2xl">Get the free "7 Red Flags" checklist</h3>
             <p class="mt-3 text-slate-600">The exact list I used when buying cars for myself and my family. Instant PDF download.</p>
             
-            <form class="mt-6" onsubmit="event.preventDefault(); alert('Thanks! Check your email for the checklist. (Demo)');">
+            <form id="guide-form" class="mt-6" onsubmit="submitGuideForm(event)">
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <input type="email" placeholder="your@email.com" class="flex-1 px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]" required>
+                    <input type="email" id="guide-email" placeholder="your@email.com" class="flex-1 px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]" required>
                     <button type="submit" class="px-8 py-3 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl text-sm transition-colors whitespace-nowrap">
                         Send me the checklist
                     </button>
                 </div>
             </form>
+            <div id="guide-success" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl text-sm flex items-center gap-2">
+                <i class="fa-solid fa-check-circle"></i>
+                <span>Thanks! The checklist has been sent to your email. (Demo mode)</span>
+            </div>
             <p class="text-[10px] text-slate-500 mt-3">We respect your inbox. Unsubscribe anytime.</p>
         </div>
     </section>
@@ -291,12 +297,14 @@
                     <a href="/products.html" class="footer-link hover:text-white">Products</a>
                     <a href="/about.html" class="footer-link hover:text-white">About</a>
                     <a href="/contact.html" class="footer-link hover:text-white">Contact</a>
+                    <a href="/privacy.html" class="footer-link hover:text-white">Privacy</a>
+                    <a href="/terms.html" class="footer-link hover:text-white">Terms</a>
                 </div>
             </div>
             
             <div class="mt-10 pt-6 border-t border-white/10 text-xs">
                 <div class="flex flex-col md:flex-row md:items-center gap-y-2 md:justify-between">
-                    <div>© 2025 TrustCar.io. All rights reserved.</div>
+                    <div>© 2026 TrustCar.io. All rights reserved.</div>
                     <div class="text-[10px] opacity-70">
                         Illustrative images only. TrustCar.io is an independent service and not affiliated with any vehicle manufacturers or dealerships.
                     </div>
@@ -305,24 +313,30 @@
         </div>
     </footer>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        function initTailwind() {
-            // Placeholder
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            initTailwind();
-            
-            // Mobile menu
+        function initMobileMenu() {
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
-            
             if (mobileBtn && mobileMenu) {
                 mobileBtn.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
                 });
             }
+        }
+
+        function submitGuideForm(e) {
+            e.preventDefault();
+            const form = document.getElementById('guide-form');
+            const success = document.getElementById('guide-success');
+            if (form && success) {
+                form.style.display = 'none';
+                success.classList.remove('hidden');
+                success.classList.add('flex');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMobileMenu();
         });
     </script>
 </body>

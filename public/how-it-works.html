@@ -9,11 +9,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        body { font-family: 'Inter', system_ui, sans-serif; }
-        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
-        .nav-link { transition: color 0.2s ease; }
-        .nav-link:hover { color: #0A66C2; }
-        .section-header { font-size: 2.25rem; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            color: #0A66C2;
+        }
+
+        .section-header {
+            font-size: 2.25rem;
+            line-height: 1.1;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .modern-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modern-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -37,6 +65,7 @@
                     <a href="/how-it-works.html" class="nav-link text-[#0A66C2] font-semibold">How it works</a>
                     <a href="/products.html" class="nav-link text-slate-700">Products</a>
                     <a href="/about.html" class="nav-link text-slate-700">About</a>
+                    <a href="/contact.html" class="nav-link text-slate-700">Contact</a>
                 </nav>
 
                 <div class="flex items-center gap-x-3">
@@ -59,6 +88,7 @@
                 <a href="/how-it-works.html" class="py-2.5 px-1 text-slate-700">How it works</a>
                 <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
                 <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
+                <a href="/contact.html" class="py-2.5 px-1 text-slate-700">Contact</a>
             </nav>
         </div>
     </header>
@@ -113,12 +143,14 @@
                     <a href="/products.html" class="hover:text-white transition-colors">Products</a>
                     <a href="/about.html" class="hover:text-white transition-colors">About</a>
                     <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>
+                    <a href="/privacy.html" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="/terms.html" class="hover:text-white transition-colors">Terms</a>
                 </div>
             </div>
             
             <div class="mt-10 pt-6 border-t border-white/10 text-xs">
                 <div class="flex flex-col md:flex-row md:items-center gap-y-2 md:justify-between">
-                    <div>© 2025 TrustCar.io. All rights reserved.</div>
+                    <div>© 2026 TrustCar.io. All rights reserved.</div>
                     <div class="text-[10px] opacity-70">
                         Illustrative images only. TrustCar.io is an independent service and not affiliated with any vehicle manufacturers or dealerships.
                     </div>
@@ -127,7 +159,6 @@
         </div>
     </footer>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const mobileBtn = document.getElementById('mobile-menu-btn');
