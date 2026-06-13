@@ -88,20 +88,10 @@
                     <a href="/contact.html" class="nav-link text-slate-700 hover:text-slate-900">Contact</a>
                 </nav>
 
-                <div class="flex items-center gap-x-3">
-                    <a href="#get-free-guide" class="hidden sm:inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
-                        Get free guide
-                    </a>
-                    
-                    <a href="/products.html" class="px-5 py-2.5 bg-[#0A66C2] hover:bg-[#084D96] transition-colors text-white text-sm font-semibold rounded-2xl">
-                        Browse products
-                    </a>
-
-                    <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600 hover:text-slate-900">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                </div>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
             </div>
         </div>
 
@@ -113,7 +103,6 @@
                 <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
                 <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
                 <a href="/contact.html" class="py-2.5 px-1 text-slate-700">Contact</a>
-                <a href="#get-free-guide" class="py-2.5 px-1 text-slate-700">Get free guide</a>
             </nav>
         </div>
     </header>
@@ -129,15 +118,6 @@
                 <p class="mt-6 text-xl text-white/90 max-w-lg mx-auto">
                     Practical tools and insider guidance from a former dealership manager who knows exactly how buyers get taken advantage of.
                 </p>
-
-                <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/products.html" class="px-8 py-3.5 bg-white text-[#0A66C2] font-semibold rounded-2xl hover:bg-slate-100 transition-colors shadow-sm text-base">
-                        Browse the toolkit
-                    </a>
-                    <a href="#get-free-guide" class="px-8 py-3.5 border border-white/30 hover:bg-white/10 text-white font-semibold rounded-2xl transition-colors text-base flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-download"></i> Get free checklist
-                    </a>
-                </div>
 
                 <div class="mt-8 flex items-center justify-center gap-x-8 text-sm text-white/70">
                     <div>4,200+ buyers helped</div>
@@ -240,27 +220,7 @@
         </div>
     </section>
 
-    <!-- Email Capture -->
-    <section id="get-free-guide" class="bg-white border-t border-b border-slate-100 py-16">
-        <div class="max-w-xl mx-auto text-center px-6">
-            <h3 class="font-semibold text-2xl">Get the free "7 Red Flags" checklist</h3>
-            <p class="mt-3 text-slate-600">The exact list I used when buying cars for myself and my family. Instant PDF download.</p>
-            
-            <form id="guide-form" class="mt-6" onsubmit="submitGuideForm(event)">
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <input type="email" id="guide-email" placeholder="your@email.com" class="flex-1 px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]" required>
-                    <button type="submit" class="px-8 py-3 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl text-sm transition-colors whitespace-nowrap">
-                        Send me the checklist
-                    </button>
-                </div>
-            </form>
-            <div id="guide-success" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl text-sm flex items-center gap-2">
-                <i class="fa-solid fa-check-circle"></i>
-                <span>Thanks! The checklist has been sent to your email. (Demo mode)</span>
-            </div>
-            <p class="text-[10px] text-slate-500 mt-3">We respect your inbox. Unsubscribe anytime.</p>
-        </div>
-    </section>
+
 
     <!-- Final CTA -->
     <section class="bg-[#0A66C2] text-white py-16">
@@ -268,11 +228,8 @@
             <h2 class="text-3xl font-semibold tracking-tight">Ready to stop guessing and start buying with confidence?</h2>
             <p class="mt-3 max-w-md mx-auto text-white/80">Most people lose money on used cars because they don’t have the right information. Don’t be most people.</p>
             
-            <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/products.html" class="px-8 py-3.5 bg-white text-[#0A66C2] font-semibold rounded-2xl hover:bg-slate-100 transition-colors">Browse the full toolkit</a>
-                <a href="#get-free-guide" class="px-8 py-3.5 border border-white/40 hover:bg-white/10 font-semibold rounded-2xl transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-download"></i> Get the free checklist
-                </a>
+            <div class="mt-8">
+                <a href="/products.html" class="inline-flex px-8 py-3.5 bg-white text-[#0A66C2] font-semibold rounded-2xl hover:bg-slate-100 transition-colors">See products &amp; pricing</a>
             </div>
         </div>
     </section>
@@ -321,17 +278,6 @@
                 mobileBtn.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
                 });
-            }
-        }
-
-        function submitGuideForm(e) {
-            e.preventDefault();
-            const form = document.getElementById('guide-form');
-            const success = document.getElementById('guide-success');
-            if (form && success) {
-                form.style.display = 'none';
-                success.classList.remove('hidden');
-                success.classList.add('flex');
             }
         }
 
