@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Report • TrustCar Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            color: #0f172a;
+        }
+        
+        .trustcar-blue {
+            color: #0A66C2;
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+        }
+        
+        .form-input:focus {
+            border-color: #0A66C2;
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+        }
+        
+        .report-detail {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .ai-draft {
+            font-family: 'Inter', system_ui, sans-serif;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto">
+            <div class="px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-x-4">
+                    <a href="index.html" class="flex items-center gap-x-3">
+                        <div class="w-9 h-9 bg-[#0A66C2] rounded-2xl flex items-center justify-center">
+                            <span class="text-white font-bold text-2xl tracking-tighter">T</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-xl tracking-tighter">TrustCar</span>
+                            <span class="font-bold text-[#0A66C2] text-xl tracking-tighter">Admin</span>
+                        </div>
+                    </a>
+                    
+                    <div class="hidden md:block text-sm text-slate-500">/ Review Report</div>
+                </div>
+                
+                <div class="flex items-center gap-x-3">
+                    <a href="index.html" 
+                       class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 flex items-center gap-2 rounded-2xl hover:bg-slate-100 transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back to Dashboard</span>
+                    </a>
+                    
+                    <button onclick="logout()" 
+                            class="flex items-center gap-x-2 px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-colors">
+                        <i class="fa-solid fa-sign-out-alt"></i>
+                        <span class="hidden sm:inline">Sign Out</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-screen-2xl mx-auto px-6 py-8">
+        <div id="loading" class="text-center py-20">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0A66C2]"></div>
+            <p class="mt-4 text-sm text-slate-500">Loading report...</p>
+        </div>
+
+        <div id="report-content" class="hidden">
+            <!-- Dynamic content populated by JS -->
+        </div>
+    </div>
+
+    <script>
+        let currentReport = null;
+        let reports = [];
+        
+        function loadReports() {
+            const saved = localStorage.getItem('trustcar_reports');
+            if (saved) {
+                reports = JSON.parse(saved);
+            }
+        }
+        
+        function saveReports() {
+            localStorage.setItem('trustcar_reports', JSON.stringify(reports));
+        }
+        
+        function getReportId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+        
+        function renderReport() {
+            const container = document.getElementById('report-content');
+            const loading = document.getElementById('loading');
+            
+            if (!currentReport) {
+                loading.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fa-solid fa-exclamation-triangle text-3xl text-amber-500 mb-4"></i>
+                        <p class="font-medium">Report not found</p>
+                        <a href="index.html" class="mt-4 inline-block text-sm text-[#0A66C2]">Return to dashboard</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            loading.classList.add('hidden');
+            container.classList.remove('hidden');
+            
+            let statusBadge = '';
+            if (currentReport.status === 'Pending') {
+                statusBadge = `<span class="px-4 py-1.5 bg-amber-100 text-amber-700 rounded-2xl text-xs font-semibold">Pending Review</span>`;
+            } else if (currentReport.status === 'Approved') {
+                statusBadge = `<span class="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-2xl text-xs font-semibold">Approved</span>`;
+            } else {
+                statusBadge = `<span class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-2xl text-xs font-semibold">Sent to Customer</span>`;
+            }
+            
+            let photosHTML = '';
+            if (currentReport.photos && currentReport.photos > 0) {
+                photosHTML = `<div class="mt-4">
+                    <div class="text-sm font-semibold mb-3">Customer Uploaded Photos (${currentReport.photos})</div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">`;
+                
+                for (let i = 1; i <= currentReport.photos; i++) {
+                    photosHTML += `
+                        <div class="bg-slate-100 border border-slate-200 rounded-2xl aspect-video flex items-center justify-center text-xs text-slate-500">
+                            <div class="text-center">
+                                <i class="fa-solid fa-image text-xl mb-1 text-slate-300"></i><br>
+                                <span>Photo ${i}</span>
+                            </div>
+                        </div>`;
+                }
+                photosHTML += `</div></div>`;
+            } else {
+                photosHTML = `<p class="text-xs text-slate-500 mt-1">No photos uploaded</p>`;
+            }
+            
+            const html = `
+                <div class="flex items-start justify-between mb-8">
+                    <div>
+                        <div class="flex items-center gap-4">
+                            <h1 class="text-3xl font-semibold tracking-tight">${currentReport.id}</h1>
+                            ${statusBadge}
+                        </div>
+                        <div class="mt-2 text-slate-600">
+                            Submitted ${currentReport.submitted} • ${currentReport.type} Report
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        ${currentReport.status === 'Pending' ? `
+                            <button onclick="approveReport()" 
+                                    class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-2xl transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Approve &amp; Send</span>
+                            </button>
+                        ` : ''}
+                        
+                        ${currentReport.status === 'Approved' ? `
+                            <button onclick="sendReport()" 
+                                    class="px-5 py-2.5 bg-[#0A66C2] hover:bg-[#084D96] text-white text-sm font-semibold rounded-2xl transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Send to Customer</span>
+                            </button>
+                        ` : ''}
+                        
+                        <button onclick="saveDraft()" 
+                                class="px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-sm font-semibold rounded-2xl transition-colors">
+                            Save Draft
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Customer Info -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                        <h3 class="section-title mb-5">Customer Information</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">FULL NAME</div>
+                                <input type="text" id="customer-name" value="${currentReport.customerName}" 
+                                       class="form-input w-full border border-slate-300 px-3 py-2 rounded-2xl text-sm">
+                            </div>
+                            
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">EMAIL</div>
+                                <input type="text" id="customer-email" value="${currentReport.email}" 
+                                       class="form-input w-full border border-slate-300 px-3 py-2 rounded-2xl text-sm">
+                            </div>
+                            
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">PHONE</div>
+                                <input type="text" id="customer-phone" value="${currentReport.phone || '(555) 555-0000'}" 
+                                       class="form-input w-full border border-slate-300 px-3 py-2 rounded-2xl text-sm">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Vehicle Info -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                        <h3 class="section-title mb-5">Vehicle Information</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">VIN</div>
+                                <input type="text" id="vin" value="${currentReport.vin}" 
+                                       class="form-input w-full border border-slate-300 px-3 py-2 rounded-2xl text-sm font-mono">
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-xs text-slate-500 mb-1">REPORT TYPE</div>
+                                    <div class="px-3 py-2 bg-slate-100 rounded-2xl text-sm font-medium">${currentReport.type}</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500 mb-1">SUBMITTED</div>
+                                    <div class="px-3 py-2 bg-slate-100 rounded-2xl text-sm font-medium">${currentReport.submitted}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                        <h3 class="section-title mb-5">Quick Actions</h3>
+                        
+                        <div class="space-y-3 text-sm">
+                            <button onclick="window.open('https://www.nhtsa.gov/vin-decoder', '_blank')" 
+                                    class="w-full flex items-center justify-between px-4 py-3 border border-slate-200 hover:bg-slate-50 rounded-2xl text-left transition-colors">
+                                <span class="flex items-center gap-3">
+                                    <i class="fa-solid fa-external-link-alt text-[#0A66C2]"></i> 
+                                    <span>Check NHTSA Recalls</span>
+                                </span>
+                            </button>
+                            
+                            <button onclick="copyVIN()" 
+                                    class="w-full flex items-center justify-between px-4 py-3 border border-slate-200 hover:bg-slate-50 rounded-2xl text-left transition-colors">
+                                <span class="flex items-center gap-3">
+                                    <i class="fa-solid fa-copy text-[#0A66C2]"></i> 
+                                    <span>Copy VIN to Clipboard</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Draft / Analysis -->
+                    <div class="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="section-title">AI Draft + Analysis</h3>
+                            <span class="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded">Editable</span>
+                        </div>
+                        
+                        <textarea id="ai-draft" class="ai-draft w-full border border-slate-300 rounded-3xl p-5 text-sm h-56 focus:outline-none focus:border-[#0A66C2] resize-y" 
+                                  placeholder="Enter or edit the report analysis...">${currentReport.aiDraft || ''}</textarea>
+                        
+                        <div class="mt-2 text-xs text-slate-500">This will be included in the final report sent to the customer.</div>
+                    </div>
+                    
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                        <h3 class="section-title mb-4">Internal Notes</h3>
+                        <textarea id="internal-notes" class="w-full border border-slate-300 rounded-3xl p-5 text-sm h-56 focus:outline-none focus:border-[#0A66C2] resize-y" 
+                                  placeholder="Add private notes here (not visible to customer)...">${currentReport.notes || ''}</textarea>
+                        
+                        <div class="mt-4">
+                            <div class="text-xs text-slate-500 mb-2">UPLOADED PHOTOS</div>
+                            ${photosHTML}
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <div class="mt-8 flex justify-end gap-3">
+                    <button onclick="saveDraft()" 
+                            class="px-6 py-3 bg-white border border-slate-300 hover:bg-slate-50 font-semibold rounded-2xl text-sm transition-colors">
+                        Save Draft
+                    </button>
+                    
+                    ${currentReport.status === 'Pending' ? `
+                        <button onclick="approveReport()" 
+                                class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-2xl text-sm transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-check"></i>
+                            Approve &amp; Send Report
+                        </button>
+                    ` : ''}
+                    
+                    ${currentReport.status === 'Approved' ? `
+                        <button onclick="sendReport()" 
+                                class="px-6 py-3 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl text-sm transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            Send to Customer Now
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        function saveDraft() {
+            if (!currentReport) return;
+            
+            currentReport.customerName = document.getElementById('customer-name').value;
+            currentReport.email = document.getElementById('customer-email').value;
+            currentReport.phone = document.getElementById('customer-phone').value;
+            currentReport.vin = document.getElementById('vin').value;
+            currentReport.aiDraft = document.getElementById('ai-draft').value;
+            currentReport.notes = document.getElementById('internal-notes').value;
+            
+            // Update in reports array
+            const index = reports.findIndex(r => r.id === currentReport.id);
+            if (index !== -1) {
+                reports[index] = currentReport;
+                saveReports();
+            }
+            
+            // Toast notification
+            showToast('Draft saved successfully.');
+        }
+        
+        function approveReport() {
+            if (!currentReport) return;
+            
+            if (!confirm('Approve this report and prepare it for sending to the customer?')) {
+                return;
+            }
+            
+            currentReport.status = 'Approved';
+            
+            const index = reports.findIndex(r => r.id === currentReport.id);
+            if (index !== -1) {
+                reports[index] = currentReport;
+                saveReports();
+            }
+            
+            showToast('Report approved. You can now send it to the customer.');
+            
+            // Refresh the page content
+            setTimeout(() => {
+                window.location.reload();
+            }, 1200);
+        }
+        
+        function sendReport() {
+            if (!currentReport) return;
+            
+            if (!confirm('Send this report to the customer via email?')) {
+                return;
+            }
+            
+            currentReport.status = 'Sent';
+            
+            const index = reports.findIndex(r => r.id === currentReport.id);
+            if (index !== -1) {
+                reports[index] = currentReport;
+                saveReports();
+            }
+            
+            showToast('Report marked as sent to customer. (Demo)');
+            
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        }
+        
+        function copyVIN() {
+            if (!currentReport) return;
+            navigator.clipboard.writeText(currentReport.vin).then(() => {
+                showToast('VIN copied to clipboard');
+            });
+        }
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl text-sm shadow-xl flex items-center gap-3 z-50`;
+            toast.innerHTML = `
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2400);
+        }
+        
+        function loadReport() {
+            const reportId = getReportId();
+            if (!reportId) {
+                document.getElementById('loading').innerHTML = `
+                    <div class="text-center py-20 text-red-500">No report ID provided in URL.</div>
+                `;
+                return;
+            }
+            
+            loadReports();
+            
+            currentReport = reports.find(r => r.id === reportId);
+            
+            if (!currentReport) {
+                // Create demo report if not found (for testing)
+                currentReport = {
+                    id: reportId,
+                    customerName: "Demo Customer",
+                    email: "demo@example.com",
+                    phone: "(555) 555-1234",
+                    vin: "1HGCM82633A004352",
+                    type: "Premium",
+                    submitted: new Date().toISOString().split('T')[0],
+                    status: "Pending",
+                    aiDraft: "This is a demo AI-generated analysis. The vehicle has a clean title with one reported minor accident. Market value in the customer's ZIP code is approximately $17,400. No open recalls found. Recommendation: Fair price, but negotiate $800–$1,200 off asking price.",
+                    notes: "Demo data for testing the admin flow.",
+                    photos: 3
+                };
+                reports.push(currentReport);
+                saveReports();
+            }
+            
+            renderReport();
+        }
+        
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('admin_logged_in') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'index.html';
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('admin_logged_in');
+            window.location.href = 'index.html';
+        }
+        
+        function init() {
+            checkAuth();
+            loadReport();
+        }
+        
+        window.onload = init;
+    </script>
+</body>
+</html>
