@@ -13,24 +13,22 @@
             font-family: 'Inter', system_ui, sans-serif;
         }
         
-        .admin-header {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
+        .nav-link {
+            transition: color 0.2s ease;
         }
         
-        .section-title {
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: -0.015em;
-            color: #0f172a;
-        }
-        
-        .trustcar-blue {
+        .nav-link:hover {
             color: #0A66C2;
         }
         
+        .section-header {
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+        }
+        
         .form-input {
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .form-input:focus {
@@ -38,14 +36,8 @@
             box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
         }
         
-        .report-detail {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .ai-draft {
-            font-family: 'Inter', system_ui, sans-serif;
-            line-height: 1.7;
+        .trustcar-blue {
+            color: #0A66C2;
         }
     </style>
 </head>
@@ -92,7 +84,7 @@
         </div>
 
         <div id="report-content" class="hidden">
-            <!-- Dynamic content populated by JS -->
+            <!-- Populated by JS -->
         </div>
     </div>
 
@@ -100,7 +92,7 @@
         let currentReport = null;
         let reports = [];
         
-        function loadReports() {
+        function loadReportsFromStorage() {
             const saved = localStorage.getItem('trustcar_reports');
             if (saved) {
                 reports = JSON.parse(saved);
@@ -137,30 +129,8 @@
             let statusBadge = '';
             if (currentReport.status === 'Pending') {
                 statusBadge = `<span class="px-4 py-1.5 bg-amber-100 text-amber-700 rounded-2xl text-xs font-semibold">Pending Review</span>`;
-            } else if (currentReport.status === 'Approved') {
-                statusBadge = `<span class="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-2xl text-xs font-semibold">Approved</span>`;
             } else {
-                statusBadge = `<span class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-2xl text-xs font-semibold">Sent to Customer</span>`;
-            }
-            
-            let photosHTML = '';
-            if (currentReport.photos && currentReport.photos > 0) {
-                photosHTML = `<div class="mt-4">
-                    <div class="text-sm font-semibold mb-3">Customer Uploaded Photos (${currentReport.photos})</div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">`;
-                
-                for (let i = 1; i <= currentReport.photos; i++) {
-                    photosHTML += `
-                        <div class="bg-slate-100 border border-slate-200 rounded-2xl aspect-video flex items-center justify-center text-xs text-slate-500">
-                            <div class="text-center">
-                                <i class="fa-solid fa-image text-xl mb-1 text-slate-300"></i><br>
-                                <span>Photo ${i}</span>
-                            </div>
-                        </div>`;
-                }
-                photosHTML += `</div></div>`;
-            } else {
-                photosHTML = `<p class="text-xs text-slate-500 mt-1">No photos uploaded</p>`;
+                statusBadge = `<span class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-2xl text-xs font-semibold">Sent</span>`;
             }
             
             const html = `
@@ -177,18 +147,10 @@
                     
                     <div class="flex gap-3">
                         ${currentReport.status === 'Pending' ? `
-                            <button onclick="approveReport()" 
+                            <button onclick="approveAndSend()" 
                                     class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-2xl transition-colors flex items-center gap-2">
                                 <i class="fa-solid fa-check"></i>
                                 <span>Approve &amp; Send</span>
-                            </button>
-                        ` : ''}
-                        
-                        ${currentReport.status === 'Approved' ? `
-                            <button onclick="sendReport()" 
-                                    class="px-5 py-2.5 bg-[#0A66C2] hover:bg-[#084D96] text-white text-sm font-semibold rounded-2xl transition-colors flex items-center gap-2">
-                                <i class="fa-solid fa-paper-plane"></i>
-                                <span>Send to Customer</span>
                             </button>
                         ` : ''}
                         
@@ -199,102 +161,69 @@
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
                     <!-- Customer Info -->
                     <div class="bg-white border border-slate-200 rounded-3xl p-6">
-                        <h3 class="section-title mb-5">Customer Information</h3>
+                        <h3 class="section-header mb-5">Customer Information</h3>
                         
                         <div class="space-y-4">
                             <div>
-                                <div class="text-xs text-slate-500 mb-1">FULL NAME</div>
-                                <input type="text" id="customer-name" value="${currentReport.customerName}" 
-                                       class="form-input w-full border border-slate-300 px-3 py-2 rounded-2xl text-sm">
+                                <div class="text-xs text-slate-500 mb-1.5">FULL NAME</div>
+                                <input type="text" id="customer-name" value="${currentReport.customerName || ''}" 
+                                       class="form-input w-full border border-slate-300 px-4 py-2.5 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]">
                             </div>
                             
                             <div>
-                                <div class="text-xs text-slate-500 mb-1">EMAIL</div>
-                                <input type="text" id="customer-email" value="${currentReport.email}" 
-                                       class="form-input w-full border border-slate-300 px-3 py-2 rounded-2xl text-sm">
-                            </div>
-                            
-                            <div>
-                                <div class="text-xs text-slate-500 mb-1">PHONE</div>
-                                <input type="text" id="customer-phone" value="${currentReport.phone || '(555) 555-0000'}" 
-                                       class="form-input w-full border border-slate-300 px-3 py-2 rounded-2xl text-sm">
+                                <div class="text-xs text-slate-500 mb-1.5">EMAIL</div>
+                                <input type="text" id="customer-email" value="${currentReport.email || ''}" 
+                                       class="form-input w-full border border-slate-300 px-4 py-2.5 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]">
                             </div>
                         </div>
                     </div>
                     
                     <!-- Vehicle Info -->
                     <div class="bg-white border border-slate-200 rounded-3xl p-6">
-                        <h3 class="section-title mb-5">Vehicle Information</h3>
+                        <h3 class="section-header mb-5">Vehicle &amp; Report Details</h3>
                         
                         <div class="space-y-4">
                             <div>
-                                <div class="text-xs text-slate-500 mb-1">VIN</div>
-                                <input type="text" id="vin" value="${currentReport.vin}" 
-                                       class="form-input w-full border border-slate-300 px-3 py-2 rounded-2xl text-sm font-mono">
+                                <div class="text-xs text-slate-500 mb-1.5">VIN</div>
+                                <input type="text" id="vin" value="${currentReport.vin || ''}" 
+                                       class="form-input w-full border border-slate-300 px-4 py-2.5 rounded-2xl text-sm font-mono focus:outline-none focus:border-[#0A66C2]">
                             </div>
                             
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <div class="text-xs text-slate-500 mb-1">REPORT TYPE</div>
-                                    <div class="px-3 py-2 bg-slate-100 rounded-2xl text-sm font-medium">${currentReport.type}</div>
+                                    <div class="text-xs text-slate-500 mb-1.5">REPORT TYPE</div>
+                                    <div class="px-4 py-2.5 bg-slate-100 rounded-2xl text-sm font-medium">${currentReport.type || ''}</div>
                                 </div>
                                 <div>
-                                    <div class="text-xs text-slate-500 mb-1">SUBMITTED</div>
-                                    <div class="px-3 py-2 bg-slate-100 rounded-2xl text-sm font-medium">${currentReport.submitted}</div>
+                                    <div class="text-xs text-slate-500 mb-1.5">SUBMITTED</div>
+                                    <div class="px-4 py-2.5 bg-slate-100 rounded-2xl text-sm font-medium">${currentReport.submitted || ''}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Quick Actions -->
-                    <div class="bg-white border border-slate-200 rounded-3xl p-6">
-                        <h3 class="section-title mb-5">Quick Actions</h3>
-                        
-                        <div class="space-y-3 text-sm">
-                            <button onclick="window.open('https://www.nhtsa.gov/vin-decoder', '_blank')" 
-                                    class="w-full flex items-center justify-between px-4 py-3 border border-slate-200 hover:bg-slate-50 rounded-2xl text-left transition-colors">
-                                <span class="flex items-center gap-3">
-                                    <i class="fa-solid fa-external-link-alt text-[#0A66C2]"></i> 
-                                    <span>Check NHTSA Recalls</span>
-                                </span>
-                            </button>
-                            
-                            <button onclick="copyVIN()" 
-                                    class="w-full flex items-center justify-between px-4 py-3 border border-slate-200 hover:bg-slate-50 rounded-2xl text-left transition-colors">
-                                <span class="flex items-center gap-3">
-                                    <i class="fa-solid fa-copy text-[#0A66C2]"></i> 
-                                    <span>Copy VIN to Clipboard</span>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- AI Draft / Analysis -->
-                    <div class="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-6">
+                    <!-- AI Draft -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6 lg:col-span-2">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="section-title">AI Draft + Analysis</h3>
+                            <h3 class="section-header">AI Draft / Analysis</h3>
                             <span class="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded">Editable</span>
                         </div>
                         
-                        <textarea id="ai-draft" class="ai-draft w-full border border-slate-300 rounded-3xl p-5 text-sm h-56 focus:outline-none focus:border-[#0A66C2] resize-y" 
-                                  placeholder="Enter or edit the report analysis...">${currentReport.aiDraft || ''}</textarea>
+                        <textarea id="ai-draft" class="w-full border border-slate-300 rounded-3xl p-5 text-sm h-64 focus:outline-none focus:border-[#0A66C2] resize-y" 
+                                  placeholder="Enter or edit the report analysis here...">${currentReport.aiDraft || ''}</textarea>
                         
                         <div class="mt-2 text-xs text-slate-500">This will be included in the final report sent to the customer.</div>
                     </div>
                     
-                    <div class="bg-white border border-slate-200 rounded-3xl p-6">
-                        <h3 class="section-title mb-4">Internal Notes</h3>
-                        <textarea id="internal-notes" class="w-full border border-slate-300 rounded-3xl p-5 text-sm h-56 focus:outline-none focus:border-[#0A66C2] resize-y" 
+                    <!-- Internal Notes -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6 lg:col-span-2">
+                        <h3 class="section-header mb-4">Internal Notes</h3>
+                        <textarea id="internal-notes" class="w-full border border-slate-300 rounded-3xl p-5 text-sm h-32 focus:outline-none focus:border-[#0A66C2] resize-y" 
                                   placeholder="Add private notes here (not visible to customer)...">${currentReport.notes || ''}</textarea>
-                        
-                        <div class="mt-4">
-                            <div class="text-xs text-slate-500 mb-2">UPLOADED PHOTOS</div>
-                            ${photosHTML}
-                        </div>
                     </div>
                     
                 </div>
@@ -306,20 +235,17 @@
                     </button>
                     
                     ${currentReport.status === 'Pending' ? `
-                        <button onclick="approveReport()" 
+                        <button onclick="approveAndSend()" 
                                 class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-2xl text-sm transition-colors flex items-center gap-2">
                             <i class="fa-solid fa-check"></i>
-                            Approve &amp; Send Report
+                            Approve &amp; Send to Customer
                         </button>
-                    ` : ''}
-                    
-                    ${currentReport.status === 'Approved' ? `
-                        <button onclick="sendReport()" 
-                                class="px-6 py-3 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl text-sm transition-colors flex items-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            Send to Customer Now
-                        </button>
-                    ` : ''}
+                    ` : `
+                        <div class="px-6 py-3 bg-blue-100 text-blue-700 font-semibold rounded-2xl text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-check"></i>
+                            Already Sent to Customer
+                        </div>
+                    `}
                 </div>
             `;
             
@@ -331,49 +257,32 @@
             
             currentReport.customerName = document.getElementById('customer-name').value;
             currentReport.email = document.getElementById('customer-email').value;
-            currentReport.phone = document.getElementById('customer-phone').value;
             currentReport.vin = document.getElementById('vin').value;
             currentReport.aiDraft = document.getElementById('ai-draft').value;
             currentReport.notes = document.getElementById('internal-notes').value;
             
-            // Update in reports array
             const index = reports.findIndex(r => r.id === currentReport.id);
             if (index !== -1) {
                 reports[index] = currentReport;
                 saveReports();
             }
             
-            // Toast notification
-            showToast('Draft saved successfully.');
-        }
-        
-        function approveReport() {
-            if (!currentReport) return;
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3 rounded-2xl text-sm shadow-xl flex items-center gap-3 z-50';
+            toast.innerHTML = `<span>Draft saved.</span>`;
+            document.body.appendChild(toast);
             
-            if (!confirm('Approve this report and prepare it for sending to the customer?')) {
-                return;
-            }
-            
-            currentReport.status = 'Approved';
-            
-            const index = reports.findIndex(r => r.id === currentReport.id);
-            if (index !== -1) {
-                reports[index] = currentReport;
-                saveReports();
-            }
-            
-            showToast('Report approved. You can now send it to the customer.');
-            
-            // Refresh the page content
             setTimeout(() => {
-                window.location.reload();
-            }, 1200);
+                toast.style.transition = 'opacity 0.3s';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
         }
         
-        function sendReport() {
-            if (!currentReport) return;
+        function approveAndSend() {
+            if (!currentReport || currentReport.status !== 'Pending') return;
             
-            if (!confirm('Send this report to the customer via email?')) {
+            if (!confirm('Approve this report and send it to the customer?')) {
                 return;
             }
             
@@ -385,33 +294,14 @@
                 saveReports();
             }
             
-            showToast('Report marked as sent to customer. (Demo)');
-            
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        }
-        
-        function copyVIN() {
-            if (!currentReport) return;
-            navigator.clipboard.writeText(currentReport.vin).then(() => {
-                showToast('VIN copied to clipboard');
-            });
-        }
-        
-        function showToast(message) {
             const toast = document.createElement('div');
-            toast.className = `fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl text-sm shadow-xl flex items-center gap-3 z-50`;
-            toast.innerHTML = `
-                <span>${message}</span>
-            `;
+            toast.className = 'fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3 rounded-2xl text-sm shadow-xl flex items-center gap-3 z-50';
+            toast.innerHTML = `<span>Report approved and marked as sent!</span>`;
             document.body.appendChild(toast);
             
             setTimeout(() => {
-                toast.style.transition = 'all 0.3s ease';
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 2400);
+                window.location.href = 'index.html';
+            }, 1500);
         }
         
         function loadReport() {
@@ -423,30 +313,33 @@
                 return;
             }
             
-            loadReports();
+            loadReportsFromStorage();
             
             currentReport = reports.find(r => r.id === reportId);
             
             if (!currentReport) {
-                // Create demo report if not found (for testing)
+                // Fallback demo if not found
                 currentReport = {
                     id: reportId,
                     customerName: "Demo Customer",
                     email: "demo@example.com",
-                    phone: "(555) 555-1234",
                     vin: "1HGCM82633A004352",
                     type: "Premium",
                     submitted: new Date().toISOString().split('T')[0],
                     status: "Pending",
-                    aiDraft: "This is a demo AI-generated analysis. The vehicle has a clean title with one reported minor accident. Market value in the customer's ZIP code is approximately $17,400. No open recalls found. Recommendation: Fair price, but negotiate $800–$1,200 off asking price.",
-                    notes: "Demo data for testing the admin flow.",
-                    photos: 3
+                    aiDraft: "This is a demo AI-generated analysis for testing the admin review flow.",
+                    notes: "Demo data for testing."
                 };
                 reports.push(currentReport);
                 saveReports();
             }
             
             renderReport();
+        }
+        
+        function getReportId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
         }
         
         function checkAuth() {
