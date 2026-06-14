@@ -494,7 +494,37 @@
                 successText = `Thanks ${name.split(' ')[0]}! Your Survival Guide PDF link has been sent to ${email}. Check your inbox (demo).`;
             } else if (currentProduct === 'report' || currentProduct === 'premium' || currentProduct === 'bundle') {
                 const vinNote = vin ? ` for VIN ${vin.toUpperCase()}` : '';
-                successText = `Thanks ${name.split(' ')[0]}! Your report${vinNote} will be emailed to ${email} shortly. (Demo — real delivery coming soon.)`;
+                successText = `Thanks ${name.split(' ')[0]}! Your report${vinNote} has been submitted for manual review. It will appear in the admin dashboard shortly. (Demo — real delivery coming soon. Open /admin/ in another tab to review.)`;
+
+                // === INTEGRATION: Create pending report for Admin Dashboard ===
+                try {
+                    let existingReports = [];
+                    const saved = localStorage.getItem('trustcar_reports');
+                    if (saved) {
+                        existingReports = JSON.parse(saved);
+                    }
+
+                    const reportType = (currentProduct === 'premium') ? 'Premium' : 'Automated';
+                    const newReport = {
+                        id: "RPT-" + new Date().getFullYear().toString().slice(2) + "-" + String(Math.floor(100 + Math.random() * 900)),
+                        customerName: name,
+                        email: email,
+                        phone: "",
+                        vin: vin ? vin.toUpperCase() : "PENDING-VIN",
+                        type: reportType,
+                        submitted: new Date().toISOString().split('T')[0],
+                        status: "Pending",
+                        aiDraft: "AI analysis generated. Awaiting human review by admin. " + (vin ? "VIN: " + vin.toUpperCase() : ""),
+                        notes: "Submitted via public site purchase flow (demo).",
+                        photos: vin ? 1 : 0
+                    };
+
+                    existingReports.unshift(newReport);
+                    localStorage.setItem('trustcar_reports', JSON.stringify(existingReports));
+                } catch (err) {
+                    console.warn("Could not save report to admin (localStorage issue)", err);
+                }
+                // === END INTEGRATION ===
             }
 
             form.style.display = 'none';
