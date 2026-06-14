@@ -3,531 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard • TrustCar.io</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Admin Dashboard - TrustCar.io</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
-        body {
-            font-family: 'Inter', system_ui, sans-serif;
-        }
-        
-        .admin-header {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .nav-link {
-            transition: color 0.2s ease;
-        }
-        
-        .nav-link:hover {
-            color: #0A66C2;
-        }
-        
-        .report-row {
-            transition: background-color 0.2s ease;
-        }
-        
-        .report-row:hover {
-            background-color: #f8fafc;
-        }
-        
-        .status-pending {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-        
-        .status-approved {
-            background-color: #dcfce7;
-            color: #166534;
-        }
-        
-        .status-sent {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
-        
-        .section-header {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-        
-        .dashboard-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-        }
-        
-        .data-table th {
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .trustcar-blue {
-            color: #0A66C2;
-        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Nunito', system-ui, sans-serif; background: #f8fafc; color: #0b1724; }
+        .header { background: #0b1724; color: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; }
+        .container { padding: 2rem 5%; max-width: 1200px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #e6eefc; }
+        th { background: #f1f5f9; }
+        .status-pending { color: #f59e0b; font-weight: 600; }
+        .btn { padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; }
+        .btn-review { background: #3b82f6; color: white; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
-    <!-- Login Screen -->
-    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-slate-100">
-        <div class="max-w-md w-full mx-4">
-            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-8">
-                <div class="flex items-center gap-x-3 mb-8">
-                    <div class="w-11 h-11 bg-[#0A66C2] rounded-2xl flex items-center justify-center">
-                        <span class="text-white font-bold text-3xl tracking-tighter">T</span>
-                    </div>
-                    <div>
-                        <span class="font-semibold text-2xl tracking-tighter">TrustCar</span>
-                        <span class="font-bold text-[#0A66C2] text-2xl tracking-tighter">Admin</span>
-                    </div>
-                </div>
-                
-                <h1 class="text-2xl font-semibold tracking-tight mb-2">Sign in to Admin</h1>
-                <p class="text-slate-600 mb-8 text-sm">Review and approve customer reports</p>
-                
-                <form id="login-form" class="space-y-5">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Username</label>
-                        <input type="text" id="username" value="admin" 
-                               class="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
-                        <input type="password" id="password" value="TrustCar2026!" 
-                               class="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]">
-                    </div>
-                    
-                    <button type="submit" 
-                            class="w-full py-3.5 bg-[#0A66C2] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors text-sm">
-                        Sign In
-                    </button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <p class="text-xs text-slate-500">Demo credentials are pre-filled</p>
-                </div>
-            </div>
-        </div>
+<body>
+    <div class="header">
+        <div class="logo">TrustCar Admin</div>
+        <div>Logged in as Admin</div>
     </div>
 
-    <!-- Dashboard -->
-    <div id="dashboard" class="hidden min-h-screen">
-        <!-- Header -->
-        <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-            <div class="max-w-screen-2xl mx-auto">
-                <div class="px-6 py-4 flex items-center justify-between">
-                    <div class="flex items-center gap-x-4">
-                        <div class="flex items-center gap-x-3">
-                            <div class="w-9 h-9 bg-[#0A66C2] rounded-2xl flex items-center justify-center">
-                                <span class="text-white font-bold text-2xl tracking-tighter">T</span>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-xl tracking-tighter">TrustCar</span>
-                                <span class="font-bold text-[#0A66C2] text-xl tracking-tighter">Admin</span>
-                            </div>
-                        </div>
-                        
-                        <div class="hidden md:block px-3 py-1.5 bg-slate-100 rounded-2xl text-xs font-medium text-slate-600">
-                            Review &amp; Approve
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-x-4">
-                        <div class="text-right hidden sm:block">
-                            <div class="text-sm font-semibold">Manny T</div>
-                            <div class="text-[10px] text-slate-500">Founder</div>
-                        </div>
-                        
-                        <button onclick="logout()" 
-                                class="flex items-center gap-x-2 px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-2xl transition-colors">
-                            <i class="fa-solid fa-sign-out-alt"></i>
-                            <span class="hidden sm:inline">Sign Out</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <div class="max-w-screen-2xl mx-auto px-6 py-8">
-            <!-- Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div class="bg-white border border-slate-200 rounded-3xl p-5">
-                    <div class="text-xs text-slate-500 font-medium tracking-wider">PENDING REVIEW</div>
-                    <div id="stat-pending" class="text-4xl font-semibold mt-1 text-amber-600">8</div>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-3xl p-5">
-                    <div class="text-xs text-slate-500 font-medium tracking-wider">APPROVED TODAY</div>
-                    <div id="stat-approved" class="text-4xl font-semibold mt-1 text-emerald-600">3</div>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-3xl p-5">
-                    <div class="text-xs text-slate-500 font-medium tracking-wider">SENT THIS WEEK</div>
-                    <div id="stat-sent" class="text-4xl font-semibold mt-1 text-blue-600">12</div>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-3xl p-5">
-                    <div class="text-xs text-slate-500 font-medium tracking-wider">TOTAL REPORTS</div>
-                    <div id="stat-total" class="text-4xl font-semibold mt-1">47</div>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-700">
-                <strong>Demo mode:</strong> Purchases made on the main site (products page) will automatically create pending reports here using shared browser storage. Try buying a report on the public site, then refresh this page.
-            </div>
-
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div>
-                    <h1 class="text-3xl font-semibold tracking-tight">Pending Reports</h1>
-                    <p class="text-sm text-slate-600 mt-1">Review and approve customer reports before delivery</p>
-                </div>
-                
-                <div class="flex gap-3">
-                    <div class="relative">
-                        <input type="text" id="search-input" placeholder="Search VIN or customer..." 
-                               class="pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-2xl text-sm w-64 focus:outline-none focus:border-[#0A66C2]">
-                        <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400 text-sm"></i>
-                    </div>
-                    
-                    <select id="status-filter" class="px-4 py-2.5 bg-white border border-slate-300 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]">
-                        <option value="">All Statuses</option>
-                        <option value="Pending">Pending Review</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Sent">Sent</option>
-                    </select>
-                    
-                    <button onclick="addDemoReport()" 
-                            class="px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-sm font-medium rounded-2xl flex items-center gap-2 transition-colors">
-                        <i class="fa-solid fa-plus"></i>
-                        <span class="hidden sm:inline">Add Demo</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Reports Table -->
-            <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b border-slate-200 bg-slate-50">
-                                <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500">REPORT ID</th>
-                                <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500">CUSTOMER</th>
-                                <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500">VIN</th>
-                                <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500">TYPE</th>
-                                <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500">SUBMITTED</th>
-                                <th class="text-left px-6 py-4 text-xs font-semibold text-slate-500">STATUS</th>
-                                <th class="text-right px-6 py-4 text-xs font-semibold text-slate-500">ACTION</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reports-table" class="divide-y divide-slate-100">
-                            <!-- Populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <div class="mt-4 text-xs text-slate-500 flex items-center gap-2">
-                <i class="fa-solid fa-info-circle"></i>
-                <span>This is a demo with fake data stored in your browser. Changes will persist until you clear localStorage.</span>
-            </div>
-        </div>
+    <div class="container">
+        <h1>Pending Reports</h1>
+        <table id="reportsTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>VIN</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 
     <script>
-        // Tailwind script
-        function initTailwind() {
-            // Already using CDN
-        }
-        
-        // Fake data
-        let reports = [];
-        
         function loadReports() {
-            const saved = localStorage.getItem('trustcar_reports');
-            if (saved) {
-                reports = JSON.parse(saved);
-            } else {
-                // Seed demo data
-                reports = [
-                    {
-                        id: "RPT-2406-001",
-                        customerName: "Sarah Chen",
-                        email: "sarah.chen@email.com",
-                        phone: "(415) 555-0192",
-                        vin: "1FTFW1ET5DFA12345",
-                        type: "Automated",
-                        submitted: "2026-06-12",
-                        status: "Pending",
-                        aiDraft: "Vehicle has clean title history. One minor accident reported in 2023 (rear-end, repaired). Current market value in 94102 ZIP: $18,200 - $19,800. No open recalls. Odometer consistent. Recommendation: Negotiate down from asking price of $21,500.",
-                        notes: "",
-                        photos: 2
-                    },
-                    {
-                        id: "RPT-2406-002",
-                        customerName: "Marcus Rodriguez",
-                        email: "marcus.r@email.com",
-                        phone: "(310) 555-7841",
-                        vin: "JHMCR6F3XHC012345",
-                        type: "Premium",
-                        submitted: "2026-06-11",
-                        status: "Pending",
-                        aiDraft: "Clean title. No accidents found. Strong service history. Local value: $14,750. Minor rust noted in undercarriage photos (common for this model in coastal areas).",
-                        notes: "Customer concerned about previous owner being a rental fleet.",
-                        photos: 4
-                    },
-                    {
-                        id: "RPT-2406-003",
-                        customerName: "Priya Patel",
-                        email: "priya.patel@work.com",
-                        phone: "(206) 555-3344",
-                        vin: "WBA3C3G55E0F98765",
-                        type: "Automated",
-                        submitted: "2026-06-10",
-                        status: "Approved",
-                        aiDraft: "Title brand: Clean. One previous owner. Market value $26,400. No structural damage. Several service records show regular maintenance at BMW dealership.",
-                        notes: "",
-                        photos: 1
-                    },
-                    {
-                        id: "RPT-2406-004",
-                        customerName: "David Kim",
-                        email: "david.kim@gmail.com",
-                        phone: "(512) 555-8821",
-                        vin: "2C4RC1BG5HR567890",
-                        type: "Premium",
-                        submitted: "2026-06-09",
-                        status: "Pending",
-                        aiDraft: "This vehicle shows signs of previous flood damage. Water lines visible in photos. Title history shows out-of-state transfer after major storm season. Strongly recommend against purchase.",
-                        notes: "AI flagged high risk. Need human confirmation.",
-                        photos: 5
-                    }
-                ];
-                saveReports();
-            }
-        }
-        
-        function saveReports() {
-            localStorage.setItem('trustcar_reports', JSON.stringify(reports));
-        }
-        
-        function renderReports(filteredReports = null) {
-            const tbody = document.getElementById('reports-table');
+            const reports = JSON.parse(localStorage.getItem('trustcar_reports') || '[]');
+            const tbody = document.querySelector('#reportsTable tbody');
             tbody.innerHTML = '';
-            
-            const dataToShow = filteredReports || reports;
-            
-            if (dataToShow.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td colspan="7" class="px-6 py-12 text-center text-slate-500">
-                        No reports found.
-                    </td>
-                `;
-                tbody.appendChild(row);
-                return;
-            }
-            
-            dataToShow.forEach(report => {
-                const row = document.createElement('tr');
-                row.className = `report-row border-b border-slate-100 last:border-b-0`;
-                
-                let statusHTML = '';
-                if (report.status === 'Pending') {
-                    statusHTML = `<span class="px-3 py-1 rounded-2xl text-xs font-semibold status-pending">Pending Review</span>`;
-                } else if (report.status === 'Approved') {
-                    statusHTML = `<span class="px-3 py-1 rounded-2xl text-xs font-semibold status-approved">Approved</span>`;
-                } else {
-                    statusHTML = `<span class="px-3 py-1 rounded-2xl text-xs font-semibold status-sent">Sent</span>`;
-                }
-                
-                row.innerHTML = `
-                    <td class="px-6 py-5 font-mono text-sm font-semibold">${report.id}</td>
-                    <td class="px-6 py-5">
-                        <div class="font-medium">${report.customerName}</div>
-                        <div class="text-xs text-slate-500">${report.email}</div>
-                    </td>
-                    <td class="px-6 py-5 font-mono text-sm">${report.vin}</td>
-                    <td class="px-6 py-5">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${report.type === 'Premium' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700'}">
-                            ${report.type}
-                        </span>
-                    </td>
-                    <td class="px-6 py-5 text-sm text-slate-600">${report.submitted}</td>
-                    <td class="px-6 py-5">${statusHTML}</td>
-                    <td class="px-6 py-5 text-right">
-                        <a href="view.html?id=${report.id}" 
-                           class="inline-flex items-center px-4 py-2 text-sm font-semibold text-[#0A66C2] hover:bg-blue-50 rounded-2xl transition-colors">
-                            <span>Review</span>
-                            <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                        </a>
-                    </td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-            
-            // Update stats
-            updateStats();
-        }
-        
-        function updateStats() {
-            const pending = reports.filter(r => r.status === 'Pending').length;
-            const approved = reports.filter(r => r.status === 'Approved').length;
-            const sent = reports.filter(r => r.status === 'Sent').length;
-            
-            document.getElementById('stat-pending').textContent = pending;
-            document.getElementById('stat-approved').textContent = approved;
-            document.getElementById('stat-sent').textContent = sent;
-            document.getElementById('stat-total').textContent = reports.length;
-        }
-        
-        function filterReports() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const statusFilter = document.getElementById('status-filter').value;
-            
-            let filtered = reports;
-            
-            if (searchTerm) {
-                filtered = filtered.filter(r => 
-                    r.vin.toLowerCase().includes(searchTerm) || 
-                    r.customerName.toLowerCase().includes(searchTerm) ||
-                    r.email.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            if (statusFilter) {
-                filtered = filtered.filter(r => r.status === statusFilter);
-            }
-            
-            renderReports(filtered);
-        }
-        
-        function addDemoReport() {
-            const newReport = {
-                id: "RPT-2406-" + String(Math.floor(Math.random() * 900) + 100),
-                customerName: "Demo Buyer " + Math.floor(Math.random() * 100),
-                email: "demo" + Math.floor(Math.random() * 100) + "@example.com",
-                phone: "(555) 555-010" + Math.floor(Math.random() * 10),
-                vin: "1HGCM82633A" + String(Math.floor(Math.random() * 900000) + 100000),
-                type: Math.random() > 0.5 ? "Automated" : "Premium",
-                submitted: new Date().toISOString().split('T')[0],
-                status: "Pending",
-                aiDraft: "AI analysis generated. Title clean. Minor issues detected in service history. Local value range: $15,200 - $17,800.",
-                notes: "",
-                photos: Math.floor(Math.random() * 4) + 1
-            };
-            
-            reports.unshift(newReport);
-            saveReports();
-            renderReports();
-            
-            // Show toast
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white text-sm px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3';
-            toast.innerHTML = `
-                <span>Demo report added.</span>
-            `;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.transition = 'opacity 0.3s';
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 2200);
-        }
-        
-        // Authentication
-        function checkAuth() {
-            const isLoggedIn = localStorage.getItem('admin_logged_in') === 'true';
-            const loginScreen = document.getElementById('login-screen');
-            const dashboard = document.getElementById('dashboard');
-            
-            if (isLoggedIn) {
-                loginScreen.classList.add('hidden');
-                dashboard.classList.remove('hidden');
-                loadReports();
-                renderReports();
-                
-                // Setup filters
-                document.getElementById('search-input').addEventListener('input', filterReports);
-                document.getElementById('status-filter').addEventListener('change', filterReports);
-            } else {
-                loginScreen.classList.remove('hidden');
-                dashboard.classList.add('hidden');
-            }
-        }
-        
-        function handleLogin(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            
-            // Hardcoded credentials
-            if (username === 'admin' && password === 'TrustCar2026!') {
-                localStorage.setItem('admin_logged_in', 'true');
-                checkAuth();
-            } else {
-                alert('Invalid credentials. Use admin / TrustCar2026!');
-            }
-        }
-        
-        function logout() {
-            localStorage.removeItem('admin_logged_in');
-            window.location.reload();
-        }
-        
-        // Initialize
-        function init() {
-            // Tailwind already loaded
-            initTailwind();
-            
-            // Login handler
-            document.getElementById('login-form').addEventListener('submit', handleLogin);
-            
-            // Check auth
-            checkAuth();
-            
-            // Keyboard shortcut for adding demo
-            document.addEventListener('keydown', function(e) {
-                if (e.metaKey && e.key === '/') {
-                    e.preventDefault();
-                    const dashboard = document.getElementById('dashboard');
-                    if (!dashboard.classList.contains('hidden')) {
-                        addDemoReport();
-                    }
-                }
-            });
-            
-            // Make sure demo data exists
-            setTimeout(() => {
-                const dashboard = document.getElementById('dashboard');
-                if (!dashboard.classList.contains('hidden')) {
-                    const saved = localStorage.getItem('trustcar_reports');
-                    if (!saved || JSON.parse(saved).length === 0) {
-                        // Will be handled in loadReports
-                    }
-                }
-            }, 100);
-        }
-        
-        window.onload = init;
 
-        // Auto-refresh every 10 seconds to pick up new reports from public site
-        setInterval(() => {
-            if (document.visibilityState === 'visible') {
-                location.reload();
-            }
-        }, 10000);
+            reports.forEach(report => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${report.submitted || 'Just now'}</td>
+                    <td>${report.customerName || 'Customer'}</td>
+                    <td>${report.vin}</td>
+                    <td>${report.type}</td>
+                    <td><span class="status-pending">${report.status}</span></td>
+                    <td><button class="btn btn-review" onclick="viewReport('${report.id}')">Review</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function viewReport(id) {
+            window.location.href = `view.html?id=${id}`;
+        }
+
+        // Auto refresh every 8 seconds
+        setInterval(loadReports, 8000);
+        loadReports();
     </script>
 </body>
 </html>
