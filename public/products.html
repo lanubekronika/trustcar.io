@@ -276,6 +276,45 @@
 
             </div>
 
+            <!-- Sample Report Preview Section -->
+            <div class="max-w-screen-xl mx-auto px-6 py-8">
+                <h2 class="text-2xl font-semibold mb-6 text-center">See What You're Getting</h2>
+                <div class="bg-white border border-slate-200 rounded-3xl p-6 max-w-2xl mx-auto">
+                    <table class="w-full text-sm">
+                        <tbody>
+                            <tr>
+                                <td class="py-2">Title Status</td>
+                                <td class="py-2 text-right font-medium">✔ Clear</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2">Accidents</td>
+                                <td class="py-2 text-right font-medium">⚠ 1 Found</td>
+                            </tr>
+                            <tr class="filter blur-[4px]">
+                                <td class="py-2">Open Recalls</td>
+                                <td class="py-2 text-right font-medium">✖ 1 Open</td>
+                            </tr>
+                            <tr class="filter blur-[4px]">
+                                <td class="py-2">Market Value</td>
+                                <td class="py-2 text-right font-medium">$19,400 fair</td>
+                            </tr>
+                            <tr class="filter blur-[4px]">
+                                <td class="py-2">Recommended Offer</td>
+                                <td class="py-2 text-right font-medium">$18,900</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-4 text-center text-xs text-slate-500">
+                        Your full report shows all data — unblurred.
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="/assets/sample-report.pdf" class="text-sm text-[#0A66C2] hover:underline font-medium">
+                        Download Free Sample Report (PDF)
+                    </a>
+                </div>
+            </div>
+
             <div class="mt-8 text-center text-sm text-slate-600">
                 Not sure which report you need?<br><br>
                 → Buying a car under $10k from a private seller? The $49 Automated Report is built for you.<br><br>
@@ -293,6 +332,61 @@
                     <button onclick="openPurchaseModal('bundle')" class="px-6 py-3 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl whitespace-nowrap">
                         Get the Bundle — $59
                     </button>
+                </div>
+            </div>
+
+            <!-- FAQ Accordion -->
+            <div class="max-w-screen-xl mx-auto px-6 py-8">
+                <h2 class="text-2xl font-semibold mb-6 text-center">Common Questions</h2>
+                <div class="max-w-3xl mx-auto space-y-2">
+                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
+                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: Is this the same as Carfax?
+                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="mt-3 text-slate-600 text-sm">We use multiple data sources including NMVTIS-connected databases — the same underlying data, interpreted by a dealership insider who tells you what it actually means for your specific situation.</p>
+                    </details>
+
+                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
+                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: What if the VIN has no reported history?
+                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="mt-3 text-slate-600 text-sm">A clean history isn't always a good sign — it may mean damage was never reported. Our report flags this and explains what to look for in person.</p>
+                    </details>
+
+                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
+                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: Does this work for cars in all 50 states?
+                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="mt-3 text-slate-600 text-sm">Yes. We pull national title history, accident records, and recalls for any VIN sold in the United States.</p>
+                    </details>
+
+                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
+                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: How is the Human Review ($89) delivered?
+                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="mt-3 text-slate-600 text-sm">Within 24 hours via email. You get a written PDF analysis from Manny T with negotiation talking points specific to that exact car.</p>
+                    </details>
+
+                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
+                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: What's your exact refund policy?
+                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="mt-3 text-slate-600 text-sm">30 days, no questions asked. If our report didn't help you make a better decision, email us and we'll refund you the same day.</p>
+                    </details>
+
+                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
+                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: Can I use this for dealership cars, not just private sellers?
+                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="mt-3 text-slate-600 text-sm">Absolutely — dealers are often where the real tricks happen. Our reports are just as useful on dealer inventory.</p>
+                    </details>
+
+                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
+                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: How fast do I get the automated report?
+                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="mt-3 text-slate-600 text-sm">Under 60 seconds after your VIN is submitted. It's delivered to your email as a downloadable PDF.</p>
+                    </details>
                 </div>
             </div>
 
