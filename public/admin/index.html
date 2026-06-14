@@ -521,6 +521,13 @@
         }
         
         window.onload = init;
+
+        // Auto-refresh every 10 seconds to pick up new reports from public site
+        setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                location.reload();
+            }
+        }, 10000);
     </script>
 </body>
 </html>

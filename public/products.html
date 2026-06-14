@@ -376,12 +376,17 @@
                 </form>
             </div>
             <div id="purchase-success" class="hidden px-8 py-8 text-center border-t">
-                <div class="mx-auto w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-                    <i class="fa-solid fa-check text-emerald-600 text-2xl"></i>
+                <div id="successMessage" class="success-modal" style="display:none;">
+                    <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">Purchase Successful!</h3>
+                    <p style="margin-bottom:0.25rem;">Your report request has been received.</p>
+                    <p style="margin-bottom:0.75rem;"><strong>It is now in the review queue.</strong></p>
+                    
+                    <button onclick="openAdminDashboard()" style="background:#0553F0; color:white; padding:0.9rem 1.8rem; border:none; border-radius:10px; font-weight:700; margin:1rem 0; cursor:pointer;">
+                        → Open Admin Dashboard
+                    </button>
+                    
+                    <p style="font-size:0.9rem; color:#64748b; margin-top:1rem;">You can review and approve it from the admin panel.</p>
                 </div>
-                <div class="font-semibold text-xl tracking-tight">Thank you!</div>
-                <p id="success-msg" class="mt-2 text-slate-600 text-sm"></p>
-                <button onclick="closePurchaseModal(true)" class="mt-6 px-6 py-2 text-sm font-semibold border border-slate-200 hover:bg-slate-50 rounded-2xl">Close</button>
             </div>
         </div>
     </div>
@@ -486,16 +491,14 @@
 
             const form = document.getElementById('purchase-form');
             const success = document.getElementById('purchase-success');
-            const msg = document.getElementById('success-msg');
 
-            let successText = `We've emailed your purchase details and access link to ${email}. (This is a demo — no payment was processed.)`;
+            let isReport = (currentProduct === 'report' || currentProduct === 'premium' || currentProduct === 'bundle');
 
             if (currentProduct === 'guide') {
-                successText = `Thanks ${name.split(' ')[0]}! Your Survival Guide PDF link has been sent to ${email}. Check your inbox (demo).`;
-            } else if (currentProduct === 'report' || currentProduct === 'premium' || currentProduct === 'bundle') {
-                const vinNote = vin ? ` for VIN ${vin.toUpperCase()}` : '';
-                successText = `Thanks ${name.split(' ')[0]}! Your report${vinNote} has been submitted for manual review. It will appear in the admin dashboard shortly. (Demo — real delivery coming soon. Open /admin/ in another tab to review.)`;
-
+                // For guide, keep simple success or hide
+                form.style.display = 'none';
+                success.style.display = 'block'; // show the new one? but for guide maybe different, but use the provided
+            } else if (isReport) {
                 // === INTEGRATION: Create pending report for Admin Dashboard ===
                 try {
                     let existingReports = [];
@@ -528,9 +531,21 @@
             }
 
             form.style.display = 'none';
-            success.classList.remove('hidden');
-            msg.textContent = successText;
+            success.style.display = 'block';
+            const successMsg = document.getElementById('successMessage');
+            if (successMsg) successMsg.style.display = 'block';
         }
+
+        function openAdminDashboard() {
+            window.open('/admin/index.html', '_blank');
+        }
+
+        // Auto-refresh every 10 seconds (for demo sync between public and admin)
+        setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                location.reload();
+            }
+        }, 10000);
 
         document.addEventListener('DOMContentLoaded', () => {
             initMobileMenu();
