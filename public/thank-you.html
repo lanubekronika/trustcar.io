@@ -112,6 +112,18 @@
         <div class="mt-8 text-xs text-slate-500 max-w-xs mx-auto">
             Once you have the facts from our report, consider our recommended partners for warranties, financing, and inspections.
         </div>
+
+        <!-- Post-purchase lead magnet for steady nurture / recurring -->
+        <div class="mt-10 max-w-md mx-auto">
+            <div class="bg-white border border-slate-200 rounded-3xl p-5">
+                <div class="text-xs font-semibold tracking-widest text-[#0553F0]">FREE FOR FUTURE BUYS</div>
+                <div class="font-semibold">Get the Private Seller Red Flags Checklist (PDF) + buyer alerts</div>
+                <form id="thankyou-lead-form" onsubmit="submitThankYouLead(event)" class="mt-3 flex gap-2">
+                    <input type="email" id="thankyou-lead-email" placeholder="your@email.com" required class="flex-1 px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:border-[#0553F0]">
+                    <button type="submit" class="px-4 py-2 bg-[#0553F0] text-white font-semibold rounded-2xl text-sm">Send</button>
+                </form>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -165,6 +177,18 @@
         document.addEventListener('DOMContentLoaded', () => {
             initMobileMenu();
         });
+
+        function submitThankYouLead(e) {
+            e.preventDefault();
+            const email = document.getElementById('thankyou-lead-email').value;
+            const container = document.getElementById('thankyou-lead-form').parentElement;
+            container.innerHTML = '<div class="text-sm"><span class="font-semibold">Checklist on its way.</span> You are now on the list for negotiation tools and membership updates.</div>';
+            try {
+                let leads = JSON.parse(localStorage.getItem('trustcar_leads') || '[]');
+                leads.unshift({ email: email, source: 'thank-you-lead', date: new Date().toISOString().split('T')[0] });
+                localStorage.setItem('trustcar_leads', JSON.stringify(leads));
+            } catch (_) {}
+        }
     </script>
 </body>
 </html>
