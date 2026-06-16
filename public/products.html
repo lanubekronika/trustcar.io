@@ -280,21 +280,7 @@
             </div>
 
             <div class="mt-8 text-center text-sm text-slate-600">
-                Most serious buyers start with the $29 Survival Guide for the full system or go straight to the $89 Premium for our team's personal review on the specific car. The $99 bundle is the smartest and most recommended choice by far — it combines the complete playbook with our team's expert analysis for the car you're looking at right now (save $19 vs buying separately), at a price that makes it the no-brainer decision.
-            </div>
-
-            <!-- Bundle (promoted as main recommended) -->
-            <div class="mt-10 max-w-2xl mx-auto bg-blue-50 border-2 border-[#0A66C2] rounded-3xl p-8 relative">
-                <div class="absolute -top-3 right-6 bg-[#0A66C2] text-white text-xs font-semibold px-3 py-1 rounded-2xl shadow-sm">THE SMARTEST CHOICE FOR MOST BUYERS</div>
-                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
-                    <div class="flex-1">
-                        <div class="font-semibold">The Complete System: Guide + Premium Review.</div>
-                        <div class="text-sm text-slate-600 mt-1">Get the full $29 Survival Guide (the playbook with scripts, checklists, and real claims patterns our team uses) plus the $89 Premium Reviewed Report with our team's personal analysis, the max price we would pay, and direct support for the exact car you're considering. The $99 bundle gives you the complete long-term system and the expert review on this VIN — for significantly less than buying them separately (save $19). This is the combination our team recommends for buyers who want to stop getting taken on this purchase and be prepared for the next one. Most people who buy the bundle never look back.</div>
-                    </div>
-                    <button onclick="openPurchaseModal('bundle')" class="px-6 py-3 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl whitespace-nowrap">
-                        Get the Bundle — $99
-                    </button>
-                </div>
+                Most buyers should start with the $29 Survival Guide to master the system. For the specific car you're serious about, the $89 Premium is our strongest offer — it includes the full playbook plus our team's personal review, the max price we would pay, and direct support. For ongoing protection on every purchase, step up to the Pro subscription.
             </div>
 
             <!-- Subscription as natural extension -->
@@ -548,7 +534,6 @@
         const products = {
             guide: { name: "The Used Car Buyer's Survival Guide", price: "$29", type: "DIGITAL DOWNLOAD", desc: "68-page no-BS guide with checklists and scripts. Instant access." },
             premium: { name: "Premium Reviewed Report", price: "$89", type: "HUMAN EXPERT REVIEW", desc: "Full playbook + our team's personal analysis and max offer price." },
-            bundle: { name: "Survival Guide + Premium Report Bundle", price: "$99", type: "BUNDLE", desc: "Best value — get both the guide and our team's premium review." },
             pro: { name: "TrustCar Pro", price: "$19/mo", type: "MONTHLY PROTECTION", desc: "Unlimited reports + priority team reviews + monthly briefings from our experts." }
         };
 
@@ -573,7 +558,7 @@
             document.getElementById('modal-desc').textContent = p.desc;
 
             const vinField = document.getElementById('vin-field');
-            if (productKey === 'premium' || productKey === 'bundle') {
+            if (productKey === 'premium') {
                 vinField.classList.remove('hidden');
             } else {
                 vinField.classList.add('hidden');
@@ -612,14 +597,14 @@
             const form = document.getElementById('purchase-form');
             const success = document.getElementById('purchase-success');
 
-            let isPremiumOrBundle = (currentProduct === 'premium' || currentProduct === 'bundle');
+            let isPremium = (currentProduct === 'premium');
             let isPro = (currentProduct === 'pro');
 
             if (currentProduct === 'guide') {
                 // For guide, keep simple success or hide
                 form.style.display = 'none';
                 success.style.display = 'block'; // show the new one? but for guide maybe different, but use the provided
-            } else if (isPremiumOrBundle) {
+            } else if (isPremium) {
                 // === INTEGRATION: Create pending report for Admin Dashboard ===
                 try {
                     let existingReports = [];
