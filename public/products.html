@@ -283,18 +283,84 @@
                 Most buyers should start with the $29 Survival Guide to master the system. For the specific car you're serious about, the $89 Premium is our strongest offer — it includes the full playbook plus our team's personal review, the max price we would pay, and direct support. For ongoing protection on every purchase, step up to the Pro subscription.
             </div>
 
-            <!-- Subscription as natural extension -->
-            <div class="mt-10 max-w-2xl mx-auto border-2 border-slate-900 bg-slate-900 text-white rounded-3xl p-8 relative">
-                <div class="absolute -top-3 right-6 bg-emerald-600 text-white text-xs font-semibold px-3 py-1 rounded-2xl shadow-sm">FOR ONGOING PROTECTION</div>
+            <!-- Bundle (promoted as main recommended) -->
+            <div class="mt-10 max-w-2xl mx-auto bg-blue-50 border-2 border-[#0A66C2] rounded-3xl p-8 relative">
+                <div class="absolute -top-3 right-6 bg-[#0A66C2] text-white text-xs font-semibold px-3 py-1 rounded-2xl shadow-sm">THE SMARTEST CHOICE FOR MOST BUYERS</div>
                 <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
                     <div class="flex-1">
-                        <div class="font-semibold text-lg">TrustCar Pro — Win at every purchase, not just this one.</div>
-                        <div class="text-sm text-white/80 mt-1">The guide and premium protect you on one car. Pro gives you unlimited access to our reports, priority team reviews at a discount, monthly briefings on what is actually happening in the used car market, and every future guide and tool we release. $19/month or $149/year (save two months). This is how you stop playing defense and start buying used cars with confidence for good — one purchase at a time, forever.</div>
-                        <div class="mt-3 text-xs text-white/60">Cancel anytime. 30-day guarantee on the annual plan.</div>
+                        <div class="font-semibold">The Complete System: Guide + Premium Review.</div>
+                        <div class="text-sm text-slate-600 mt-1">Get the full $29 Survival Guide (the playbook with scripts, checklists, and real claims patterns our team uses) plus the $89 Premium Reviewed Report with our team's personal analysis, the max price we would pay, and direct support for the exact car you're considering. The $99 bundle gives you the complete long-term system and the expert review on this VIN — for significantly less than buying them separately (save $19). This is the combination our team recommends for buyers who want to stop getting taken on this purchase and be prepared for the next one. Most people who buy the bundle never look back.</div>
                     </div>
-                    <button onclick="openPurchaseModal('pro')" class="px-6 py-3 bg-white text-slate-900 text-sm font-semibold rounded-2xl whitespace-nowrap hover:bg-slate-100 transition-colors">
-                        Get Pro — $19/mo or $149/yr
+                    <button onclick="openPurchaseModal('bundle')" class="px-6 py-3 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl whitespace-nowrap">
+                        Get the Bundle — $99
                     </button>
+                </div>
+            </div>
+
+            <!-- Subscription as Ongoing Protection Membership -->
+            <div class="mt-10 max-w-2xl mx-auto border-2 border-[#0A66C2] bg-white rounded-3xl p-8 relative">
+                <div class="absolute -top-3 right-6 bg-[#0A66C2] text-white text-xs font-semibold px-3 py-1 rounded-2xl shadow-sm">ONGOING PROTECTION MEMBERSHIP</div>
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                    <div class="flex-1">
+                        <div class="font-semibold text-lg">Ongoing Protection Membership — Lifetime Confidence, Not Just One Deal.</div>
+                        <div class="text-sm text-slate-600 mt-1">The $89 one-time Premium Report protects you on this one car with our team's full analysis and max offer price. The Ongoing Protection Membership is different — it's a premium ongoing service for buyers who want to protect every purchase for life.
+
+$39 per month or $399 per year (save $69).
+
+Unlimited reports on any VIN • Priority team reviews at no extra cost • Monthly market briefings from our experts • All future guides and tools included • Direct priority support.
+
+This is not a cheaper alternative to the one-time report. It is the membership for serious buyers who never want to get taken again.</div>
+                    </div>
+                    <button onclick="openPurchaseModal('pro')" class="px-6 py-3 bg-[#0A66C2] hover:bg-[#084D96] text-white text-sm font-semibold rounded-2xl whitespace-nowrap">
+                        Get Membership — $39/mo or $399/yr
+                    </button>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="mt-6">
+                    <h4 class="font-semibold text-sm mb-3">One-time $89 Premium Report vs. Ongoing Protection Membership</h4>
+                    <table class="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+                        <thead>
+                            <tr class="bg-slate-100">
+                                <th class="px-4 py-2 text-left">Feature</th>
+                                <th class="px-4 py-2 text-center">$89 One-time Report</th>
+                                <th class="px-4 py-2 text-center">Membership $39/mo or $399/yr</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-t">
+                                <td class="px-4 py-2">For this specific car</td>
+                                <td class="px-4 py-2 text-center">✓ Full analysis + max offer</td>
+                                <td class="px-4 py-2 text-center">✓ Full analysis + max offer</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="px-4 py-2">Unlimited reports on any VIN</td>
+                                <td class="px-4 py-2 text-center">✗ Only this car</td>
+                                <td class="px-4 py-2 text-center">✓ Yes</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="px-4 py-2">Priority human reviews</td>
+                                <td class="px-4 py-2 text-center">✗ One-time only</td>
+                                <td class="px-4 py-2 text-center">✓ Priority access</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="px-4 py-2">Monthly market briefings</td>
+                                <td class="px-4 py-2 text-center">✗ No</td>
+                                <td class="px-4 py-2 text-center">✓ Yes</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="px-4 py-2">All future guides & tools</td>
+                                <td class="px-4 py-2 text-center">✗ No</td>
+                                <td class="px-4 py-2 text-center">✓ Included</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="px-4 py-2">Direct support</td>
+                                <td class="px-4 py-2 text-center">✓ One-time email access</td>
+                                <td class="px-4 py-2 text-center">✓ Ongoing priority</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="mt-2 text-xs text-slate-500">The one-time report is for when you need protection on this one car. The membership is for buyers who want to protect every car they buy for the rest of their lives.</p>
                 </div>
             </div>
 
@@ -534,7 +600,8 @@
         const products = {
             guide: { name: "The Used Car Buyer's Survival Guide", price: "$29", type: "DIGITAL DOWNLOAD", desc: "68-page no-BS guide with checklists and scripts. Instant access." },
             premium: { name: "Premium Reviewed Report", price: "$89", type: "HUMAN EXPERT REVIEW", desc: "Full playbook + our team's personal analysis and max offer price." },
-            pro: { name: "TrustCar Pro", price: "$19/mo", type: "MONTHLY PROTECTION", desc: "Unlimited reports + priority team reviews + monthly briefings from our experts." }
+            bundle: { name: "Survival Guide + Premium Report Bundle", price: "$99", type: "BUNDLE", desc: "Best value — get both the guide and our team's premium review for one car." },
+            pro: { name: "Ongoing Protection Membership", price: "$39/mo", type: "ONGOING PROTECTION MEMBERSHIP", desc: "Unlimited reports + priority reviews + monthly briefings. Premium ongoing service." }
         };
 
         function initMobileMenu() {
@@ -558,7 +625,7 @@
             document.getElementById('modal-desc').textContent = p.desc;
 
             const vinField = document.getElementById('vin-field');
-            if (productKey === 'premium') {
+            if (productKey === 'premium' || productKey === 'bundle') {
                 vinField.classList.remove('hidden');
             } else {
                 vinField.classList.add('hidden');
@@ -597,14 +664,14 @@
             const form = document.getElementById('purchase-form');
             const success = document.getElementById('purchase-success');
 
-            let isPremium = (currentProduct === 'premium');
+            let isPremiumOrBundle = (currentProduct === 'premium' || currentProduct === 'bundle');
             let isPro = (currentProduct === 'pro');
 
             if (currentProduct === 'guide') {
                 // For guide, keep simple success or hide
                 form.style.display = 'none';
                 success.style.display = 'block'; // show the new one? but for guide maybe different, but use the provided
-            } else if (isPremium) {
+            } else if (isPremiumOrBundle) {
                 // === INTEGRATION: Create pending report for Admin Dashboard ===
                 try {
                     let existingReports = [];
