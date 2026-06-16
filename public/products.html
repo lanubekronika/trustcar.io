@@ -501,14 +501,14 @@
             <div id="purchase-success" class="hidden px-8 py-8 text-center border-t">
                 <div id="successMessage" class="success-modal" style="display:none;">
                     <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">Purchase Successful!</h3>
-                    <p style="margin-bottom:0.25rem;">Your report request has been received.</p>
-                    <p style="margin-bottom:0.75rem;"><strong>It is now in the review queue.</strong></p>
+                    <p style="margin-bottom:0.25rem;">Thank you. Your order is confirmed.</p>
+                    <p style="margin-bottom:0.75rem;" id="success-detail">For reports: it is now in the review queue.</p>
                     
                     <button onclick="openAdminDashboard()" style="background:#0553F0; color:white; padding:0.9rem 1.8rem; border:none; border-radius:10px; font-weight:700; margin:1rem 0; cursor:pointer;">
-                        → Open Admin Dashboard
+                        → Open Admin Dashboard (for reports)
                     </button>
                     
-                    <p style="font-size:0.9rem; color:#64748b; margin-top:1rem;">You can review and approve it from the admin panel.</p>
+                    <p style="font-size:0.9rem; color:#64748b; margin-top:1rem;">Pro members: check your email for login details in the demo.</p>
                 </div>
             </div>
         </div>
@@ -622,6 +622,7 @@
             const success = document.getElementById('purchase-success');
 
             let isReport = (currentProduct === 'report' || currentProduct === 'premium' || currentProduct === 'bundle');
+            let isPro = (currentProduct === 'pro');
 
             if (currentProduct === 'guide') {
                 // For guide, keep simple success or hide
