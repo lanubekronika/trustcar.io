@@ -3,180 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog — TrustCar.io</title>
-    <meta name="description" content="Straight talk used car buying advice from a former service manager and warranty claims specialist. No ads, no hype.">
+    <title>Blog &amp; Resources — Expert Used Car Buying Advice | TrustCar.io</title>
+    <meta name="description" content="Actionable guides on reliability red flags, negotiation tactics, and real buyer stories. Learn how to get the expert second opinion before you buy.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600&amp;display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
         body {
-            font-family: 'Inter', system_ui, sans-serif;
+            font-family: 'Nunito', system_ui, sans-serif;
         }
         
+        .font-display {
+            font-family: 'Space Grotesk', 'Nunito', sans-serif;
+            font-weight: 600;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0553F0 0%, #0442C0 100%);
+        }
+
         .nav-link {
             transition: color 0.2s ease;
         }
         
         .nav-link:hover {
-            color: #0A66C2;
+            color: #0553F0;
         }
 
-        .section-header {
-            font-size: 2.25rem;
-            line-height: 1.1;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-
-        .article-card {
+        .modern-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .article-card:hover {
+        .modern-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .footer-link {
+            color: #94A3B8;
+            transition: color 0.2s;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+
+        .category-tag {
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
-    <!-- Header -->
+    <!-- Header (consistent) -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div class="max-w-screen-xl mx-auto">
             <div class="px-6 py-5 flex items-center justify-between">
                 <div class="flex items-center gap-x-3">
                     <div class="flex items-center gap-x-2">
-                        <div class="w-9 h-9 bg-[#0A66C2] rounded-xl flex items-center justify-center">
+                        <div class="w-9 h-9 bg-[#0553F0] rounded-xl flex items-center justify-center">
                             <span class="text-white font-bold text-2xl tracking-tighter">T</span>
                         </div>
                         <div>
                             <span class="font-semibold text-2xl tracking-tighter">TrustCar</span>
-                            <span class="font-bold text-[#0A66C2] text-2xl tracking-tighter">.io</span>
+                            <span class="font-bold text-[#0553F0] text-2xl tracking-tighter">.io</span>
                         </div>
                     </div>
                 </div>
 
                 <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
-                    <a href="/" class="nav-link text-slate-700">Home</a>
-                    <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
-                    <a href="/blog.html" class="nav-link text-[#0A66C2] font-semibold">Blog</a>
-                    <a href="/products.html" class="nav-link text-slate-700">Products</a>
-                    <a href="/about.html" class="nav-link text-slate-700">About</a>
-                    <a href="/contact.html" class="nav-link text-slate-700">Contact</a>
+                    <a href="/" class="nav-link text-slate-700 hover:text-slate-900">Home</a>
+                    <a href="/how-it-works.html" class="nav-link text-slate-700 hover:text-slate-900">How it works</a>
+                    <a href="/products.html" class="nav-link text-slate-700 hover:text-slate-900">Products</a>
+                    <a href="/blog.html" class="nav-link text-[#0553F0] font-semibold">Blog</a>
+                    <a href="/about.html" class="nav-link text-slate-700 hover:text-slate-900">About</a>
+                    <a href="/contact.html" class="nav-link text-slate-700 hover:text-slate-900">Contact</a>
                 </nav>
 
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600">
+                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600 hover:text-slate-900">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 px-6 py-4">
             <nav class="flex flex-col gap-y-1 text-sm font-medium">
                 <a href="/" class="py-2.5 px-1 text-slate-700">Home</a>
                 <a href="/how-it-works.html" class="py-2.5 px-1 text-slate-700">How it works</a>
-                <a href="/blog.html" class="py-2.5 px-1 text-slate-700">Blog</a>
                 <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
+                <a href="/blog.html" class="py-2.5 px-1 text-[#0553F0] font-semibold">Blog</a>
                 <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
                 <a href="/contact.html" class="py-2.5 px-1 text-slate-700">Contact</a>
             </nav>
         </div>
     </header>
 
-    <main class="max-w-screen-xl mx-auto px-6 py-16">
-        <div class="max-w-3xl mx-auto">
-            <h1 class="section-header">Used Car Buying Advice From Someone Who's Seen It All</h1>
-            <p class="mt-4 text-xl text-slate-600">No ads. No sponsored content. Just straight talk from a former service manager and warranty claims specialist.</p>
+    <main>
+        <!-- Hero / Header -->
+        <div class="max-w-screen-xl mx-auto px-6 pt-12 pb-8">
+            <div class="max-w-3xl">
+                <h1 class="text-4xl md:text-5xl font-semibold tracking-tighter">Blog &amp; Resources</h1>
+                <p class="mt-3 text-xl text-slate-600">Straight talk on used cars: reliability red flags, negotiation tactics, real buyer mistakes, and how to protect your money with an expert second opinion.</p>
+            </div>
+            <div class="mt-4">
+                <a href="/products.html" class="inline-flex items-center px-5 py-2.5 bg-[#0553F0] text-white text-sm font-semibold rounded-2xl hover:bg-[#0442C0] transition-colors">
+                    Get the $89 Expert Second Opinion Report →
+                </a>
+            </div>
         </div>
 
-        <div class="mt-12 max-w-3xl mx-auto space-y-6">
-            
-            <!-- Article 1 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">10 Things to Check Before Buying a Used Car on Facebook Marketplace</h3>
-                <p class="mt-1 text-xs text-slate-500">June 15, 2026</p>
-                <p class="mt-3 text-slate-600">The exact checklist a former service manager and warranty claims specialist uses to avoid curbstoners, flood cars, and overpriced lemons on Marketplace.</p>
-                <a href="/blog/facebook-marketplace-checklist.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
+        <!-- Categories -->
+        <div class="max-w-screen-xl mx-auto px-6 pb-8">
+            <div class="flex flex-wrap gap-2">
+                <a href="#red-flags" class="category-tag bg-red-100 text-red-700 hover:bg-red-200">Reliability Red Flags</a>
+                <a href="#should-you-buy" class="category-tag bg-emerald-100 text-emerald-700 hover:bg-emerald-200">Should You Buy This Car?</a>
+                <a href="#buying-guides" class="category-tag bg-blue-100 text-blue-700 hover:bg-blue-200">Buying Guides</a>
+            </div>
+        </div>
+
+        <!-- Article Grid -->
+        <div class="max-w-screen-xl mx-auto px-6 pb-12">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Article 1 -->
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden modern-card">
+                    <div class="h-40 bg-slate-100 flex items-center justify-center">
+                        <i class="fa-solid fa-exclamation-triangle text-4xl text-red-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <span class="category-tag bg-red-100 text-red-700">Reliability Red Flags</span>
+                        <h3 class="mt-3 text-xl font-semibold tracking-tight">Seller Red Flags That Almost Always Mean Expensive Problems</h3>
+                        <p class="mt-2 text-sm text-slate-600 line-clamp-3">The exact phrases and behaviors our team has seen in thousands of claims that signal the seller is hiding something serious. Spot these before you waste time or money.</p>
+                        <div class="mt-4 flex items-center justify-between text-xs text-slate-500">
+                            <span>Feb 12, 2026 • 8 min read</span>
+                            <a href="/blog/seller-red-flags.html" class="text-[#0553F0] font-medium hover:underline">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 2 -->
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden modern-card">
+                    <div class="h-40 bg-slate-100 flex items-center justify-center">
+                        <i class="fa-solid fa-car text-4xl text-emerald-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <span class="category-tag bg-emerald-100 text-emerald-700">Should You Buy This Car?</span>
+                        <h3 class="mt-3 text-xl font-semibold tracking-tight">Is a $5,000 Used Car Ever Worth It? The Real Math Most Buyers Ignore</h3>
+                        <p class="mt-2 text-sm text-slate-600 line-clamp-3">Low price tags are seductive. Here’s what actually happens to most $5k cars within 12 months — and the one calculation you must run before saying yes.</p>
+                        <div class="mt-4 flex items-center justify-between text-xs text-slate-500">
+                            <span>Feb 5, 2026 • 11 min read</span>
+                            <a href="/blog/is-a-5000-dollar-used-car-worth-it.html" class="text-[#0553F0] font-medium hover:underline">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 3 -->
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden modern-card">
+                    <div class="h-40 bg-slate-100 flex items-center justify-center">
+                        <i class="fa-solid fa-handshake text-4xl text-blue-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <span class="category-tag bg-blue-100 text-blue-700">Buying Guides</span>
+                        <h3 class="mt-3 text-xl font-semibold tracking-tight">How to Negotiate a Used Car Like Someone Who Has Done This Before</h3>
+                        <p class="mt-2 text-sm text-slate-600 line-clamp-3">Word-for-word scripts, the exact moment to stop talking, and the data-backed leverage points that consistently move the price in your favor.</p>
+                        <div class="mt-4 flex items-center justify-between text-xs text-slate-500">
+                            <span>Jan 28, 2026 • 14 min read</span>
+                            <a href="/blog/how-to-negotiate-used-car.html" class="text-[#0553F0] font-medium hover:underline">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 4 -->
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden modern-card">
+                    <div class="h-40 bg-slate-100 flex items-center justify-center">
+                        <i class="fa-solid fa-water text-4xl text-red-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <span class="category-tag bg-red-100 text-red-700">Reliability Red Flags</span>
+                        <h3 class="mt-3 text-xl font-semibold tracking-tight">How Dealers Hide Flood Damage (And the 4 Checks That Expose It)</h3>
+                        <p class="mt-2 text-sm text-slate-600 line-clamp-3">The methods we’ve seen used to disguise water damage and the specific data points and questions that reveal the truth before you sign.</p>
+                        <div class="mt-4 flex items-center justify-between text-xs text-slate-500">
+                            <span>Jan 20, 2026 • 9 min read</span>
+                            <a href="/blog/how-dealers-hide-flood-damage.html" class="text-[#0553F0] font-medium hover:underline">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 5 -->
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden modern-card">
+                    <div class="h-40 bg-slate-100 flex items-center justify-center">
+                        <i class="fa-solid fa-balance-scale text-4xl text-emerald-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <span class="category-tag bg-emerald-100 text-emerald-700">Should You Buy This Car?</span>
+                        <h3 class="mt-3 text-xl font-semibold tracking-tight">Lemon Law Buybacks: Smart Deal or Expensive Headache?</h3>
+                        <p class="mt-2 text-sm text-slate-600 line-clamp-3">What the paperwork really tells you, why some buybacks are fine, and the red flags that mean this “bargain” will cost you far more than it saves.</p>
+                        <div class="mt-4 flex items-center justify-between text-xs text-slate-500">
+                            <span>Jan 15, 2026 • 7 min read</span>
+                            <a href="/blog/lemon-law-buybacks.html" class="text-[#0553F0] font-medium hover:underline">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article 6 -->
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden modern-card">
+                    <div class="h-40 bg-slate-100 flex items-center justify-center">
+                        <i class="fa-solid fa-file-contract text-4xl text-blue-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <span class="category-tag bg-blue-100 text-blue-700">Buying Guides</span>
+                        <h3 class="mt-3 text-xl font-semibold tracking-tight">The Facebook Marketplace Used Car Checklist That Actually Works</h3>
+                        <p class="mt-2 text-sm text-slate-600 line-clamp-3">A practical, no-fluff checklist our team wishes every private-party buyer used before driving across town to look at a car.</p>
+                        <div class="mt-4 flex items-center justify-between text-xs text-slate-500">
+                            <span>Jan 8, 2026 • 10 min read</span>
+                            <a href="/blog/facebook-marketplace-checklist.html" class="text-[#0553F0] font-medium hover:underline">Read →</a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Article 2 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">How Dealers Hide Flood Damage — And How to Spot It Before You Buy</h3>
-                <p class="mt-1 text-xs text-slate-500">June 12, 2026</p>
-                <p class="mt-3 text-slate-600">Title washing, rust spots, and the 7 physical signs that a "clean" Carfax might be hiding flood damage.</p>
-                <a href="/blog/how-dealers-hide-flood-damage.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
+            <!-- Pagination -->
+            <div class="mt-10 flex justify-center gap-2 text-sm">
+                <span class="px-3 py-1.5 rounded-xl bg-white border text-slate-400">Previous</span>
+                <span class="px-3 py-1.5 rounded-xl bg-[#0553F0] text-white font-medium">1</span>
+                <a href="#" class="px-3 py-1.5 rounded-xl bg-white border hover:bg-slate-50">2</a>
+                <a href="#" class="px-3 py-1.5 rounded-xl bg-white border hover:bg-slate-50">3</a>
+                <a href="#" class="px-3 py-1.5 rounded-xl bg-white border hover:bg-slate-50">Next →</a>
             </div>
+        </div>
 
-            <!-- Article 3 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">Is a $5,000 Used Car Ever Worth It? The Honest Answer.</h3>
-                <p class="mt-1 text-xs text-slate-500">June 10, 2026</p>
-                <p class="mt-3 text-slate-600">What $5,000 actually buys you in 2026, which models are gems, which are money pits, and the one thing that makes the difference.</p>
-                <a href="/blog/is-a-5000-dollar-used-car-worth-it.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
+        <!-- Strong CTA Bar -->
+        <div class="bg-[#0553F0] text-white">
+            <div class="max-w-screen-xl mx-auto px-6 py-10 text-center">
+                <h2 class="text-2xl font-semibold tracking-tight">Don’t just read about the risks. Get the expert second opinion on the car you’re actually looking at.</h2>
+                <p class="mt-2 text-white/80">The $89 Premium Report delivers our team’s data synthesis, the max price we would pay, and negotiation leverage — in 24 hours or less.</p>
+                <a href="/products.html" class="mt-5 inline-flex px-7 py-3 bg-white text-[#0553F0] font-semibold rounded-2xl hover:bg-slate-100 transition-colors">Get the $89 Report Now</a>
+                <p class="mt-3 text-xs text-white/70">30-day money-back guarantee • Works on any VIN</p>
             </div>
-
-            <!-- Article 4 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">What a Carfax Report Won't Tell You (And What Actually Will)</h3>
-                <p class="mt-1 text-xs text-slate-500">June 7, 2026</p>
-                <p class="mt-3 text-slate-600">The gaps in Carfax data, why "Clean Carfax" is marketing speak, and what you should check instead.</p>
-                <a href="/blog/what-carfax-wont-tell-you.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
-            </div>
-
-            <!-- Article 5 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">Extended Warranty Red Flags Every Used Car Buyer Should Know</h3>
-                <p class="mt-1 text-xs text-slate-500">June 4, 2026</p>
-                <p class="mt-3 text-slate-600">The fine print that turns a "peace of mind" purchase into an expensive lesson.</p>
-                <a href="/blog/extended-warranty-red-flags.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
-            </div>
-
-            <!-- Article 6 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">How to Negotiate a Used Car Like a Pro (Word-for-Word Scripts)</h3>
-                <p class="mt-1 text-xs text-slate-500">June 1, 2026</p>
-                <p class="mt-3 text-slate-600">Exact negotiation scripts and tactics used by insiders to get the best price every time.</p>
-                <a href="/blog/how-to-negotiate-used-car.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
-            </div>
-
-            <!-- Article 7 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">Title Washing Scams: How Crooks Clean Bad Titles and How to Spot Them</h3>
-                <p class="mt-1 text-xs text-slate-500">May 28, 2026</p>
-                <p class="mt-3 text-slate-600">Learn how flood and salvage cars get clean titles across state lines and the red flags to watch for.</p>
-                <a href="/blog/title-washing-scams.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
-            </div>
-
-            <!-- Article 8 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">The Ultimate Pre-Purchase Inspection Checklist for Used Cars</h3>
-                <p class="mt-1 text-xs text-slate-500">May 25, 2026</p>
-                <p class="mt-3 text-slate-600">The exact 20-point checklist a former service manager and warranty claims specialist uses before buying any used vehicle.</p>
-                <a href="/blog/pre-purchase-inspection-checklist.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
-            </div>
-
-            <!-- Article 9 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">7 Seller Behaviors That Scream 'Walk Away' from a Used Car Deal</h3>
-                <p class="mt-1 text-xs text-slate-500">May 22, 2026</p>
-                <p class="mt-3 text-slate-600">Vague answers, pressure tactics, and other warning signs that experienced buyers never ignore.</p>
-                <a href="/blog/seller-red-flags.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
-            </div>
-
-            <!-- Article 10 -->
-            <div class="article-card bg-white border border-slate-100 rounded-3xl p-8">
-                <h3 class="font-semibold text-2xl tracking-tight">Lemon Law Buybacks and How to Avoid Buying a 'Lemon' Used Car</h3>
-                <p class="mt-1 text-xs text-slate-500">May 20, 2026</p>
-                <p class="mt-3 text-slate-600">What lemon law buybacks are, how they end up on the market, and how to detect them before you buy.</p>
-                <a href="/blog/lemon-law-buybacks.html" class="inline-block mt-4 text-[#0A66C2] font-semibold">Read more →</a>
-            </div>
-
         </div>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer (consistent) -->
     <footer class="bg-slate-900 text-slate-400 text-sm">
         <div class="max-w-screen-xl mx-auto px-6 py-10">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-y-6">
@@ -187,18 +257,20 @@
                         </div>
                         <span class="font-semibold text-white">TrustCar.io</span>
                     </div>
-                    <div class="mt-1 text-xs">Smart tools for used car buyers.</div>
+                    <div class="mt-1 text-xs">Expert second opinions and negotiation leverage for used car buyers.</div>
                 </div>
                 
                 <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
-                    <a href="/" class="hover:text-white transition-colors">Home</a>
-                    <a href="/how-it-works.html" class="hover:text-white transition-colors">How it works</a>
-                    <a href="/blog.html" class="hover:text-white transition-colors">Blog</a>
-                    <a href="/products.html" class="hover:text-white transition-colors">Products</a>
-                    <a href="/about.html" class="hover:text-white transition-colors">About</a>
-                    <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>
-                    <a href="/privacy.html" class="hover:text-white transition-colors">Privacy</a>
-                    <a href="/terms.html" class="hover:text-white transition-colors">Terms</a>
+                    <a href="/" class="footer-link hover:text-white">Home</a>
+                    <a href="/how-it-works.html" class="footer-link hover:text-white">How it works</a>
+                    <a href="/products.html" class="footer-link hover:text-white">Products</a>
+                    <a href="/blog.html" class="footer-link hover:text-white">Blog</a>
+                    <a href="/faq.html" class="footer-link hover:text-white">FAQ</a>
+                    <a href="/sample-report.html" class="footer-link hover:text-white">Sample Report</a>
+                    <a href="/about.html" class="footer-link hover:text-white">About</a>
+                    <a href="/contact.html" class="footer-link hover:text-white">Contact</a>
+                    <a href="/privacy-policy.html" class="footer-link hover:text-white">Privacy</a>
+                    <a href="/terms-of-service.html" class="footer-link hover:text-white">Terms</a>
                 </div>
             </div>
             
@@ -214,7 +286,7 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        function initMobileMenu() {
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileBtn && mobileMenu) {
@@ -222,6 +294,9 @@
                     mobileMenu.classList.toggle('hidden');
                 });
             }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            initMobileMenu();
         });
     </script>
 </body>
