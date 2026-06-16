@@ -2,14 +2,14 @@
   "outputDirectory": "public",
   "redirects": [
     {
-      "source": "/",
+      "source": "/:path*",
       "has": [
         {
           "type": "host",
           "value": "trustcar.io"
         }
       ],
-      "destination": "https://www.trustcar.io",
+      "destination": "https://www.trustcar.io/:path*",
       "permanent": true
     }
   ]
