@@ -119,10 +119,11 @@
 
         <!-- Categories -->
         <div class="max-w-screen-xl mx-auto px-6 pb-8">
-            <div class="flex flex-wrap gap-2">
-                <a href="#red-flags" class="category-tag bg-red-100 text-red-700 hover:bg-red-200">Reliability Red Flags</a>
-                <a href="#should-you-buy" class="category-tag bg-emerald-100 text-emerald-700 hover:bg-emerald-200">Should You Buy This Car?</a>
-                <a href="#buying-guides" class="category-tag bg-blue-100 text-blue-700 hover:bg-blue-200">Buying Guides</a>
+            <div class="flex flex-wrap gap-2 items-center">
+                <button data-category="" class="category-tag bg-slate-200 text-slate-700 hover:bg-slate-300 font-semibold active-filter">All</button>
+                <button data-category="Reliability Red Flags" class="category-tag bg-red-100 text-red-700 hover:bg-red-200">Reliability Red Flags</button>
+                <button data-category="Should You Buy This Car?" class="category-tag bg-emerald-100 text-emerald-700 hover:bg-emerald-200">Should You Buy This Car?</button>
+                <button data-category="Buying Guides" class="category-tag bg-blue-100 text-blue-700 hover:bg-blue-200">Buying Guides</button>
             </div>
         </div>
 
@@ -313,19 +314,58 @@
             }
         ];
 
+        let currentFilter = null;
         let currentPage = 1;
         const itemsPerPage = 6;
+
+        function getFilteredArticles() {
+            if (!currentFilter) return articles;
+            return articles.filter(a => a.category === currentFilter);
+        }
+
+        function updateActiveFilter() {
+            document.querySelectorAll('[data-category]').forEach(btn => {
+                const cat = btn.getAttribute('data-category');
+                const isActive = (currentFilter === null && cat === '') || (cat === currentFilter);
+                if (isActive) {
+                    btn.classList.add('ring-2', 'ring-[#0553F0]', 'ring-offset-2');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-[#0553F0]', 'ring-offset-2');
+                }
+            });
+        }
+
+        function setupCategoryFilters() {
+            document.querySelectorAll('[data-category]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cat = btn.getAttribute('data-category');
+                    if (cat === '') {
+                        currentFilter = null;
+                    } else if (currentFilter === cat) {
+                        currentFilter = null; // toggle off
+                    } else {
+                        currentFilter = cat;
+                    }
+                    currentPage = 1;
+                    renderArticles(currentPage);
+                    renderPagination(currentPage);
+                    updateActiveFilter();
+                });
+            });
+            updateActiveFilter();
+        }
 
         function renderArticles(page) {
             const grid = document.getElementById('articles-grid');
             grid.innerHTML = '';
 
+            const filtered = getFilteredArticles();
             const start = (page - 1) * itemsPerPage;
             const end = start + itemsPerPage;
-            const pageArticles = articles.slice(start, end);
+            const pageArticles = filtered.slice(start, end);
 
             if (pageArticles.length === 0) {
-                grid.innerHTML = '<p class="col-span-3 text-center text-slate-500 py-8">No more articles.</p>';
+                grid.innerHTML = '<p class="col-span-3 text-center text-slate-500 py-8">No articles found for this category.</p>';
                 return;
             }
 
@@ -354,7 +394,8 @@
             const pagination = document.getElementById('pagination');
             pagination.innerHTML = '';
 
-            const totalPages = Math.ceil(articles.length / itemsPerPage);
+            const filtered = getFilteredArticles();
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
             // Previous button
             if (page > 1) {
@@ -426,6 +467,7 @@
             // Initial render
             renderArticles(currentPage);
             renderPagination(currentPage);
+            setupCategoryFilters();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
