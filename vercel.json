@@ -12,5 +12,24 @@
       "destination": "https://www.trustcar.io/:path*",
       "permanent": true
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate, proxy-revalidate, no-cache"
+        },
+        {
+          "key": "Surrogate-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        }
+      ]
+    }
   ]
 }
