@@ -3,22 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products — TrustCar.io</title>
-    <meta name="description" content="Expert second opinion and negotiation leverage reports for used car buyers. Clear max price and talking points before you buy.">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <title>Offers — TrustCar.io</title>
+    <meta name="description" content="Get the expert second opinion and negotiation leverage you need before buying a used car. $89 Premium Report or the $99 Bundle with full leverage kit.">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600&amp;display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
         body {
-            font-family: 'Inter', system_ui, sans-serif;
+            font-family: 'Nunito', system-ui, sans-serif;
         }
         
         .font-display {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-family: 'Space Grotesk', 'Nunito', sans-serif;
             font-weight: 600;
         }
 
@@ -27,7 +23,7 @@
         }
         
         .nav-link:hover {
-            color: #0A66C2;
+            color: #0553F0;
         }
 
         .product-card {
@@ -37,12 +33,6 @@
         .product-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        }
-
-        .price {
-            font-size: 2.5rem;
-            line-height: 1;
-            font-weight: 700;
         }
 
         .section-header {
@@ -50,15 +40,6 @@
             line-height: 1.1;
             font-weight: 700;
             letter-spacing: -0.025em;
-        }
-
-        .product-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
 
         .modal {
@@ -77,66 +58,61 @@
             <div class="px-6 py-5 flex items-center justify-between">
                 <div class="flex items-center gap-x-3">
                     <div class="flex items-center gap-x-2">
-                        <div class="w-9 h-9 bg-[#0A66C2] rounded-xl flex items-center justify-center">
+                        <div class="w-9 h-9 bg-[#0553F0] rounded-xl flex items-center justify-center">
                             <span class="text-white font-bold text-2xl tracking-tighter">T</span>
                         </div>
                         <div>
                             <span class="font-semibold text-2xl tracking-tighter">TrustCar</span>
-                            <span class="font-bold text-[#0A66C2] text-2xl tracking-tighter">.io</span>
+                            <span class="font-bold text-[#0553F0] text-2xl tracking-tighter">.io</span>
                         </div>
                     </div>
                 </div>
 
                 <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
                     <a href="/" class="nav-link text-slate-700">Home</a>
-                    <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
-                    <a href="/products.html" class="nav-link text-[#0A66C2] font-semibold">Products</a>
+                    <a href="/products.html" class="nav-link text-[#0553F0] font-semibold">Offers</a>
                     <a href="/blog.html" class="nav-link text-slate-700">Blog</a>
                     <a href="/about.html" class="nav-link text-slate-700">About</a>
-                    <a href="/contact.html" class="nav-link text-slate-700">Contact</a>
+                    <a href="/faq.html" class="nav-link text-slate-700">FAQ</a>
                 </nav>
 
-                <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 px-6 py-4">
             <nav class="flex flex-col gap-y-1 text-sm font-medium">
                 <a href="/" class="py-2.5 px-1 text-slate-700">Home</a>
-                <a href="/how-it-works.html" class="py-2.5 px-1 text-slate-700">How it works</a>
-                <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
+                <a href="/products.html" class="py-2.5 px-1 text-slate-700">Offers</a>
                 <a href="/blog.html" class="py-2.5 px-1 text-slate-700">Blog</a>
                 <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
-                <a href="/contact.html" class="py-2.5 px-1 text-slate-700">Contact</a>
+                <a href="/faq.html" class="py-2.5 px-1 text-slate-700">FAQ</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <!-- Header -->
         <div class="max-w-screen-xl mx-auto px-6 pt-12 pb-8">
             <div class="max-w-2xl">
-                <div class="text-sm font-semibold tracking-widest text-[#0A66C2]">EXPERT SECOND OPINION + NEGOTIATION LEVERAGE</div>
-                <h1 class="mt-3 text-4xl md:text-5xl font-semibold tracking-tighter">The expert second opinion the seller already has — now on your side.</h1>
-                <p class="mt-4 text-xl text-slate-600">We synthesize title history, accidents, recalls, local market comps, and real-world claims data into a clear human expert second opinion. You get the highest price we would pay ourselves plus specific negotiation leverage — so you can negotiate with confidence or walk away before you lose real money. No mechanic visit required.</p>
-                <p class="mt-3"><a href="/assets/sample-report.pdf" class="text-sm text-[#0A66C2] hover:underline">See a sample report first →</a></p>
+                <div class="text-sm font-semibold tracking-widest text-[#0553F0]">THE TRUTH THE SELLER HOPES YOU NEVER SEE</div>
+                <h1 class="mt-3 text-4xl md:text-5xl font-semibold tracking-tighter">Expert second opinion and negotiation leverage for used car buyers.</h1>
+                <p class="mt-4 text-xl text-slate-600">We synthesize title history, accidents, recalls, local market comps, and real-world claims data into a clear human expert second opinion. You get the highest price we would pay ourselves plus specific negotiation leverage. No mechanic visit required.</p>
+                <p class="mt-3"><a href="/sample-report.html" class="text-sm text-[#0553F0] hover:underline">See a sample report first →</a></p>
             </div>
         </div>
 
-        <!-- Pricing Tiers -->
+        <!-- Pricing -->
         <div class="max-w-screen-xl mx-auto px-6 pb-16">
             <div class="grid md:grid-cols-2 gap-6">
                 
-                <!-- $89 Premium Human-Reviewed Report (Core / Hero) -->
+                <!-- $89 Core -->
                 <div class="product-card bg-white border border-slate-200 rounded-3xl p-8 flex flex-col">
                     <div>
                         <div class="font-semibold text-sm text-emerald-600 tracking-wider">HUMAN EXPERT SECOND OPINION</div>
-                        <h3 class="mt-2 text-2xl font-semibold tracking-tight">Premium Expert Second Opinion Report</h3>
-                        <div class="mt-1 text-slate-600 text-[15px]">Our team synthesizes the complete data on this specific VIN — title, accidents, recalls, service history, and real local sold prices for comparable cars in your area — and delivers a clear expert second opinion with the highest price we would pay ourselves.</div>
+                        <h3 class="mt-2 text-2xl font-semibold tracking-tight">Premium Report</h3>
+                        <div class="mt-1 text-slate-600 text-[15px]">Our team synthesizes the complete data on this specific VIN and delivers a clear expert second opinion with the highest price we would pay ourselves.</div>
                         
                         <div class="mt-7">
                             <span class="text-5xl font-semibold tracking-tighter">$89</span>
@@ -145,86 +121,84 @@
                         <ul class="mt-8 space-y-3 text-sm">
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Full data synthesis: title, accidents, recalls, ownership, and local market comparables pulled together into one clear picture</span>
+                                <span>Full data synthesis: title, accidents, recalls, ownership, and local market comparables</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Human expert second opinion — reviewed by former technicians, service managers, and warranty claims specialists (not software)</span>
+                                <span>Human expert second opinion — not software</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>The firm maximum price we would pay ourselves on this exact car, based on real local data and claims experience</span>
+                                <span>The firm maximum price we would pay ourselves</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Clear explanation of which issues actually matter and what they will realistically cost at current shop rates</span>
+                                <span>Specific negotiation talking points for this car and seller</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Specific negotiation talking points tailored to this car and this seller so you can negotiate from strength</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Direct email access to our team for questions on this report before you meet the seller</span>
+                                <span>Direct email access to our team for questions</span>
                             </li>
                         </ul>
-                        <p class="mt-4 text-xs text-slate-500">Want to see what a report looks like? <a href="/assets/sample-report.pdf" class="text-[#0A66C2]">View a sample redacted report →</a></p>
                     </div>
                     
                     <div class="mt-auto pt-8">
-                        <button onclick="openPurchaseModal('premium')" class="w-full text-center py-3.5 bg-white border border-[#0A66C2] hover:bg-[#F0F7FF] text-[#0A66C2] font-semibold rounded-2xl transition-colors">
-                            Get the Expert Second Opinion — $89
+                        <button onclick="openPurchaseModal('premium')" class="w-full text-center py-3.5 bg-white border border-[#0553F0] text-[#0553F0] font-semibold rounded-2xl hover:bg-[#F0F7FF] transition-colors">
+                            Get the Premium Report — $89
                         </button>
-                        <p class="text-center text-xs text-slate-500 mt-3">Delivered within 24 hours by email. The core expert second opinion with max price and negotiation leverage. Best for buyers who want clear facts on one specific car.</p>
+                        <p class="text-center text-xs text-slate-500 mt-3">Delivered within 24 hours by email. Best for buyers who want clear facts on one specific car.</p>
                     </div>
                 </div>
 
-                <!-- $99 Bundle (Most prominent / Recommended) -->
-                <div class="product-card bg-white border-2 border-[#0A66C2] rounded-3xl p-8 flex flex-col relative">
-                    <div class="absolute -top-3 right-6 bg-[#0A66C2] text-white text-xs font-semibold px-3 py-1 rounded-2xl shadow-sm">RECOMMENDED — BEST VALUE</div>
+                <!-- $99 Bundle - Most Prominent -->
+                <div class="product-card bg-white border-2 border-[#0553F0] rounded-3xl p-8 flex flex-col relative">
+                    <div class="absolute -top-3 right-6 bg-[#0553F0] text-white text-xs font-semibold px-3 py-1 rounded-2xl shadow-sm">RECOMMENDED FOR MOST BUYERS</div>
                     
                     <div>
                         <div class="font-semibold text-sm text-emerald-600 tracking-wider">EXPERT SECOND OPINION + LEVERAGE KIT</div>
                         <h3 class="mt-2 text-2xl font-semibold tracking-tight">Premium Report + Negotiation Leverage Kit</h3>
-                        <div class="mt-1 text-slate-600 text-[15px]">Everything in the $89 Premium Report plus our complete Negotiation Leverage Kit — the exact scripts, checklists, and tactics our team has refined over years of claims and buyer situations. Clear extra value for buyers who want to be fully prepared.</div>
+                        <div class="mt-1 text-slate-600 text-[15px]">Everything in the $89 Premium Report plus our complete Negotiation Leverage Kit — the exact scripts, checklists, and tactics our team has refined over years. Clear extra value for buyers who want to be fully prepared.</div>
                         
                         <div class="mt-7">
                             <span class="text-5xl font-semibold tracking-tighter">$99</span>
-                            <span class="text-sm text-slate-500 ml-1">save $20 vs separate</span>
+                            <span class="text-sm text-slate-500 ml-1">(save $20 vs buying separately)</span>
                         </div>
                         
                         <ul class="mt-8 space-y-3 text-sm">
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Everything in the Premium Expert Second Opinion Report (data synthesis + human review + max price + tailored talking points)</span>
+                                <span>Everything in the Premium Report</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Complete Negotiation Leverage Kit: word-for-word scripts for private sellers and dealers, printable checklists, and exact questions that expose issues and create leverage</span>
+                                <span>Complete Negotiation Leverage Kit: word-for-word scripts for private sellers and dealers</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Proven tactics for when to push, when to counter, and when to walk — based on real claims experience</span>
+                                <span>Printable checklists and proven questions that create leverage</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
-                                <span>Priority email support on your report and the kit so you can prepare quickly before you meet the seller</span>
+                                <span>Priority email support on your report and the kit</span>
                             </li>
                         </ul>
-                        <p class="mt-4 text-xs text-slate-500">The report gives you the expert second opinion. The kit gives you the exact language and process to use it.</p>
                     </div>
                     
                     <div class="mt-auto pt-8">
                         <button onclick="openPurchaseModal('bundle')" class="w-full text-center py-3.5 bg-[#0553F0] hover:bg-[#0442C0] text-white font-semibold rounded-2xl transition-colors">
                             Get the Bundle (Recommended) — $99
                         </button>
-                        <p class="text-center text-xs text-slate-500 mt-3">Premium Report + full Negotiation Leverage Kit delivered together. The smartest move for most buyers who want the complete expert second opinion and the tools to act on it with confidence.</p>
+                        <p class="text-center text-xs text-slate-500 mt-3">Premium Report + full Negotiation Leverage Kit. The smartest move for most buyers who want the complete expert second opinion and the tools to act on it with confidence.</p>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Sample Report Preview Section -->
+            <div class="mt-8 text-center text-sm text-slate-600">
+                Most buyers get the best results with the $99 Bundle. The $89 Premium Report is available for those who only need the expert second opinion on one car.
+            </div>
+
+            <!-- Sample -->
             <div class="max-w-screen-xl mx-auto px-6 py-8">
                 <h2 class="text-2xl font-semibold mb-6 text-center">See What Your Expert Second Opinion Includes</h2>
                 <div class="bg-white border border-slate-200 rounded-3xl p-6 max-w-2xl mx-auto relative">
@@ -246,11 +220,6 @@
                                 <td class="py-2 text-xs text-slate-500 text-right">Fuel pump — free dealer fix required</td>
                             </tr>
                             <tr style="filter: blur(5px);">
-                                <td class="py-2">Odometer</td>
-                                <td class="py-2 text-right font-medium">✔ CLEAR</td>
-                                <td class="py-2 text-xs text-slate-500 text-right">Consistent across all records</td>
-                            </tr>
-                            <tr style="filter: blur(5px);">
                                 <td class="py-2">Local Market Value</td>
                                 <td class="py-2 text-right font-medium">$19,400 fair</td>
                                 <td class="py-2 text-xs text-slate-500 text-right">Based on Tampa Bay, FL comps</td>
@@ -263,61 +232,42 @@
                         </tbody>
                     </table>
                     <div class="absolute bottom-0 left-0 right-0 flex items-center justify-center pb-4">
-                        <div class="bg-white/90 text-[#0A66C2] text-xs font-semibold px-3 py-1 rounded">Your full report — unblurred</div>
+                        <div class="bg-white/90 text-[#0553F0] text-xs font-semibold px-3 py-1 rounded">Your full report — unblurred</div>
                     </div>
                 </div>
                 <div class="mt-4 text-center text-xs text-slate-500">
                     Sample only — real report uses your actual VIN data and our team's human synthesis
                 </div>
                 <div class="text-center mt-1">
-                    <a href="/assets/sample-report.pdf" class="text-sm text-[#0A66C2] hover:underline font-medium">Download a full sample report (PDF)</a>
+                    <a href="/sample-report.html" class="text-sm text-[#0553F0] hover:underline font-medium">See the full sample report page →</a>
                 </div>
             </div>
 
-            <div class="mt-4 text-center text-sm text-slate-600 max-w-xl mx-auto">
-                The $89 Premium Report gives you the expert second opinion with max price and leverage for this car. The $99 Bundle adds the complete Negotiation Leverage Kit so you have the exact scripts and process ready before you meet the seller. Most buyers choose the Bundle.
-            </div>
-
-            <!-- Recommended Partners (Affiliate / Hybrid Income Stream) - Integrated naturally -->
+            <!-- Recommended Partners -->
             <div class="mt-12 max-w-screen-xl mx-auto px-6">
                 <div class="text-center mb-8">
-                    <div class="text-sm font-semibold tracking-widest text-[#0A66C2]">NEXT STEPS AFTER YOU HAVE THE EXPERT SECOND OPINION</div>
+                    <div class="text-sm font-semibold tracking-widest text-[#0553F0]">NATURAL EXTENSIONS OF OUR TOOLS</div>
                     <h2 class="mt-2 text-2xl font-semibold tracking-tight">Recommended Partners</h2>
-                    <p class="mt-2 text-slate-600 max-w-xl mx-auto">Once you have the expert second opinion and clear negotiation leverage from our report, these vetted services help you complete the purchase the right way. We only recommend partners that align with the issues and values we see in real claims. Using our links may earn us a commission at no extra cost to you.</p>
+                    <p class="mt-2 text-slate-600 max-w-xl mx-auto">Once you have the facts from our report, these trusted services help you complete the purchase the right way. We've vetted them based on real claims experience.</p>
                 </div>
 
                 <div class="grid md:grid-cols-3 gap-6">
-                    <!-- Extended Warranties -->
                     <div class="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col">
                         <h3 class="font-semibold text-lg">Extended Warranties</h3>
-                        <p class="text-sm text-slate-600 mt-1">Coverage from providers with strong payout records on the types of claims our team has reviewed for years. Avoid dealer markups on plans that actually cover the issues we commonly flag.</p>
-                        <ul class="mt-4 space-y-2 text-sm flex-1">
-                            <li class="flex items-start gap-2">• Plans matched to the problems our reports flag most often</li>
-                            <li class="flex items-start gap-2">• Clear terms and responsive claims support</li>
-                        </ul>
-                        <a href="#" class="mt-4 inline-block text-sm text-[#0A66C2] font-medium hover:underline">Compare recommended plans →</a>
+                        <p class="text-sm text-slate-600 mt-1">Coverage from providers with strong payout records on the types of claims our team has reviewed.</p>
+                        <a href="#" class="mt-4 inline-block text-sm text-[#0553F0] font-medium hover:underline">Compare recommended plans →</a>
                     </div>
 
-                    <!-- Financing -->
                     <div class="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col">
                         <h3 class="font-semibold text-lg">Used Car Financing</h3>
-                        <p class="text-sm text-slate-600 mt-1">Competitive rates from lenders who work with buyers who have done real due diligence and understand actual market values.</p>
-                        <ul class="mt-4 space-y-2 text-sm flex-1">
-                            <li class="flex items-start gap-2">• Pre-approval options that respect the local comps in our reports</li>
-                            <li class="flex items-start gap-2">• Transparent terms without surprise fees</li>
-                        </ul>
-                        <a href="#" class="mt-4 inline-block text-sm text-[#0A66C2] font-medium hover:underline">Get pre-approved →</a>
+                        <p class="text-sm text-slate-600 mt-1">Competitive rates from lenders who work with buyers who have done real due diligence.</p>
+                        <a href="#" class="mt-4 inline-block text-sm text-[#0553F0] font-medium hover:underline">Get pre-approved →</a>
                     </div>
 
-                    <!-- Pre-Purchase Inspections -->
                     <div class="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col">
                         <h3 class="font-semibold text-lg">Pre-Purchase Inspections</h3>
-                        <p class="text-sm text-slate-600 mt-1">Independent inspectors who know what to focus on beyond a basic test drive — especially the red flags our reports highlight. Use our report to direct the inspection and save time and money.</p>
-                        <ul class="mt-4 space-y-2 text-sm flex-1">
-                            <li class="flex items-start gap-2">• Mobile options in most major areas</li>
-                            <li class="flex items-start gap-2">• Detailed reports that complement our data synthesis</li>
-                        </ul>
-                        <a href="#" class="mt-4 inline-block text-sm text-[#0A66C2] font-medium hover:underline">Find an inspector near you →</a>
+                        <p class="text-sm text-slate-600 mt-1">Independent inspectors who know what to look for beyond a basic test drive.</p>
+                        <a href="#" class="mt-4 inline-block text-sm text-[#0553F0] font-medium hover:underline">Find an inspector near you →</a>
                     </div>
                 </div>
             </div>
@@ -327,98 +277,44 @@
                 <h2 class="text-2xl font-semibold mb-6 text-center">Common Questions</h2>
                 <div class="max-w-3xl mx-auto space-y-2">
                     <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
-                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: Is this the same as a pre-purchase inspection?
-                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: Is this the same as Carfax?
+                            <span class="text-[#0553F0] group-open:rotate-180 transition-transform">▼</span>
                         </summary>
-                        <p class="mt-3 text-slate-600 text-sm">No. This is a remote expert second opinion and data synthesis. We review all available records, local market data, and claims history and deliver clear value and leverage guidance. It is not a physical inspection. Many buyers use our report to decide whether a physical inspection is worth it and exactly what to ask the inspector to focus on.</p>
+                        <p class="mt-3 text-slate-600 text-sm">We use the same underlying data sources. The difference is we turn it into local sold prices for your exact area and a clear expert second opinion on what to pay. Free tools and most Carfax reports stop at the records and leave you to guess the price and the risk.</p>
                     </details>
 
                     <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
                         <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: What if the VIN has no reported history?
-                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                            <span class="text-[#0553F0] group-open:rotate-180 transition-transform">▼</span>
                         </summary>
-                        <p class="mt-3 text-slate-600 text-sm">A clean history isn't always a good sign — it may mean damage was never reported. Our report flags this and explains what to look for in person and how to negotiate accordingly.</p>
-                    </details>
-
-                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
-                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: Does this work for cars in all 50 states?
-                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
-                        </summary>
-                        <p class="mt-3 text-slate-600 text-sm">Yes. We pull national title history, accident records, and recalls for any VIN sold in the United States, plus local market comps for your area.</p>
+                        <p class="mt-3 text-slate-600 text-sm">A clean history isn't always a good sign. Our report flags this and explains what to look for in person.</p>
                     </details>
 
                     <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
                         <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: How is the report delivered?
-                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                            <span class="text-[#0553F0] group-open:rotate-180 transition-transform">▼</span>
                         </summary>
                         <p class="mt-3 text-slate-600 text-sm">Within 24 hours via email as a downloadable PDF with the full synthesis, max price recommendation, and negotiation leverage points.</p>
                     </details>
 
                     <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
                         <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: What's your exact refund policy?
-                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
+                            <span class="text-[#0553F0] group-open:rotate-180 transition-transform">▼</span>
                         </summary>
-                        <p class="mt-3 text-slate-600 text-sm">30 days, no questions asked. If the report didn't help you make a better decision or negotiate stronger, email us and we'll refund you the same day.</p>
-                    </details>
-
-                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
-                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: Can I use this for dealership cars, not just private sellers?
-                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
-                        </summary>
-                        <p class="mt-3 text-slate-600 text-sm">Absolutely — dealers are often where the real information asymmetry happens. Our reports are just as useful on dealer inventory.</p>
-                    </details>
-
-                    <details class="bg-white border border-slate-200 rounded-2xl p-4 group">
-                        <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Q: How fast do I get the report or bundle?
-                            <span class="text-[#0A66C2] group-open:rotate-180 transition-transform">▼</span>
-                        </summary>
-                        <p class="mt-3 text-slate-600 text-sm">The report is delivered to your email within 24 hours (usually faster). The Bundle includes the same report plus the Negotiation Leverage Kit.</p>
+                        <p class="mt-3 text-slate-600 text-sm">30 days, no questions asked. If the report didn't help you make a better decision, email us and we'll refund you the same day.</p>
                     </details>
                 </div>
-            </div>
-
-            <div class="mt-8 text-center text-xs text-slate-500 max-w-md mx-auto">
-                All one-time products include a 30-day money-back guarantee. If something doesn't help you make a better decision or negotiate with more confidence, email us and we will make it right.
-            </div>
-
-            <div class="max-w-2xl mx-auto mt-10 px-6">
-                <h3 class="font-semibold text-xl mb-4">Still have questions?</h3>
-
-                <div class="mb-6">
-                    <p class="font-medium">Q: How is this different from Carfax or a free NHTSA lookup?</p>
-                    <p class="text-slate-600">A: Free tools and basic reports give you raw data and leave you to guess. We synthesize the data, add real local market comparables, and deliver a human expert second opinion with a clear max price and specific negotiation leverage you can use immediately. That's what the raw records leave out.</p>
-                </div>
-
-                <div class="mb-6">
-                    <p class="font-medium">Q: Do I need this for a dealership car?</p>
-                    <p class="text-slate-600">A: Yes. Dealers are often better at controlling the narrative. Title washing, undisclosed auction history, and inflated pricing happen there too. Our expert second opinion and leverage points work on any VIN no matter who is selling it.</p>
-                </div>
-
-                <div class="mb-6">
-                    <p class="font-medium">Q: What if the report doesn't help me?</p>
-                    <p class="text-slate-600">A: Every product comes with a 30-day money-back guarantee. If you don't feel more confident about your purchase decision or it doesn't help you negotiate or walk away, email us and we'll refund you — no hassle, same day.</p>
-                </div>
-
-                <div class="mb-6">
-                    <p class="font-medium">Q: How fast do I get my report?</p>
-                    <p class="text-slate-600">A: The Premium Report and the Bundle are delivered to your email within 24 hours, usually much faster.</p>
-                </div>
-            </div>
-
-            <div class="mt-10 max-w-2xl mx-auto px-6 text-center text-xs text-slate-600">
-                <strong class="font-semibold">How we pull your data:</strong><br>
-                Reports combine title history, accident records, recall databases, and real local market comparables. We don't hand you raw records — we synthesize them into what the numbers mean for your money and give you the expert second opinion and leverage to act on it.
             </div>
         </div>
     </main>
 
-    <!-- Purchase Modal (Modern demo checkout) -->
+    <!-- Purchase Modal -->
     <div id="purchase-modal" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4" onclick="if (event.target.id === 'purchase-modal') closePurchaseModal()">
         <div class="modal bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100" onclick="event.stopImmediatePropagation()">
             <div class="px-8 pt-8 pb-6">
                 <div class="flex items-start justify-between mb-6">
                     <div>
-                        <div id="modal-product-type" class="text-xs font-semibold tracking-widest text-[#0A66C2] uppercase"></div>
+                        <div id="modal-product-type" class="text-xs font-semibold tracking-widest text-[#0553F0] uppercase"></div>
                         <div id="modal-product-name" class="text-2xl font-semibold tracking-tighter mt-1"></div>
                     </div>
                     <button onclick="closePurchaseModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
@@ -435,16 +331,16 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 mb-1.5">YOUR EMAIL</label>
-                            <input type="email" id="purchase-email" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]" placeholder="you@email.com" required>
+                            <input type="email" id="purchase-email" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0553F0]" placeholder="you@email.com" required>
                         </div>
                         <div id="vin-field" class="hidden">
                             <label class="block text-xs font-semibold text-slate-500 mb-1.5">VIN (for report)</label>
-                            <input type="text" id="purchase-vin" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2] font-mono uppercase" placeholder="1HGCM82633A123456" maxlength="17">
+                            <input type="text" id="purchase-vin" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0553F0] font-mono uppercase" placeholder="1HGCM82633A123456" maxlength="17">
                             <p class="text-[10px] text-slate-500 mt-1">17 characters • We'll pull the data instantly in demo</p>
                         </div>
                         <div id="name-field">
                             <label class="block text-xs font-semibold text-slate-500 mb-1.5">FULL NAME (OPTIONAL)</label>
-                            <input type="text" id="purchase-name" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0A66C2]" placeholder="Alex Rivera">
+                            <input type="text" id="purchase-name" class="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-[#0553F0]" placeholder="Alex Rivera">
                         </div>
                     </div>
 
@@ -466,7 +362,7 @@
                         → Open Admin Dashboard (for reports)
                     </button>
                     
-                    <p style="font-size:0.9rem; color:#64748b; margin-top:1rem;">Check your email for details in the demo.</p>
+                    <p style="font-size:0.9rem; color:#64748b; margin-top:1rem;">Pro members: check your email for login details in the demo.</p>
                 </div>
             </div>
         </div>
@@ -488,12 +384,10 @@
                 
                 <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
                     <a href="/" class="hover:text-white transition-colors">Home</a>
-                    <a href="/how-it-works.html" class="hover:text-white transition-colors">How it works</a>
-                    <a href="/products.html" class="hover:text-white transition-colors">Products</a>
+                    <a href="/products.html" class="hover:text-white transition-colors">Offers</a>
                     <a href="/blog.html" class="hover:text-white transition-colors">Blog</a>
-                    <a href="/faq.html" class="hover:text-white transition-colors">FAQ</a>
-                    <a href="/sample-report.html" class="hover:text-white transition-colors">Sample Report</a>
                     <a href="/about.html" class="hover:text-white transition-colors">About</a>
+                    <a href="/faq.html" class="hover:text-white transition-colors">FAQ</a>
                     <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>
                     <a href="/privacy-policy.html" class="hover:text-white transition-colors">Privacy</a>
                     <a href="/terms-of-service.html" class="hover:text-white transition-colors">Terms</a>
@@ -540,14 +434,12 @@
             document.getElementById('modal-desc').textContent = p.desc;
 
             const vinField = document.getElementById('vin-field');
-            // Both premium and bundle need VIN
             if (productKey === 'premium' || productKey === 'bundle') {
                 vinField.classList.remove('hidden');
             } else {
                 vinField.classList.add('hidden');
             }
 
-            // reset states
             document.getElementById('purchase-form').style.display = '';
             document.getElementById('purchase-success').classList.add('hidden');
             document.getElementById('purchase-form').reset();
@@ -556,13 +448,10 @@
             document.getElementById('purchase-modal').classList.add('flex');
         }
 
-        function closePurchaseModal(resetOnly) {
+        function closePurchaseModal() {
             const modal = document.getElementById('purchase-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            if (resetOnly) {
-                // keep form clean for next time
-            }
         }
 
         function submitPurchase(e) {
@@ -570,15 +459,12 @@
             const email = document.getElementById('purchase-email').value;
             const vin = document.getElementById('purchase-vin') ? document.getElementById('purchase-vin').value : '';
             const name = document.getElementById('purchase-name').value || 'Valued customer';
-            const p = products[currentProduct];
 
             const form = document.getElementById('purchase-form');
             const success = document.getElementById('purchase-success');
 
-            let isPremiumOrBundle = (currentProduct === 'premium' || currentProduct === 'bundle');
-
-            if (isPremiumOrBundle) {
-                // === INTEGRATION: Create pending report for Admin Dashboard ===
+            // Demo integration for admin
+            if (currentProduct === 'premium' || currentProduct === 'bundle') {
                 try {
                     let existingReports = [];
                     const saved = localStorage.getItem('trustcar_reports');
@@ -586,27 +472,23 @@
                         existingReports = JSON.parse(saved);
                     }
 
-                    const reportType = 'Premium';
                     const newReport = {
                         id: "RPT-" + new Date().getFullYear().toString().slice(2) + "-" + String(Math.floor(100 + Math.random() * 900)),
                         customerName: name,
                         email: email,
                         phone: "",
                         vin: vin ? vin.toUpperCase() : "PENDING-VIN",
-                        type: reportType,
+                        type: 'Premium',
                         submitted: new Date().toISOString().split('T')[0],
                         status: "Pending",
-                        aiDraft: "AI analysis generated. Awaiting human review by admin. " + (vin ? "VIN: " + vin.toUpperCase() : ""),
+                        aiDraft: "AI analysis generated. Awaiting human review.",
                         notes: "Submitted via public site purchase flow (demo).",
                         photos: vin ? 1 : 0
                     };
 
                     existingReports.unshift(newReport);
                     localStorage.setItem('trustcar_reports', JSON.stringify(existingReports));
-                } catch (err) {
-                    console.warn("Could not save report to admin (localStorage issue)", err);
-                }
-                // === END INTEGRATION ===
+                } catch (err) {}
             }
 
             form.style.display = 'none';
@@ -618,13 +500,6 @@
         function openAdminDashboard() {
             window.open('/admin/index.html', '_blank');
         }
-
-        // Auto-refresh every 10 seconds (for demo sync between public and admin)
-        setInterval(() => {
-            if (document.visibilityState === 'visible') {
-                location.reload();
-            }
-        }, 10000);
 
         document.addEventListener('DOMContentLoaded', () => {
             initMobileMenu();

@@ -5,20 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About — TrustCar.io</title>
     <meta name="description" content="Manny T. started as a technician, became a service advisor and service manager, and has worked professionally in the extended warranty claims industry — approving and denying mechanical claims from real inspection reports. TrustCar.io is built on that.">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600&amp;display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
         body {
-            font-family: 'Inter', system_ui, sans-serif;
+            font-family: 'Nunito', system-ui, sans-serif;
         }
         
         .font-display {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-family: 'Space Grotesk', 'Nunito', sans-serif;
             font-weight: 600;
         }
 
@@ -39,6 +35,7 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
         <div class="max-w-screen-xl mx-auto">
             <div class="px-6 py-5 flex items-center justify-between">
@@ -56,14 +53,12 @@
 
                 <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
                     <a href="/" class="nav-link text-slate-700">Home</a>
-                    <a href="/how-it-works.html" class="nav-link text-slate-700">How it works</a>
+                    <a href="/products.html" class="nav-link text-slate-700">Offers</a>
                     <a href="/blog.html" class="nav-link text-slate-700">Blog</a>
-                    <a href="/products.html" class="nav-link text-slate-700">Products</a>
                     <a href="/about.html" class="nav-link text-[#0553F0] font-semibold">About</a>
-                    <a href="/contact.html" class="nav-link text-slate-700">Contact</a>
+                    <a href="/faq.html" class="nav-link text-slate-700">FAQ</a>
                 </nav>
 
-                <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
@@ -73,11 +68,10 @@
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 px-6 py-4">
             <nav class="flex flex-col gap-y-1 text-sm font-medium">
                 <a href="/" class="py-2.5 px-1 text-slate-700">Home</a>
-                <a href="/how-it-works.html" class="py-2.5 px-1 text-slate-700">How it works</a>
+                <a href="/products.html" class="py-2.5 px-1 text-slate-700">Offers</a>
                 <a href="/blog.html" class="py-2.5 px-1 text-slate-700">Blog</a>
-                <a href="/products.html" class="py-2.5 px-1 text-slate-700">Products</a>
                 <a href="/about.html" class="py-2.5 px-1 text-slate-700">About</a>
-                <a href="/contact.html" class="py-2.5 px-1 text-slate-700">Contact</a>
+                <a href="/faq.html" class="py-2.5 px-1 text-slate-700">FAQ</a>
             </nav>
         </div>
     </header>
@@ -86,98 +80,37 @@
         <div class="max-w-3xl mx-auto">
             <h1 class="section-header">The Person Reviewing Your Car's History Has Seen the Inside of Thousands of Them.</h1>
             
-            <!-- FOUNDER BLOCK: two-column layout -->
+            <!-- FOUNDER BLOCK -->
             <div class="mt-8 flex flex-col md:flex-row gap-8">
-                <!-- Left column: circular placeholder -->
+                <!-- Left column: circular photo placeholder -->
                 <div class="flex-shrink-0">
-                    <div id="founder-photo" class="w-[280px] h-[280px] bg-slate-200 rounded-full flex items-center justify-center text-center text-slate-500 mx-auto md:mx-0">
-                        Manny T. — Photo Coming Soon
+                    <div class="w-[280px] h-[280px] bg-slate-200 rounded-full flex items-center justify-center text-center mx-auto md:mx-0 overflow-hidden border-4 border-white shadow-md">
+                        <div class="text-center">
+                            <i class="fa-solid fa-user text-6xl text-slate-400 mb-2"></i>
+                            <div class="text-slate-600 font-medium">Manny T.</div>
+                            <div class="text-xs text-slate-500">Founder &amp; Lead Reviewer</div>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Right column -->
                 <div class="flex-1">
                     <div class="font-bold text-3xl">Manny T.</div>
-                    <div class="text-sm text-slate-500 mt-1">
-                        Technician · Service Advisor · Service Manager · Warranty Claims Specialist — Tampa, FL
-                    </div>
+                    <div class="mt-1 text-slate-600">Founder &amp; Lead Expert Reviewer</div>
                     
-                    <div class="mt-6 space-y-3 text-sm">
-                        <div class="flex items-start gap-2">
-                            <span class="text-teal-500 mt-0.5">✓</span>
-                            <span>Started as an automotive technician — learned how cars actually fail from the ground up, not from a textbook</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-teal-500 mt-0.5">✓</span>
-                            <span>Advanced to Service Advisor then Service Manager at dealerships — saw how reconditioning gets minimized and how deals get written</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-teal-500 mt-0.5">✓</span>
-                            <span>Has worked professionally in the extended warranty claims industry — reviewing mechanical claims and approving or denying them based on real inspection reports</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-teal-500 mt-0.5">✓</span>
-                            <span>Coordinates with 3rd-party inspection companies on in-person and virtual inspections — knows what they look for and what they're allowed to skip</span>
-                        </div>
+                    <div class="prose prose-slate mt-6 text-[15px] text-slate-600">
+                        <p>Manny T. started as a technician, became a service advisor and service manager, and has worked professionally in the extended warranty claims industry — approving and denying mechanical claims from real inspection reports.</p>
+                        
+                        <p>TrustCar.io is built on that experience. After seeing thousands of cars where buyers got the short end of the stick, we created a service that gives normal people the same kind of expert second opinion that dealers and warranty companies have always had.</p>
+                        
+                        <p>Every report we deliver is reviewed by humans who have actually seen these problems turn into expensive repairs. We don't just hand you data. We tell you what it means for your money and what you should do about it.</p>
                     </div>
                 </div>
-            </div>
-            
-            <!-- IN HIS OWN WORDS section -->
-            <div class="mt-12">
-                <div class="text-xs font-semibold tracking-widest text-teal-500 mb-2">IN HIS OWN WORDS</div>
-                
-                <div class="prose prose-slate max-w-none text-base">
-                    <p>I didn't start behind a desk. I started under cars.</p>
-                    
-                    <p>As a technician, I learned how vehicles actually fail — not theory, but real patterns. Which engines burn oil by 60,000 miles. Which transmissions are already failing at 80k. Which repairs on a history report are early signs of something far more expensive.</p>
-                    
-                    <p>When I moved into service advisory and management, I saw the other side of the counter. How reconditioning gets rushed before a car hits the lot. How condition gets described versus what we actually found on the lift. How a clean-looking car can have a file full of problems nobody disclosed.</p>
-                    
-                    <p>I have worked professionally in the extended warranty claims industry. I reviewed mechanical claims. I studied 3rd-party inspection reports — in-person and virtual — and made the call: approved or denied. I saw what breaks, when, and why. I know what inspectors look for and what the report doesn't always catch.</p>
-                    
-                    <p>Most used car buyers never get access to this layer of knowledge. They get a vehicle history PDF and a seller's word.</p>
-                    
-                    <p>That's not enough. That's why I built TrustCar.io.</p>
-                </div>
-            </div>
-            
-            <!-- WHAT THIS MEANS FOR YOU -->
-            <div class="mt-12">
-                <h2 class="font-semibold text-xl mb-6">What This Means for You</h2>
-                
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-white border border-slate-100 rounded-3xl p-6">
-                        <div class="text-2xl mb-3">🔧</div>
-                        <h4 class="font-semibold text-lg mb-2">I Know How Cars Actually Fail</h4>
-                        <p class="text-sm text-slate-600">"Not from reading about it — from diagnosing and repairing them. When I flag a risk in your report, it comes from real failure patterns I've seen firsthand, not an algorithm."</p>
-                    </div>
-                    
-                    <div class="bg-white border border-slate-100 rounded-3xl p-6">
-                        <div class="text-2xl mb-3">📋</div>
-                        <h4 class="font-semibold text-lg mb-2">I Read Inspection Reports for a Living</h4>
-                        <p class="text-sm text-slate-600">"I review 3rd-party vehicle inspection reports — in-person and virtual — as part of my job. I know what the checkboxes mean, what gets glossed over, and what you should push back on."</p>
-                    </div>
-                    
-                    <div class="bg-white border border-slate-100 rounded-3xl p-6">
-                        <div class="text-2xl mb-3">🛡️</div>
-                        <h4 class="font-semibold text-lg mb-2">I Know What Gets Claims Denied</h4>
-                        <p class="text-sm text-slate-600">"I've approved and denied hundreds of warranty claims. I know which red flags turn into expensive post-purchase problems — and I look for every one in your report."</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- CLOSING -->
-            <div class="mt-12">
-                <p class="text-base text-slate-600 mb-6">TrustCar.io isn't a data aggregator with a chatbot. It's tools built by someone who has spent years as a tech, an advisor, a manager, and a warranty claims specialist. Every flag in your report is something I've personally seen cost a real buyer real money.</p>
-                
-                <a href="/products.html" class="inline-flex items-center px-8 py-3.5 bg-[#0553F0] hover:bg-[#084D96] text-white font-semibold rounded-2xl transition-colors">
-                    See the Tools →
-                </a>
             </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 text-sm">
         <div class="max-w-screen-xl mx-auto px-6 py-10">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-y-6">
@@ -188,17 +121,18 @@
                         </div>
                         <span class="font-semibold text-white">TrustCar.io</span>
                     </div>
-                    <div class="mt-1 text-xs">Smart tools for used car buyers.</div>
+                    <div class="mt-1 text-xs">Expert second opinions and negotiation leverage for used car buyers.</div>
                 </div>
                 
                 <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs">
-                    <a href="/" class="hover:text-white transition-colors">Home</a>
-                    <a href="/how-it-works.html" class="hover:text-white transition-colors">How it works</a>
-                    <a href="/products.html" class="hover:text-white transition-colors">Products</a>
-                    <a href="/about.html" class="hover:text-white transition-colors">About</a>
-                    <a href="/contact.html" class="hover:text-white transition-colors">Contact</a>
-                    <a href="/privacy-policy.html" class="hover:text-white transition-colors">Privacy</a>
-                    <a href="/terms-of-service.html" class="hover:text-white transition-colors">Terms</a>
+                    <a href="/" class="footer-link hover:text-white">Home</a>
+                    <a href="/products.html" class="footer-link hover:text-white">Offers</a>
+                    <a href="/blog.html" class="footer-link hover:text-white">Blog</a>
+                    <a href="/about.html" class="footer-link hover:text-white">About</a>
+                    <a href="/faq.html" class="footer-link hover:text-white">FAQ</a>
+                    <a href="/contact.html" class="footer-link hover:text-white">Contact</a>
+                    <a href="/privacy-policy.html" class="footer-link hover:text-white">Privacy</a>
+                    <a href="/terms-of-service.html" class="footer-link hover:text-white">Terms</a>
                 </div>
             </div>
             
@@ -214,7 +148,7 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        function initMobileMenu() {
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileBtn && mobileMenu) {
@@ -222,6 +156,10 @@
                     mobileMenu.classList.toggle('hidden');
                 });
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMobileMenu();
         });
     </script>
 </body>
